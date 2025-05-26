@@ -15,6 +15,10 @@ export type ResolutionPlan = {
   filePaths: string[];
 };
 
+const HEADING_OF_FILE_PATHS_TO_BE_MODIFIED = '# File Paths to be Modified';
+const HEADING_OF_FILE_PATHS_TO_BE_REFERRED = '# File Paths to be Referred';
+const HEADING_OF_PLAN = '# Implementation Plans';
+
 export async function planCodeChanges(
   model: string,
   issueContent: string,
@@ -54,8 +58,8 @@ export async function planCodeChanges(
   console.info('Selecting complete!');
 
   const extractedFilePathLists = extractHeaderContents(trimCodeBlockFences(filesResponse), [
-    '# File Paths to be Modified',
-    '# File Paths to be Referred',
+    HEADING_OF_FILE_PATHS_TO_BE_MODIFIED,
+    HEADING_OF_FILE_PATHS_TO_BE_REFERRED,
   ]);
   if (!extractedFilePathLists) {
     return { filePaths: [] };
@@ -100,7 +104,7 @@ ${fence}`;
   );
   console.info('Planning complete!');
 
-  const extractedPlans = extractHeaderContents(trimCodeBlockFences(planResponse), ['# Implementation Plans']);
+  const extractedPlans = extractHeaderContents(trimCodeBlockFences(planResponse), [HEADING_OF_PLAN]);
   if (!extractedPlans) {
     return { filePaths: [] };
   }
@@ -123,13 +127,13 @@ ${issueFence}
 
 Please format your response without any explanatory text as follows:
 \`\`\`
-# File Paths to be Modified
+${HEADING_OF_FILE_PATHS_TO_BE_MODIFIED}
 
 - \`<filePath1>\`
 - \`<filePath2>\`
 - ...
 
-# File Paths to be Referred
+${HEADING_OF_FILE_PATHS_TO_BE_REFERRED}
 
 - \`<filePath1>\`
 - \`<filePath2>\`
@@ -157,7 +161,7 @@ ${issueFence}
 
 Please format your response without any explanatory text as follows:
 \`\`\`
-# Implementation Plans
+${HEADING_OF_PLAN}
 
 1. <Specific implementation step>
 2. <Next implementation step>
