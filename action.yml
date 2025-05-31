@@ -20,7 +20,7 @@ inputs:
   repomix-extra-args:
     description: 'Extra arguments for repomix when generating context for planning'
     required: false
-    default: '--model gemini/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --chat-language English'
+    default: '--model google/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --chat-language English'
   aider-extra-args:
     description: 'Additional arguments to pass to the aider command'
     required: false

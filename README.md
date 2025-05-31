@@ -22,7 +22,7 @@ See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/wor
 
 ```sh
 # Using model names defined on llmlite
-bun start -i 37 -m google/gemini-2.5-pro-preview-05-06 -e high -r="--compress --remove-empty-lines --include 'src/**/*.ts'" -a="--model gemini/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
+bun start -i 37 -m google/gemini-2.5-pro-preview-05-06 -e high -r="--compress --remove-empty-lines --include 'src/**/*.ts'" -a="--model google/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
 ```
 
 #### Supported Model Format
