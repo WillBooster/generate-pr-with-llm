@@ -1,9 +1,9 @@
-import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
-import { createAnthropic } from '@ai-sdk/anthropic';
+import { type BedrockProviderOptions, createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
+import { type AnthropicProviderOptions, createAnthropic } from '@ai-sdk/anthropic';
 import { createAzure } from '@ai-sdk/azure';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { type GoogleGenerativeAIProviderOptions, createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createVertex } from '@ai-sdk/google-vertex';
-import { createOpenAI } from '@ai-sdk/openai';
+import { type OpenAIResponsesProviderOptions, createOpenAI } from '@ai-sdk/openai';
 import type { LanguageModelV2 } from '@ai-sdk/provider';
 import { type ModelMessage, generateText } from 'ai';
 import type { ReasoningEffort } from './types.js';
@@ -25,12 +25,34 @@ export async function callLlmApi(
       messages: messages,
     };
 
-    if (reasoningEffort !== undefined && (provider === 'openai' || provider === 'azure')) {
+    if (
+      reasoningEffort !== undefined &&
+      (provider === 'openai' || provider === 'azure' || provider === 'google' || provider === 'anthropic')
+    ) {
+      const thinkingBudget = getThinkingBudget(reasoningEffort);
+
       if (provider === 'openai') {
         requestParams.providerOptions = {
           openai: {
             reasoningEffort: reasoningEffort as string,
-          },
+          } satisfies OpenAIResponsesProviderOptions,
+        };
+      } else if (provider === 'anthropic') {
+        requestParams.providerOptions = {
+          anthropic: {
+            thinking: {
+              type: 'enabled',
+              budgetTokens: thinkingBudget,
+            },
+          } satisfies AnthropicProviderOptions,
+        };
+      } else if (provider === 'google') {
+        requestParams.providerOptions = {
+          google: {
+            thinkingConfig: {
+              thinkingBudget,
+            },
+          } satisfies GoogleGenerativeAIProviderOptions,
         };
       } else if (provider === 'azure') {
         requestParams.providerOptions = {
@@ -38,8 +60,13 @@ export async function callLlmApi(
             reasoningEffort: reasoningEffort as string,
           },
         };
+      } else if (provider === 'bedrock') {
+        requestParams.providerOptions = {
+          bedrock: {
+            reasoningConfig: { type: 'enabled', budgetTokens: thinkingBudget },
+          } satisfies BedrockProviderOptions,
+        };
       }
-      // Note: Google and Anthropic models don't currently support reasoning effort in the same way
     }
 
     const result = await generateText(requestParams);
@@ -63,6 +90,19 @@ export async function callLlmApi(
     console.error(`LLM API error for model ${model}:`, error);
     process.exit(1);
   }
+}
+
+/**
+ * Get thinking budget token count based on reasoning effort level
+ */
+function getThinkingBudget(reasoningEffort: ReasoningEffort): number {
+  const tokenBudgets = {
+    low: 1000, // 1K tokens
+    medium: 8000, // 8K tokens
+    high: 24000, // 24K tokens
+  };
+
+  return tokenBudgets[reasoningEffort];
 }
 
 function getModelInstance(model: string): [LanguageModelV2, string] {

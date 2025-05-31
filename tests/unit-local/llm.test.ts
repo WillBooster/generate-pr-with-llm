@@ -142,6 +142,76 @@ describe('callLlmApi', () => {
     );
   });
 
+  describe('reasoning effort with thinking budget', () => {
+    test.skipIf(!process.env.OPENAI_API_KEY)(
+      'should work with OpenAI reasoning effort low',
+      async () => {
+        const result = await callLlmApi('openai/o4-mini', testMessages, 'low');
+
+        expect(typeof result).toBe('string');
+        expect(result.toLowerCase()).toContain('hi');
+      },
+      30000
+    );
+
+    test.skipIf(!process.env.OPENAI_API_KEY)(
+      'should work with OpenAI reasoning effort medium',
+      async () => {
+        const result = await callLlmApi('openai/o4-mini', testMessages, 'medium');
+
+        expect(typeof result).toBe('string');
+        expect(result.toLowerCase()).toContain('hi');
+      },
+      30000
+    );
+
+    test.skipIf(!process.env.OPENAI_API_KEY)(
+      'should work with OpenAI reasoning effort high',
+      async () => {
+        const result = await callLlmApi('openai/o4-mini', testMessages, 'high');
+
+        expect(typeof result).toBe('string');
+        expect(result.toLowerCase()).toContain('hi');
+      },
+      30000
+    );
+
+    test.skipIf(!process.env.AZURE_OPENAI_API_KEY)(
+      'should work with Azure OpenAI reasoning effort',
+      async () => {
+        const result = await callLlmApi('azure/o4-mini', testMessages, 'medium');
+
+        expect(typeof result).toBe('string');
+        expect(result.toLowerCase()).toContain('hi');
+      },
+      30000
+    );
+
+    test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)(
+      'should work with Google thinking budget',
+      async () => {
+        // Test Google thinking models with thinking budget
+        const result = await callLlmApi('google/gemini-2.5-flash-preview-04-17', testMessages, 'medium');
+
+        expect(typeof result).toBe('string');
+        expect(result.toLowerCase()).toContain('hi');
+      },
+      10000
+    );
+
+    test.skipIf(!process.env.ANTHROPIC_API_KEY)(
+      'should work with Anthropic reasoning effort',
+      async () => {
+        // Test Anthropic reasoning models with thinking budget
+        const result = await callLlmApi('anthropic/claude-4-sonnet-20250514', testMessages, 'medium');
+
+        expect(typeof result).toBe('string');
+        expect(result.toLowerCase()).toContain('hi');
+      },
+      30000
+    );
+  });
+
   describe('error handling', () => {
     test('should handle API errors gracefully', async () => {
       // This test verifies that API errors are caught and logged
