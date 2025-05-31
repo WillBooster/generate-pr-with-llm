@@ -21,8 +21,23 @@ See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/wor
 ### CLI
 
 ```sh
-bun start -i 37 -m gemini-2.5-pro-preview-05-06 -e high -r="--compress --remove-empty-lines --include 'src/**/*.ts'" -a="--model gemini/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
+# Using llmlite-like model names (required format)
+bun start -i 37 -m google/gemini-2.5-pro-preview-05-06 -e high -r="--compress --remove-empty-lines --include 'src/**/*.ts'" -a="--model gemini/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
+
+# Other supported model formats:
+# OpenAI: openai/gpt-4o, openai/o1-preview
+# Google: google/gemini-2.5-pro
+# Anthropic: anthropic/claude-3-5-sonnet
 ```
+
+#### Supported Model Format
+
+The tool requires **llmlite-like model names** in the format `provider/model-name`:
+
+- `openai/gpt-4o`
+- `openai/o1-preview`
+- `google/gemini-2.5-pro`
+- `anthropic/claude-3-5-sonnet`
 
 ## License
 

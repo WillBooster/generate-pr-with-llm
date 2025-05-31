@@ -16,7 +16,8 @@ const argv = await yargs(hideBin(process.argv))
   })
   .option('planning-model', {
     alias: 'm',
-    description: 'LLM (OpenAI or Gemini) for planning code changes',
+    description:
+      'LLM for planning code changes. Must use llmlite format: provider/model (e.g., openai/gpt-4o, google/gemini-2.5-pro, anthropic/claude-3-5-sonnet)',
     type: 'string',
   })
   .option('two-staged-planning', {
