@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { extractHeaderContents } from '../../src/markdown';
+import { extractHeaderContents } from '../../src/markdown.js';
 
 describe('extractHeaderContent', () => {
   test('should extract content between headers in correct order', () => {

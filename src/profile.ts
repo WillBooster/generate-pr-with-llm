@@ -1,5 +1,5 @@
 import ansis from 'ansis';
-import { runCommand } from './spawn';
+import { runCommand } from './spawn.js';
 
 export async function configureGitUserDetailsIfNeeded(): Promise<void> {
   const gitUserName = (await runCommand('git', ['config', 'user.name'], { ignoreExitStatus: true })).trim();

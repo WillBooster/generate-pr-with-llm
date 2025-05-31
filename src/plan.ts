@@ -1,12 +1,12 @@
 import fs from 'node:fs';
 import YAML from 'yaml';
-import { callLlmApi, getApiUrlAndKey } from './llm';
-import type { ReasoningEffort } from './types';
-import { parseCommandLineArgs } from './utils';
+import { callLlmApi } from './llm.js';
+import type { ReasoningEffort } from './types.js';
+import { parseCommandLineArgs } from './utils.js';
 
-import { DEFAULT_REPOMIX_EXTRA_ARGS } from './defaultOptions';
-import { extractHeaderContents, findDistinctFence, trimCodeBlockFences } from './markdown';
-import { runCommand } from './spawn';
+import { DEFAULT_REPOMIX_EXTRA_ARGS } from './defaultOptions.js';
+import { extractHeaderContents, findDistinctFence, trimCodeBlockFences } from './markdown.js';
+import { runCommand } from './spawn.js';
 
 const REPOMIX_FILE_NAME = 'repomix.result';
 
@@ -26,8 +26,6 @@ export async function planCodeChanges(
   reasoningEffort?: ReasoningEffort,
   repomixExtraArgs?: string
 ): Promise<ResolutionPlan> {
-  const { url, apiKey } = getApiUrlAndKey(model);
-
   const issueFence = findDistinctFence(issueContent);
 
   // Base repomix command arguments
@@ -41,8 +39,6 @@ export async function planCodeChanges(
   if (twoStagePlanning) {
     console.info(`Selecting files with ${model} (reasoning effort: ${reasoningEffort}) ...`);
     const filesResponse = await callLlmApi(
-      url,
-      apiKey,
       model,
       [
         {
@@ -65,7 +61,7 @@ export async function planCodeChanges(
     if (!extractedFilePathLists) {
       return { filePaths: [] };
     }
-    const [filePathsToBeModified, filePathsToBeReferred] = extractedFilePathLists.map((filesContent) => {
+    const [filePathsToBeModified, filePathsToBeReferred] = extractedFilePathLists.map((filesContent: string) => {
       const filePathRegex = /\B-\s*`?([^`\n]+)`?/g;
       const matches = [...filesContent.matchAll(filePathRegex)];
       return matches.map((match) => match[1].trim());
@@ -85,8 +81,6 @@ ${fence}`;
 
     console.info(`Planning code changes with ${model} (reasoning effort: ${reasoningEffort}) ...`);
     const planResponse = await callLlmApi(
-      url,
-      apiKey,
       model,
       [
         {
@@ -110,8 +104,6 @@ ${fence}`;
   }
   console.info(`Planning code changes with ${model} (reasoning effort: ${reasoningEffort}) ...`);
   const filesResponse = await callLlmApi(
-    url,
-    apiKey,
     model,
     [
       {

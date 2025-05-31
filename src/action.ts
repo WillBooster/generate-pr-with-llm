@@ -2,9 +2,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import core from '@actions/core';
-import { DEFAULT_MAX_TEST_ATTEMPTS } from './defaultOptions';
-import { main } from './main';
-import type { ReasoningEffort } from './types';
+import { DEFAULT_MAX_TEST_ATTEMPTS } from './defaultOptions.js';
+import { main } from './main.js';
+import type { ReasoningEffort } from './types.js';
 
 // Get inputs
 const issueNumber = core.getInput('issue-number', { required: true });

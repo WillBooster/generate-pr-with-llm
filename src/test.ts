@@ -1,9 +1,9 @@
 import ansis from 'ansis';
-import { buildAiderArgs } from './aider';
-import type { MainOptions } from './main';
-import type { ResolutionPlan } from './plan';
-import { runCommand, spawnAsync } from './spawn';
-import { parseCommandLineArgs } from './utils';
+import { buildAiderArgs } from './aider.js';
+import type { MainOptions } from './main.js';
+import type { ResolutionPlan } from './plan.js';
+import { runCommand, spawnAsync } from './spawn.js';
+import { parseCommandLineArgs } from './utils.js';
 
 export async function testAndFix(options: MainOptions, resolutionPlan?: ResolutionPlan): Promise<string> {
   const maxAttempts = options.maxTestAttempts;

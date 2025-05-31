@@ -1,9 +1,9 @@
 import process from 'node:process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { DEFAULT_AIDER_EXTRA_ARGS, DEFAULT_MAX_TEST_ATTEMPTS, DEFAULT_REPOMIX_EXTRA_ARGS } from './defaultOptions';
-import { main } from './main';
-import type { ReasoningEffort } from './types';
+import { DEFAULT_AIDER_EXTRA_ARGS, DEFAULT_MAX_TEST_ATTEMPTS, DEFAULT_REPOMIX_EXTRA_ARGS } from './defaultOptions.js';
+import { main } from './main.js';
+import type { ReasoningEffort } from './types.js';
 
 // Parse command line arguments using yargs
 const argv = await yargs(hideBin(process.argv))

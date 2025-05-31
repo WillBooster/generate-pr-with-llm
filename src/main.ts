@@ -1,13 +1,13 @@
 import child_process from 'node:child_process';
 import ansis from 'ansis';
 import YAML from 'yaml';
-import { buildAiderArgs } from './aider';
-import { planCodeChanges } from './plan';
-import { configureGitUserDetailsIfNeeded } from './profile';
-import { runCommand } from './spawn';
-import { testAndFix } from './test';
-import type { GitHubIssue, ReasoningEffort } from './types';
-import { stripHtmlComments } from './utils';
+import { buildAiderArgs } from './aider.js';
+import { planCodeChanges } from './plan.js';
+import { configureGitUserDetailsIfNeeded } from './profile.js';
+import { runCommand } from './spawn.js';
+import { testAndFix } from './test.js';
+import type { GitHubComment, GitHubIssue, ReasoningEffort } from './types.js';
+import { stripHtmlComments } from './utils.js';
 
 /**
  * Options for the main function
@@ -62,7 +62,7 @@ export async function main(options: MainOptions): Promise<void> {
     author: issue.author.login,
     title: issue.title,
     description: cleanedIssueBody,
-    comments: issue.comments.map((c) => ({
+    comments: issue.comments.map((c: GitHubComment) => ({
       author: c.author.login,
       body: c.body,
     })),
