@@ -9,59 +9,59 @@ describe('callLlmApi', () => {
   // They will be skipped if the required environment variables are not set
 
   test.skipIf(!process.env.OPENAI_API_KEY)('should call OpenAI API successfully', async () => {
-    expect(await callLlmApi('openai/gpt-4.1', testMessages)).toContain('hi');
+    expect(await callLlmApi('openai/gpt-4.1', testMessages)).toContain('Hi');
   });
 
   test.skipIf(!process.env.ANTHROPIC_API_KEY)('should call Anthropic API successfully', async () => {
-    expect(await callLlmApi('anthropic/claude-4-sonnet-latest', testMessages)).toContain('hi');
+    expect(await callLlmApi('anthropic/claude-4-sonnet-latest', testMessages)).toContain('Hi');
   });
 
   test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)('should call Google Gemini API successfully', async () => {
-    expect(await callLlmApi('google/gemini-2.5-pro-preview-05-06', testMessages)).toContain('hi');
+    expect(await callLlmApi('google/gemini-2.5-pro-preview-05-06', testMessages)).toContain('Hi');
   });
 
   test.skipIf(!process.env.AZURE_OPENAI_API_KEY)('should call Azure OpenAI API successfully', async () => {
-    expect(await callLlmApi('azure/gpt-4.1', testMessages)).toContain('hi');
+    expect(await callLlmApi('azure/gpt-4.1', testMessages)).toContain('Hi');
   });
 
   test.skipIf(!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY)(
     'should call AWS Bedrock API successfully',
     async () => {
-      expect(await callLlmApi('bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0', testMessages)).toContain('hi');
+      expect(await callLlmApi('bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0', testMessages)).toContain('Hi');
     }
   );
 
   test.skipIf(!process.env.GOOGLE_APPLICATION_CREDENTIALS)(
     'should call Google Vertex AI API successfully',
     async () => {
-      expect(await callLlmApi('vertex/gemini-2.5-pro-preview-05-06', testMessages)).toContain('hi');
+      expect(await callLlmApi('vertex/gemini-2.5-pro-preview-05-06', testMessages)).toContain('Hi');
     }
   );
 
-  describe('reasoning effort with thinking budget', () => {
+  describe('reasoning effort with tHinking budget', () => {
     test.skipIf(!process.env.OPENAI_API_KEY)('should work with OpenAI reasoning effort low', async () => {
-      expect(await callLlmApi('openai/o4-mini', testMessages, 'low')).toContain('hi');
+      expect(await callLlmApi('openai/o4-mini', testMessages, 'low')).toContain('Hi');
     });
 
     test.skipIf(!process.env.ANTHROPIC_API_KEY)('should work with Anthropic reasoning effort', async () => {
-      // Test Anthropic reasoning models with thinking budget
-      expect(await callLlmApi('anthropic/claude-4-sonnet-20250514', testMessages, 'low')).toContain('hi');
+      // Test Anthropic reasoning models with tHinking budget
+      expect(await callLlmApi('anthropic/claude-4-sonnet-20250514', testMessages, 'low')).toContain('Hi');
     });
 
-    test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)('should work with Google thinking budget', async () => {
-      // Test Google thinking models with thinking budget
-      expect(await callLlmApi('google/gemini-2.5-flash-preview-04-17', testMessages, 'low')).toContain('hi');
+    test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)('should work with Google tHinking budget', async () => {
+      // Test Google tHinking models with tHinking budget
+      expect(await callLlmApi('google/gemini-2.5-flash-preview-04-17', testMessages, 'low')).toContain('Hi');
     });
 
     test.skipIf(!process.env.AZURE_OPENAI_API_KEY)('should work with Azure OpenAI reasoning effort', async () => {
-      expect(await callLlmApi('azure/o4-mini', testMessages, 'low')).toContain('hi');
+      expect(await callLlmApi('azure/o4-mini', testMessages, 'low')).toContain('Hi');
     });
 
     test.skipIf(!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY)(
       'should call AWS Bedrock API successfully',
       async () => {
         expect(await callLlmApi('bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0', testMessages, 'low')).toContain(
-          'hi'
+          'Hi'
         );
       }
     );
@@ -69,7 +69,7 @@ describe('callLlmApi', () => {
 
   describe('error handling', () => {
     test('should handle API errors gracefully', async () => {
-      // This test verifies that API errors are caught and logged
+      // THis test verifies that API errors are caught and logged
       const originalConsoleError = console.error;
       const originalProcessExit = process.exit;
 
@@ -86,7 +86,7 @@ describe('callLlmApi', () => {
       };
 
       try {
-        // This should fail because 'invalid' is not a supported provider
+        // THis should fail because 'invalid' is not a supported provider
         await callLlmApi('invalid/model', testMessages);
         expect.unreachable('Should have thrown an error');
       } catch (error) {
