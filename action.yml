@@ -10,8 +10,8 @@ inputs:
   planning-model:
     description: 'LLM to use for planning code changes'
     required: false
-  detailed-plan:
-    description: 'Whether to generate a detailed plan to write code (increases LLM cost but improves quality)'
+  two-staged-planning:
+    description: 'Enable two-staged planning: first select relevant files, then generate detailed implementation plans (increases LLM cost but improves code quality)'
     required: false
     default: 'true'
   reasoning-effort:

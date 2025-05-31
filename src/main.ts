@@ -15,8 +15,8 @@ import { stripHtmlComments } from './utils';
 export interface MainOptions {
   /** Additional arguments to pass to the aider command */
   aiderExtraArgs?: string;
-  /** Whether to generate a detailed plan */
-  detailedPlan: boolean;
+  /** Enable two-staged planning: first select relevant files, then generate detailed implementation plans */
+  twoStagePlanning: boolean;
   /** Run without making actual changes (no branch creation, no PR) */
   dryRun: boolean;
   /** GitHub issue number to process */
@@ -73,7 +73,7 @@ export async function main(options: MainOptions): Promise<void> {
       (await planCodeChanges(
         options.planningModel,
         issueText,
-        options.detailedPlan,
+        options.twoStagePlanning,
         options.reasoningEffort,
         options.repomixExtraArgs
       ))) ||

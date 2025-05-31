@@ -19,9 +19,10 @@ const argv = await yargs(hideBin(process.argv))
     description: 'LLM (OpenAI or Gemini) for planning code changes',
     type: 'string',
   })
-  .option('detailed-plan', {
+  .option('two-staged-planning', {
     alias: 'p',
-    description: 'Whether to generate a detailed plan to write code (increases LLM cost but improves quality)',
+    description:
+      'Enable two-staged planning: first select relevant files, then generate detailed implementation plans (increases LLM cost but improves code quality)',
     type: 'boolean',
     default: true,
   })
@@ -76,7 +77,7 @@ if (argv['working-dir']) {
 await main({
   aiderExtraArgs: argv['aider-extra-args'],
   dryRun: argv['dry-run'],
-  detailedPlan: argv['detailed-plan'],
+  twoStagePlanning: argv['two-staged-planning'],
   issueNumber: argv['issue-number'],
   maxTestAttempts: argv['max-test-attempts'],
   planningModel: argv['planning-model'],

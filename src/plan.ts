@@ -22,7 +22,7 @@ const HEADING_OF_PLAN = '# Implementation Plans';
 export async function planCodeChanges(
   model: string,
   issueContent: string,
-  detailedPlan: boolean,
+  twoStagePlanning: boolean,
   reasoningEffort?: ReasoningEffort,
   repomixExtraArgs?: string
 ): Promise<ResolutionPlan> {
@@ -38,7 +38,77 @@ export async function planCodeChanges(
   const repomixResult = fs.readFileSync(REPOMIX_FILE_NAME, 'utf8');
   void fs.promises.rm(REPOMIX_FILE_NAME, { force: true });
 
-  console.info(`Selecting files with ${model} (reasoning effort: ${reasoningEffort}) ...`);
+  if (twoStagePlanning) {
+    console.info(`Selecting files with ${model} (reasoning effort: ${reasoningEffort}) ...`);
+    const filesResponse = await callLlmApi(
+      url,
+      apiKey,
+      model,
+      [
+        {
+          role: 'system',
+          content: buildPromptForSelectingFiles(issueFence, issueContent).trim(),
+        },
+        {
+          role: 'user',
+          content: repomixResult,
+        },
+      ],
+      reasoningEffort
+    );
+    console.info('Selecting complete!');
+
+    const extractedFilePathLists = extractHeaderContents(trimCodeBlockFences(filesResponse), [
+      HEADING_OF_FILE_PATHS_TO_BE_MODIFIED,
+      HEADING_OF_FILE_PATHS_TO_BE_REFERRED,
+    ]);
+    if (!extractedFilePathLists) {
+      return { filePaths: [] };
+    }
+    const [filePathsToBeModified, filePathsToBeReferred] = extractedFilePathLists.map((filesContent) => {
+      const filePathRegex = /\B-\s*`?([^`\n]+)`?/g;
+      const matches = [...filesContent.matchAll(filePathRegex)];
+      return matches.map((match) => match[1].trim());
+    });
+
+    const fileContents = [...filePathsToBeModified, ...filePathsToBeReferred]
+      .map((filePath) => {
+        const content = fs.readFileSync(filePath, 'utf8').trim();
+        const fence = findDistinctFence(content);
+        return `# \`${filePath}\`
+
+${fence}
+${content}
+${fence}`;
+      })
+      .join('\n\n');
+
+    console.info(`Planning code changes with ${model} (reasoning effort: ${reasoningEffort}) ...`);
+    const planResponse = await callLlmApi(
+      url,
+      apiKey,
+      model,
+      [
+        {
+          role: 'system',
+          content: buildPromptForPlanningCodeChanges(issueFence, issueContent),
+        },
+        {
+          role: 'user',
+          content: fileContents,
+        },
+      ],
+      reasoningEffort
+    );
+    console.info('Planning complete!');
+
+    const extractedPlans = extractHeaderContents(trimCodeBlockFences(planResponse), [HEADING_OF_PLAN]);
+    if (!extractedPlans) {
+      return { filePaths: [] };
+    }
+    return { plan: extractedPlans[0], filePaths: filePathsToBeModified };
+  }
+  console.info(`Planning code changes with ${model} (reasoning effort: ${reasoningEffort}) ...`);
   const filesResponse = await callLlmApi(
     url,
     apiKey,
@@ -46,7 +116,7 @@ export async function planCodeChanges(
     [
       {
         role: 'system',
-        content: buildPromptForSelectingFiles(issueFence, issueContent).trim(),
+        content: buildPromptForSelectingFilesAndPlanningCodeChanges(issueFence, issueContent).trim(),
       },
       {
         role: 'user',
@@ -55,60 +125,20 @@ export async function planCodeChanges(
     ],
     reasoningEffort
   );
-  console.info('Selecting complete!');
+  console.info('Planning complete!');
 
   const extractedFilePathLists = extractHeaderContents(trimCodeBlockFences(filesResponse), [
+    HEADING_OF_PLAN,
     HEADING_OF_FILE_PATHS_TO_BE_MODIFIED,
-    HEADING_OF_FILE_PATHS_TO_BE_REFERRED,
   ]);
   if (!extractedFilePathLists) {
     return { filePaths: [] };
   }
-  const [filePathsToBeModified, filePathsToBeReferred] = extractedFilePathLists.map((filesContent) => {
-    const filePathRegex = /\B-\s*`?([^`\n]+)`?/g;
-    const matches = [...filesContent.matchAll(filePathRegex)];
-    return matches.map((match) => match[1].trim());
-  });
-  if (!detailedPlan) {
-    return { filePaths: filePathsToBeModified };
-  }
 
-  const fileContents = [...filePathsToBeModified, ...filePathsToBeReferred]
-    .map((filePath) => {
-      const content = fs.readFileSync(filePath, 'utf8').trim();
-      const fence = findDistinctFence(content);
-      return `# \`${filePath}\`
-
-${fence}
-${content}
-${fence}`;
-    })
-    .join('\n\n');
-
-  console.info(`Planning code changes with ${model} (reasoning effort: ${reasoningEffort}) ...`);
-  const planResponse = await callLlmApi(
-    url,
-    apiKey,
-    model,
-    [
-      {
-        role: 'system',
-        content: buildPromptForPlanningCodeChanges(issueFence, issueContent),
-      },
-      {
-        role: 'user',
-        content: fileContents,
-      },
-    ],
-    reasoningEffort
-  );
-  console.info('Planning complete!');
-
-  const extractedPlans = extractHeaderContents(trimCodeBlockFences(planResponse), [HEADING_OF_PLAN]);
-  if (!extractedPlans) {
-    return { filePaths: [] };
-  }
-  return { plan: extractedPlans[0], filePaths: filePathsToBeModified };
+  const filePathRegex = /\B-\s*`?([^`\n]+)`?/g;
+  const matches = [...extractedFilePathLists[1].matchAll(filePathRegex)];
+  const filePathsToBeModified = matches.map((match) => match[1].trim());
+  return { plan: extractedFilePathLists[0], filePaths: filePathsToBeModified };
 }
 
 function buildPromptForSelectingFiles(issueFence: string, issueContent: string): string {
@@ -150,9 +180,9 @@ Review the following GitHub issue and the provided file contents (which will be 
 Create a detailed, step-by-step plan outlining how to address the issue effectively.
 
 Your plan should:
-1. Focus on implementation details for each file that needs modification
-2. Be clear and actionable for a developer to follow
-3. Exclude testing procedures as those will be handled separately
+- Focus on implementation details for each file that needs modification
+- Be clear and actionable for a developer to follow
+- Exclude testing procedures as those will be handled separately
 
 GitHub Issue:
 ${issueFence}yml
@@ -168,4 +198,40 @@ ${HEADING_OF_PLAN}
 ...
 \`\`\`
 `.trim();
+}
+
+function buildPromptForSelectingFilesAndPlanningCodeChanges(issueFence: string, issueContent: string): string {
+  return `
+You are an expert software developer tasked with analyzing GitHub issues and creating implementation plans.
+
+Review the following GitHub issue and the list of available file paths and their contents (which will be provided in a separate message).
+Your task is to:
+1. Create a detailed, step-by-step plan outlining how to resolve the issue effectively
+2. Identify files that need to be modified to resolve the issue
+
+Your plan should:
+- Focus on implementation details for each file that needs modification
+- Be clear and actionable for a developer to follow
+- Exclude testing procedures as those will be handled separately
+
+GitHub Issue:
+${issueFence}yml
+${YAML.stringify(issueContent).trim()}
+${issueFence}
+
+Please format your response without any explanatory text as follows:
+\`\`\`
+${HEADING_OF_PLAN}
+
+1. <Specific implementation step>
+2. <Next implementation step>
+...
+
+${HEADING_OF_FILE_PATHS_TO_BE_MODIFIED}
+
+- \`<filePath1>\`
+- \`<filePath2>\`
+- ...
+\`\`\`
+`;
 }
