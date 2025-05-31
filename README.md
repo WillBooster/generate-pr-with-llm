@@ -23,21 +23,29 @@ See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/wor
 ```sh
 # Using llmlite-like model names (required format)
 bun start -i 37 -m google/gemini-2.5-pro-preview-05-06 -e high -r="--compress --remove-empty-lines --include 'src/**/*.ts'" -a="--model gemini/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
-
-# Other supported model formats:
-# OpenAI: openai/gpt-4o, openai/o1-preview
-# Google: google/gemini-2.5-pro
-# Anthropic: anthropic/claude-3-5-sonnet
 ```
 
 #### Supported Model Format
 
 The tool requires **llmlite-like model names** in the format `provider/model-name`:
 
-- `openai/gpt-4o`
-- `openai/o1-preview`
-- `google/gemini-2.5-pro`
-- `anthropic/claude-3-5-sonnet`
+- **OpenAI**: `openai/gpt-4.1`, `openai/o4-mini`
+- **Azure OpenAI**: `azure/gpt-4.1`, `azure/o4-mini`
+- **Google Gemini**: `google/gemini-2.5-pro-preview-05-06`, `google/gemini-2.5-flash-preview-05-20`
+- **Anthropic**: `anthropic/claude-4-sonnet-latest`, `anthropic/claude-3-5-haiku-latest`
+- **AWS Bedrock**: `bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0`, `bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0`
+- **Google Vertex AI**: `vertex/gemini-2.5-pro-preview-05-06`, `vertex/gemini-2.5-flash-preview-05-20`
+
+#### Environment Variables
+
+Each provider uses standard environment variables for authentication:
+
+- **OpenAI**: `OPENAI_API_KEY`
+- **Anthropic**: `ANTHROPIC_API_KEY`
+- **Google Gemini**: `GOOGLE_GENERATIVE_AI_API_KEY`
+- **Azure OpenAI**: `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_VERSION`
+- **AWS Bedrock**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`
+- **Google Vertex AI**: `GOOGLE_APPLICATION_CREDENTIALS` or default service account
 
 ## License
 

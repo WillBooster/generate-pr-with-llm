@@ -147,7 +147,6 @@ ${aiderAnswer.slice(0, MAX_ANSWER_LENGTH - prBody.length)}
   }
 
   console.info(`\nIssue #${options.issueNumber} processed successfully.`);
-  console.info('AWS_REGION_NAME:', process.env.AWS_REGION_NAME);
 }
 
 function getTwoDigits(value: number): string {

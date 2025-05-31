@@ -22,12 +22,16 @@
     "release": "bun semantic-release && git tag -f v1 main && git push origin v1 --force",
     "start": "bun --env-file=.env src/cli.ts",
     "test": "bun wb test",
+    "test-local": "bun --env-file=.env test tests/unit-local",
     "typecheck": "bun --bun wb typecheck"
   },
   "prettier": "@willbooster/prettier-config",
   "dependencies": {
+    "@ai-sdk/amazon-bedrock": "3.0.0-alpha.7",
     "@ai-sdk/anthropic": "2.0.0-alpha.7",
+    "@ai-sdk/azure": "2.0.0-alpha.7",
     "@ai-sdk/google": "2.0.0-alpha.7",
+    "@ai-sdk/google-vertex": "3.0.0-alpha.7",
     "@ai-sdk/openai": "2.0.0-alpha.7",
     "ai": "5.0.0-alpha.7"
   },
