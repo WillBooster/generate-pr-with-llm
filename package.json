@@ -35,7 +35,7 @@
     "@willbooster/prettier-config": "10.0.0",
     "@willbooster/wb": "8.1.4",
     "ansis": "4.1.0",
-    "build-ts": "14.0.7",
+    "build-ts": "15.0.0",
     "conventional-changelog-conventionalcommits": "9.0.0",
     "lefthook": "1.11.13",
     "prettier": "3.5.3",
