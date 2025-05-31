@@ -69,7 +69,7 @@ export async function planCodeChanges(
 
     const fileContents = [...filePathsToBeModified, ...filePathsToBeReferred]
       .map((filePath) => {
-        const content = fs.readFileSync(filePath, 'utf8').trim();
+        const content = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8').trim() : '';
         const fence = findDistinctFence(content);
         return `# \`${filePath}\`
 
