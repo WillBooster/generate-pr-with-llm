@@ -36,6 +36,12 @@ export interface MainOptions {
 const MAX_ANSWER_LENGTH = 65000;
 
 export async function main(options: MainOptions): Promise<void> {
+  if (!process.env.AWS_REGION_NAME && process.env.AWS_REGION) {
+    process.env.AWS_REGION_NAME = process.env.AWS_REGION;
+  } else if (process.env.AWS_REGION_NAME && !process.env.AWS_REGION) {
+    process.env.AWS_REGION = process.env.AWS_REGION_NAME;
+  }
+
   if (options.dryRun) {
     console.info(ansis.yellow('Running in dry-run mode. No branches or PRs will be created.'));
   } else {
