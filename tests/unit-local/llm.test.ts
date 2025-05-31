@@ -44,12 +44,10 @@ describe('callLlmApi', () => {
     });
 
     test.skipIf(!process.env.ANTHROPIC_API_KEY)('should work with Anthropic reasoning effort', async () => {
-      // Test Anthropic reasoning models with tHinking budget
       expect(await callLlmApi('anthropic/claude-4-sonnet-20250514', testMessages, 'low')).toContain('Hi');
     });
 
     test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)('should work with Google tHinking budget', async () => {
-      // Test Google tHinking models with tHinking budget
       expect(await callLlmApi('google/gemini-2.5-flash-preview-04-17', testMessages, 'low')).toContain('Hi');
     });
 

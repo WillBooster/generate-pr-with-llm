@@ -1,4 +1,4 @@
-import { type BedrockProviderOptions, createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
+import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { type AnthropicProviderOptions, createAnthropic } from '@ai-sdk/anthropic';
 import { createAzure } from '@ai-sdk/azure';
 import { type GoogleGenerativeAIProviderOptions, createGoogleGenerativeAI } from '@ai-sdk/google';
@@ -58,19 +58,18 @@ export async function callLlmApi(
               },
             } satisfies GoogleGenerativeAIProviderOptions,
           };
-        } else if (provider === 'bedrock') {
-          requestParams.providerOptions = {
-            bedrock: {
-              reasoningConfig: { type: 'enabled', budgetTokens: thinkingBudget },
-            } satisfies BedrockProviderOptions,
-          };
+          // The latest AI SDK doesn't work on Bedrock with reasoning.
+          // } else if (provider === 'bedrock') {
+          //   requestParams.providerOptions = {
+          //     bedrock: {
+          //       reasoningConfig: { type: 'enabled', budgetTokens: thinkingBudget },
+          //     } satisfies BedrockProviderOptions,
+          //   };
         }
       }
     }
 
     const result = await generateText(requestParams);
-
-    // Log the result for debugging (similar to original implementation)
     console.log(
       `${model}:`,
       JSON.stringify(
