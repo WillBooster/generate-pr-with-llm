@@ -21,13 +21,13 @@ See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/wor
 ### CLI
 
 ```sh
-# Using llmlite-like model names (required format)
+# Using model names defined on llmlite
 bun start -i 37 -m google/gemini-2.5-pro-preview-05-06 -e high -r="--compress --remove-empty-lines --include 'src/**/*.ts'" -a="--model gemini/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
 ```
 
 #### Supported Model Format
 
-The tool requires **llmlite-like model names** in the format `provider/model-name`:
+The tool requires **model names defined on [llmlite](https://docs.litellm.ai/docs/providers)** in the format `provider/model-name`:
 
 - **OpenAI**: `openai/gpt-4.1`, `openai/o4-mini`
 - **Azure OpenAI**: `azure/gpt-4.1`, `azure/o4-mini`
