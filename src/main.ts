@@ -99,8 +99,19 @@ export async function main(options: MainOptions): Promise<void> {
   }
 
   const cleanedIssueBody = stripHtmlComments(issue.body);
-  const issueObject: Record<string, any> = {
-    // Changed type to Record<string, any>
+
+  interface IssueObjectForYaml {
+    author: string;
+    title: string;
+    description: string;
+    comments: Array<{
+      author: string;
+      body: string;
+    }>;
+    diff?: string;
+  }
+
+  const issueObject: IssueObjectForYaml = {
     author: issue.author.login,
     title: issue.title,
     description: cleanedIssueBody,
