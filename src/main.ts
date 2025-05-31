@@ -48,8 +48,22 @@ export async function main(options: MainOptions): Promise<void> {
   await runCommand('python', ['-m', 'pip', 'install', 'aider-install']);
   await runCommand('uv', ['tool', 'uninstall', 'aider-chat'], { ignoreExitStatus: true });
   await runCommand('aider-install', []);
-  await runCommand('uv', ['tool', 'run', '--from', 'aider-chat', 'pip', 'install', 'boto3']);
-  // await runCommand('aider', ['--install-main-branch', '--yes-always']);
+
+  if (options.aiderExtraArgs?.includes('bedrock/')) {
+    await runCommand('uv', [
+      'tool',
+      'run',
+      '--from',
+      'aider-chat',
+      'pip',
+      'install',
+      '--upgrade',
+      '--upgrade-strategy',
+      'only-if-needed',
+      'boto3',
+    ]);
+    // await runCommand('aider', ['--install-main-branch', '--yes-always']);
+  }
 
   const issueResult = await runCommand('gh', [
     'issue',
