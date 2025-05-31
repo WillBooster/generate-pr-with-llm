@@ -20,7 +20,7 @@ describe('callLlmApi', () => {
   });
 
   test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)('should call Google Gemini API successfully', async () => {
-    expect(await callLlmApi('google/gemini-2.5-pro-preview-05-06', testMessages)).toContain('Hi');
+    expect(await callLlmApi('gemini/gemini-2.5-pro-preview-05-06', testMessages)).toContain('Hi');
   });
 
   test.skipIf(!process.env.AZURE_OPENAI_API_KEY)('should call Azure OpenAI API successfully', async () => {
@@ -51,7 +51,7 @@ describe('callLlmApi', () => {
     });
 
     test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)('should work with Google tHinking budget', async () => {
-      expect(await callLlmApi('google/gemini-2.5-flash-preview-04-17', testMessages, 'low')).toContain('Hi');
+      expect(await callLlmApi('gemini/gemini-2.5-flash-preview-04-17', testMessages, 'low')).toContain('Hi');
     });
 
     test.skipIf(!process.env.AZURE_OPENAI_API_KEY)('should work with Azure OpenAI reasoning effort', async () => {

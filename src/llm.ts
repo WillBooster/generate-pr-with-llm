@@ -113,7 +113,7 @@ function getModelInstance(model: string): [LanguageModelV2, string, string] {
       return [anthropicProvider(modelName), provider, modelName];
     }
 
-    case 'google': {
+    case 'gemini': {
       // cf. https://ai-sdk.dev/providers/ai-sdk-providers/google-generative-ai
       const googleProvider = createGoogleGenerativeAI();
       return [googleProvider(modelName), provider, modelName];

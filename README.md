@@ -22,7 +22,7 @@ See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/wor
 
 ```sh
 # Using model names defined on llmlite
-bun start -i 37 -m google/gemini-2.5-pro-preview-05-06 -e high -r="--compress --remove-empty-lines --include 'src/**/*.ts'" -a="--model google/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
+bun start -i 37 -m gemini/gemini-2.5-pro-preview-05-06 -e high -r="--compress --remove-empty-lines --include 'src/**/*.ts'" -a="--model gemini/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
 ```
 
 #### Supported Model Format
@@ -31,7 +31,7 @@ The tool requires **model names defined on [llmlite](https://docs.litellm.ai/doc
 
 - **OpenAI**: `openai/gpt-4.1`, `openai/o4-mini`
 - **Azure OpenAI**: `azure/gpt-4.1`, `azure/o4-mini`
-- **Google Gemini**: `google/gemini-2.5-pro-preview-05-06`, `google/gemini-2.5-flash-preview-05-20`
+- **Google Gemini**: `gemini/gemini-2.5-pro-preview-05-06`, `gemini/gemini-2.5-flash-preview-05-20`
 - **Anthropic**: `anthropic/claude-4-sonnet-latest`, `anthropic/claude-3-5-haiku-latest`
 - **AWS Bedrock**: `bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0`, `bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0`
 - **Google Vertex AI**: `vertex/gemini-2.5-pro-preview-05-06`, `vertex/gemini-2.5-flash-preview-05-20`
