@@ -25,10 +25,7 @@ export async function callLlmApi(
       messages: messages,
     };
 
-    if (
-      reasoningEffort !== undefined &&
-      (provider === 'openai' || provider === 'azure' || provider === 'google' || provider === 'anthropic')
-    ) {
+    if (reasoningEffort) {
       const thinkingBudget = getThinkingBudget(reasoningEffort);
 
       if (provider === 'openai') {
@@ -53,12 +50,6 @@ export async function callLlmApi(
               thinkingBudget,
             },
           } satisfies GoogleGenerativeAIProviderOptions,
-        };
-      } else if (provider === 'azure') {
-        requestParams.providerOptions = {
-          azure: {
-            reasoningEffort: reasoningEffort as string,
-          },
         };
       } else if (provider === 'bedrock') {
         requestParams.providerOptions = {
