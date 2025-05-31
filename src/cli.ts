@@ -17,7 +17,7 @@ const argv = await yargs(hideBin(process.argv))
   .option('planning-model', {
     alias: 'm',
     description:
-      'LLM for planning code changes. Must use llmlite format: provider/model (e.g., openai/gpt-4o, azure/gpt-4o, google/gemini-2.5-pro, anthropic/claude-3-5-sonnet, bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0, vertex/gemini-1.5-pro)',
+      'LLM for planning code changes. Must use llmlite format: provider/model (e.g., openai/gpt-4.1, azure/gpt-4.1, google/gemini-2.5-pro-preview-05-06, anthropic/claude-4-sonnet-latest, bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0, vertex/gemini-2.5-pro-preview-05-06)',
     type: 'string',
   })
   .option('two-staged-planning', {
