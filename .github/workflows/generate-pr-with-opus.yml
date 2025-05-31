@@ -21,10 +21,10 @@ jobs:
           # required options
           issue-number: ${{ github.event.issue.number }}
           # optional options
-          planning-model: bedrock/anthropic.claude-opus-4-20250514-v1:0
+          planning-model: bedrock/us.anthropic.claude-opus-4-20250514-v1:0
           reasoning-effort: high
           repomix-extra-args: "--compress --remove-empty-lines --include 'src/**/*.ts'"
-          aider-extra-args: '--model bedrock/anthropic.claude-opus-4-20250514-v1:0 --chat-language English'
+          aider-extra-args: '--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --chat-language English'
           test-command: 'yarn check-for-ai'
           max-test-attempts: 10
         env:
