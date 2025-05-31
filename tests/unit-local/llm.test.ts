@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'bun:test';
 import type { ModelMessage } from 'ai';
+import { configureEnvVars } from '../../src/env.js';
 import { callLlmApi } from '../../src/llm.js';
+
+configureEnvVars();
 
 describe('callLlmApi', () => {
   const testMessages: ModelMessage[] = [{ role: 'user', content: 'Say only `Hi`' }];

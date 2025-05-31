@@ -2,6 +2,7 @@ import child_process from 'node:child_process';
 import ansis from 'ansis';
 import YAML from 'yaml';
 import { buildAiderArgs } from './aider.js';
+import { configureEnvVars } from './env.js';
 import { planCodeChanges } from './plan.js';
 import { configureGitUserDetailsIfNeeded } from './profile.js';
 import { runCommand } from './spawn.js';
@@ -36,11 +37,7 @@ export interface MainOptions {
 const MAX_ANSWER_LENGTH = 65000;
 
 export async function main(options: MainOptions): Promise<void> {
-  if (!process.env.AWS_REGION_NAME && process.env.AWS_REGION) {
-    process.env.AWS_REGION_NAME = process.env.AWS_REGION;
-  } else if (process.env.AWS_REGION_NAME && !process.env.AWS_REGION) {
-    process.env.AWS_REGION = process.env.AWS_REGION_NAME;
-  }
+  configureEnvVars();
 
   if (options.dryRun) {
     console.info(ansis.yellow('Running in dry-run mode. No branches or PRs will be created.'));
