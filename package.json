@@ -27,13 +27,13 @@
   },
   "prettier": "@willbooster/prettier-config",
   "dependencies": {
-    "@ai-sdk/amazon-bedrock": "3.0.0-alpha.7",
-    "@ai-sdk/anthropic": "2.0.0-alpha.7",
-    "@ai-sdk/azure": "2.0.0-alpha.7",
-    "@ai-sdk/google": "2.0.0-alpha.7",
-    "@ai-sdk/google-vertex": "3.0.0-alpha.7",
-    "@ai-sdk/openai": "2.0.0-alpha.7",
-    "ai": "5.0.0-alpha.7"
+    "@ai-sdk/amazon-bedrock": "3.0.0-canary.19",
+    "@ai-sdk/anthropic": "2.0.0-canary.19",
+    "@ai-sdk/azure": "2.0.0-canary.21",
+    "@ai-sdk/google": "2.0.0-canary.20",
+    "@ai-sdk/google-vertex": "3.0.0-canary.20",
+    "@ai-sdk/openai": "2.0.0-canary.20",
+    "ai": "5.0.0-canary.24"
   },
   "devDependencies": {
     "@actions/core": "1.11.1",
