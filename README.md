@@ -20,9 +20,16 @@ See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/wor
 
 ### CLI
 
+Gemini 2.5 Pro:
+
 ```sh
-# Using model names defined on llmlite
-bun start -i 37 -m gemini/gemini-2.5-pro-preview-05-06 -e high -r="--compress --remove-empty-lines --include 'src/**/*.ts'" -a="--model gemini/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
+bun start --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-05-06 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model gemini/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
+```
+
+Claude Opus 4 on Bedrock:
+
+```sh
+bun start --issue-number 8 --planning-model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --test-cmd='yarn check-for-ai' --auto-test --chat-language English"
 ```
 
 #### Supported Model Format
