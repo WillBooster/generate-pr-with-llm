@@ -39,5 +39,3 @@ Close #<IssueNumber>
 4. Push `Submit` button.
 5. ...
 -->
-
-<!-- 日本語で記述しても大丈夫です。 -->

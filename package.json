@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build": "build-ts app --input src/action.ts --input src/cli.ts --bundleBuiltins undici",
-    "check-for-ai": "bun install && bun run cleanup && bun run typecheck && bun run build && bun run test",
+    "check-for-ai": "bun install > /dev/null && bun run cleanup && bun run typecheck && bun run test --silent",
     "cleanup": "bun --bun wb lint --fix --format",
     "format": "bun --bun wb lint --format",
     "lint": "bun --bun wb lint",
@@ -22,9 +22,19 @@
     "release": "bun semantic-release && git tag -f v1 main && git push origin v1 --force",
     "start": "bun --env-file=.env src/cli.ts",
     "test": "bun wb test",
+    "test-local": "bun --env-file=.env test tests/unit-local",
     "typecheck": "bun --bun wb typecheck"
   },
   "prettier": "@willbooster/prettier-config",
+  "dependencies": {
+    "@ai-sdk/amazon-bedrock": "3.0.0-alpha.7",
+    "@ai-sdk/anthropic": "2.0.0-alpha.7",
+    "@ai-sdk/azure": "2.0.0-alpha.7",
+    "@ai-sdk/google": "2.0.0-alpha.7",
+    "@ai-sdk/google-vertex": "3.0.0-alpha.7",
+    "@ai-sdk/openai": "2.0.0-alpha.7",
+    "ai": "5.0.0-alpha.7"
+  },
   "devDependencies": {
     "@actions/core": "1.11.1",
     "@biomejs/biome": "1.9.4",

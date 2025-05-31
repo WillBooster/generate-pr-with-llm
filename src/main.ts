@@ -1,13 +1,14 @@
 import child_process from 'node:child_process';
 import ansis from 'ansis';
 import YAML from 'yaml';
-import { buildAiderArgs } from './aider';
-import { planCodeChanges } from './plan';
-import { configureGitUserDetailsIfNeeded } from './profile';
-import { runCommand } from './spawn';
-import { testAndFix } from './test';
-import type { GitHubIssue, ReasoningEffort } from './types';
-import { stripHtmlComments } from './utils';
+import { buildAiderArgs } from './aider.js';
+import { configureEnvVars } from './env.js';
+import { planCodeChanges } from './plan.js';
+import { configureGitUserDetailsIfNeeded } from './profile.js';
+import { runCommand } from './spawn.js';
+import { testAndFix } from './test.js';
+import type { GitHubComment, GitHubIssue, ReasoningEffort } from './types.js';
+import { stripHtmlComments } from './utils.js';
 
 /**
  * Options for the main function
@@ -15,8 +16,8 @@ import { stripHtmlComments } from './utils';
 export interface MainOptions {
   /** Additional arguments to pass to the aider command */
   aiderExtraArgs?: string;
-  /** Whether to generate a detailed plan */
-  detailedPlan: boolean;
+  /** Enable two-staged planning: first select relevant files, then generate detailed implementation plans */
+  twoStagePlanning: boolean;
   /** Run without making actual changes (no branch creation, no PR) */
   dryRun: boolean;
   /** GitHub issue number to process */
@@ -36,6 +37,8 @@ export interface MainOptions {
 const MAX_ANSWER_LENGTH = 65000;
 
 export async function main(options: MainOptions): Promise<void> {
+  configureEnvVars();
+
   if (options.dryRun) {
     console.info(ansis.yellow('Running in dry-run mode. No branches or PRs will be created.'));
   } else {
@@ -62,7 +65,7 @@ export async function main(options: MainOptions): Promise<void> {
     author: issue.author.login,
     title: issue.title,
     description: cleanedIssueBody,
-    comments: issue.comments.map((c) => ({
+    comments: issue.comments.map((c: GitHubComment) => ({
       author: c.author.login,
       body: c.body,
     })),
@@ -73,7 +76,7 @@ export async function main(options: MainOptions): Promise<void> {
       (await planCodeChanges(
         options.planningModel,
         issueText,
-        options.detailedPlan,
+        options.twoStagePlanning,
         options.reasoningEffort,
         options.repomixExtraArgs
       ))) ||
@@ -147,7 +150,6 @@ ${aiderAnswer.slice(0, MAX_ANSWER_LENGTH - prBody.length)}
   }
 
   console.info(`\nIssue #${options.issueNumber} processed successfully.`);
-  console.info('AWS_REGION_NAME:', process.env.AWS_REGION_NAME);
 }
 
 function getTwoDigits(value: number): string {

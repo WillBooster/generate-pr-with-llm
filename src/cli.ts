@@ -1,9 +1,9 @@
 import process from 'node:process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { DEFAULT_AIDER_EXTRA_ARGS, DEFAULT_MAX_TEST_ATTEMPTS, DEFAULT_REPOMIX_EXTRA_ARGS } from './defaultOptions';
-import { main } from './main';
-import type { ReasoningEffort } from './types';
+import { DEFAULT_AIDER_EXTRA_ARGS, DEFAULT_MAX_TEST_ATTEMPTS, DEFAULT_REPOMIX_EXTRA_ARGS } from './defaultOptions.js';
+import { main } from './main.js';
+import type { ReasoningEffort } from './types.js';
 
 // Parse command line arguments using yargs
 const argv = await yargs(hideBin(process.argv))
@@ -16,12 +16,14 @@ const argv = await yargs(hideBin(process.argv))
   })
   .option('planning-model', {
     alias: 'm',
-    description: 'LLM (OpenAI or Gemini) for planning code changes',
+    description:
+      'LLM for planning code changes. Must use llmlite format: provider/model (e.g., openai/gpt-4.1, azure/gpt-4.1, google/gemini-2.5-pro-preview-05-06, anthropic/claude-4-sonnet-latest, bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0, vertex/gemini-2.5-pro-preview-05-06)',
     type: 'string',
   })
-  .option('detailed-plan', {
+  .option('two-staged-planning', {
     alias: 'p',
-    description: 'Whether to generate a detailed plan to write code (increases LLM cost but improves quality)',
+    description:
+      'Enable two-staged planning: first select relevant files, then generate detailed implementation plans (increases LLM cost but improves code quality)',
     type: 'boolean',
     default: true,
   })
@@ -76,7 +78,7 @@ if (argv['working-dir']) {
 await main({
   aiderExtraArgs: argv['aider-extra-args'],
   dryRun: argv['dry-run'],
-  detailedPlan: argv['detailed-plan'],
+  twoStagePlanning: argv['two-staged-planning'],
   issueNumber: argv['issue-number'],
   maxTestAttempts: argv['max-test-attempts'],
   planningModel: argv['planning-model'],

@@ -13,13 +13,16 @@ test-fixtures/
 .yarn/
 .pnp.js
 .aider.*
+repomix-output.xml
 
 !.keep
+.aider*
 .env.production
-*/mount/*.hash
 .idea/AugmentWebviewStateStore.xml
 .idea/copilot/chatSessions/
 .devcontainer/
+*/mount/*.hash
+__generated__/
 dist/
 temp/
 

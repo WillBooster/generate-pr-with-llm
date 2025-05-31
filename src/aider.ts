@@ -1,7 +1,7 @@
-import { DEFAULT_AIDER_EXTRA_ARGS } from './defaultOptions';
-import type { MainOptions } from './main';
-import type { ResolutionPlan } from './plan';
-import { parseCommandLineArgs } from './utils';
+import { DEFAULT_AIDER_EXTRA_ARGS } from './defaultOptions.js';
+import type { MainOptions } from './main.js';
+import type { ResolutionPlan } from './plan.js';
+import { parseCommandLineArgs } from './utils.js';
 
 /**
  * Builds the command line arguments for the aider command

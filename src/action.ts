@@ -2,14 +2,14 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import core from '@actions/core';
-import { DEFAULT_MAX_TEST_ATTEMPTS } from './defaultOptions';
-import { main } from './main';
-import type { ReasoningEffort } from './types';
+import { DEFAULT_MAX_TEST_ATTEMPTS } from './defaultOptions.js';
+import { main } from './main.js';
+import type { ReasoningEffort } from './types.js';
 
 // Get inputs
 const issueNumber = core.getInput('issue-number', { required: true });
 const planningModel = core.getInput('planning-model', { required: false });
-const detailedPlan = core.getInput('detailed-plan', { required: false }) !== 'false';
+const twoStagePlanning = core.getInput('two-staged-planning', { required: false }) !== 'false';
 const reasoningEffort = core.getInput('reasoning-effort', { required: false }) as ReasoningEffort | undefined;
 const dryRun = core.getInput('dry-run', { required: false }) === 'true';
 const aiderExtraArgs = core.getInput('aider-extra-args', { required: false });
@@ -30,7 +30,7 @@ fs.rmSync(path.join(os.homedir(), '.config', 'gh'), { force: true, recursive: tr
 
 void main({
   aiderExtraArgs,
-  detailedPlan,
+  twoStagePlanning,
   dryRun,
   issueNumber: Number(issueNumber),
   maxTestAttempts,
