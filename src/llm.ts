@@ -27,7 +27,6 @@ export async function callLlmApi(
 
     if (reasoningEffort) {
       const thinkingBudget = getThinkingBudget(reasoningEffort);
-
       if (provider === 'openai') {
         requestParams.providerOptions = {
           openai: {
