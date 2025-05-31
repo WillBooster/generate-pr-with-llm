@@ -70,12 +70,30 @@ export async function main(options: MainOptions): Promise<void> {
     'view',
     options.issueNumber.toString(),
     '--json',
-    'author,title,body,labels,comments',
+    'author,title,body,labels,comments,pullRequest', // Added 'pullRequest'
   ]);
   const issue: GitHubIssue = JSON.parse(issueResult);
 
+  let prDiff: string | undefined = undefined;
+  if (issue.pullRequest && Object.keys(issue.pullRequest).length > 0) {
+    console.info(ansis.blue(`Input ${options.issueNumber} is a Pull Request. Fetching diff...`));
+    try {
+      // Note: gh pr diff might fail if the PR is an empty draft or has other issues.
+      // We use ignoreExitStatus: true and check the output.
+      const diffResultOutput = await runCommand('gh', ['pr', 'diff', options.issueNumber.toString()], { ignoreExitStatus: true });
+      if (diffResultOutput.trim()) {
+          prDiff = diffResultOutput.trim();
+          console.info(ansis.blue(`Successfully fetched diff for PR ${options.issueNumber}.`));
+      } else {
+          console.warn(ansis.yellow(`Could not fetch diff for PR ${options.issueNumber}, or diff is empty.`));
+      }
+    } catch (error) {
+      console.warn(ansis.yellow(`Error fetching diff for PR ${options.issueNumber}: ${error instanceof Error ? error.message : String(error)}`));
+    }
+  }
+
   const cleanedIssueBody = stripHtmlComments(issue.body);
-  const issueObject = {
+  const issueObject: Record<string, any> = { // Changed type to Record<string, any>
     author: issue.author.login,
     title: issue.title,
     description: cleanedIssueBody,
@@ -84,6 +102,10 @@ export async function main(options: MainOptions): Promise<void> {
       body: c.body,
     })),
   };
+
+  if (prDiff) {
+    issueObject.diff = prDiff; // Add the diff to the object
+  }
   const issueText = YAML.stringify(issueObject).trim();
   const resolutionPlan =
     (options.planningModel &&

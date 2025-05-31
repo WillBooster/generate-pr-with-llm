@@ -94,6 +94,8 @@ export interface GitHubIssue {
   labels: GitHubLabel[];
   /** The issue's title */
   title: string;
+  /** Optional pull request data if the issue is a pull request */
+  pullRequest?: { [key: string]: any } | null;
 }
 
 /**
