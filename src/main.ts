@@ -119,7 +119,9 @@ export async function main(options: MainOptions): Promise<void> {
     }
   } catch (error: any) {
     // biome-ignore lint/suspicious/noExplicitAny: Error type is unknown
-    console.warn(ansis.yellow(`Error checking for PR or fetching diff for #${options.issueNumber}: ${(error as Error).message}`));
+    console.warn(
+      ansis.yellow(`Error checking for PR or fetching diff for #${options.issueNumber}: ${(error as Error).message}`)
+    );
   }
 
   const cleanedIssueBody = stripHtmlComments(issue.body);
