@@ -139,7 +139,7 @@ ${planText}
   }
 
   // Try commiting changes because aider may fail to commit changes due to pre-commit hooks
-  await runCommand('git', ['commit', '-m', `fix: close #${options.issueNumber}`, '--no-verify'], {
+  await runCommand('git', ['commit', '-m', `fix: Close #${options.issueNumber}`, '--no-verify'], {
     ignoreExitStatus: true,
   });
   if (!options.dryRun) {
@@ -150,7 +150,7 @@ ${planText}
 
   // Create a PR using GitHub CLI
   const prTitle = getHeaderOfFirstCommit();
-  let prBody = `Closes #${options.issueNumber}
+  let prBody = `Close #${options.issueNumber}
 
 ${planText}
 `;
