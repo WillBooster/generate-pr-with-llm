@@ -5,7 +5,7 @@ import { buildAiderArgs } from './aider.js';
 import { configureEnvVars } from './env.js';
 import { planCodeChanges } from './plan.js';
 import { configureGitUserDetailsIfNeeded } from './profile.js';
-import { runCommand } from './spawn.js';
+import { runCommand, spawnAsync } from './spawn.js';
 import { testAndFix } from './test.js';
 import type { GitHubComment, GitHubIssue, ReasoningEffort } from './types.js';
 import { stripHtmlComments } from './utils.js';
@@ -80,8 +80,46 @@ export async function main(options: MainOptions): Promise<void> {
   ]);
   const issue: GitHubIssue = JSON.parse(issueResult);
 
+  let prDiff = '';
+  let isPR = false;
+
+  try {
+    // Use spawnAsync to get exit status and output for conditional logic
+    const prCheckProcessResult = await spawnAsync('gh', [
+      'pr',
+      'view',
+      options.issueNumber.toString(),
+      '--json',
+      'id', // Request a minimal field to confirm PR existence
+    ]);
+
+    if (prCheckProcessResult.status === 0 && prCheckProcessResult.stdout.trim()) {
+      isPR = true;
+      console.info(ansis.gray(`Input #${options.issueNumber} is a Pull Request. Fetching diff...`));
+      const prDiffProcessResult = await spawnAsync('gh', ['pr', 'diff', options.issueNumber.toString()]);
+
+      if (prDiffProcessResult.status === 0) {
+        prDiff = prDiffProcessResult.stdout.trim();
+        if (!prDiff) {
+          console.info(ansis.gray(`PR #${options.issueNumber} has no diff.`));
+        }
+      } else {
+        console.warn(
+          ansis.yellow(`Could not fetch diff for PR #${options.issueNumber}. stderr: ${prDiffProcessResult.stderr.trim()}`)
+        );
+      }
+    } else {
+      console.info(
+        ansis.gray(`Input #${options.issueNumber} is not a Pull Request or 'gh pr view' failed. stderr: ${prCheckProcessResult.stderr.trim()}`)
+      );
+    }
+  } catch (error: any) {
+    console.warn(ansis.yellow(`Error checking for PR or fetching diff for #${options.issueNumber}: ${error.message}`));
+  }
+
   const cleanedIssueBody = stripHtmlComments(issue.body);
-  const issueObject = {
+  // Rename issueObject to contextDataForLlm for clarity
+  const contextDataForLlm: Record<string, any> = {
     author: issue.author.login,
     title: issue.title,
     description: cleanedIssueBody,
@@ -90,7 +128,15 @@ export async function main(options: MainOptions): Promise<void> {
       body: c.body,
     })),
   };
-  const issueText = YAML.stringify(issueObject).trim();
+
+  if (isPR) {
+    contextDataForLlm.isPullRequest = true;
+    if (prDiff) {
+      contextDataForLlm.codeChanges = prDiff;
+    }
+  }
+
+  const issueText = YAML.stringify(contextDataForLlm).trim();
   const resolutionPlan =
     (options.planningModel &&
       (await planCodeChanges(
@@ -109,13 +155,13 @@ export async function main(options: MainOptions): Promise<void> {
 ${resolutionPlan.plan}
 `.trim()
       : '';
+  const promptSubject = isPR ? 'GitHub Pull Request' : 'GitHub Issue';
   const prompt = `
-Modify the code to resolve the following GitHub issue:
+Modify the code to address the following ${promptSubject}:
 \`\`\`\`yml
 ${issueText}
 \`\`\`\`
-
-${planText}
+${planText ? `\n${planText}` : ''}
 `.trim();
   console.log('Resolution plan:', resolutionPlan);
 

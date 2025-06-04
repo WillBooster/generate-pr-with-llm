@@ -137,14 +137,16 @@ function buildPromptForSelectingFiles(issueFence: string, issueContent: string):
   return `
 You are an expert software developer tasked with analyzing GitHub issues and identifying relevant files for code changes.
 
-Review the following GitHub issue and the list of available file paths and their contents (which will be provided in a separate message).
+Review the following GitHub Issue/PR description and the list of available file paths and their contents (which will be provided in a separate message).
+If the provided data includes \`isPullRequest: true\` and a \`codeChanges\` field (a diff), it represents a Pull Request.
+Use this information, especially the diff, to better understand the context and required modifications.
 Your task is to identify:
-1. Files that need to be MODIFIED to resolve the issue
+1. Files that need to be MODIFIED to resolve the issue/PR
 2. Files that should be REFERRED to (but not modified) to understand the codebase better
 
-GitHub Issue:
+GitHub Issue/PR:
 ${issueFence}yml
-${YAML.stringify(issueContent).trim()}
+${issueContent}
 ${issueFence}
 
 Please format your response without any explanatory text as follows:
@@ -166,9 +168,11 @@ ${HEADING_OF_FILE_PATHS_TO_BE_REFERRED}
 
 function buildPromptForPlanningCodeChanges(issueFence: string, issueContent: string): string {
   return `
-You are an expert software developer tasked with creating implementation plans based on GitHub issues.
+You are an expert software developer tasked with creating implementation plans based on GitHub issues or Pull Requests.
 
-Review the following GitHub issue and the provided file contents (which will be provided in a separate message).
+Review the following GitHub Issue/PR description and the provided file contents (which will be provided in a separate message).
+If the provided data includes \`isPullRequest: true\` and a \`codeChanges\` field (a diff), it represents a Pull Request.
+Your plan should consider these existing changes. The goal might be to refine the PR, address review comments, or complete its work based on the PR's description and comments.
 Create a detailed, step-by-step plan outlining how to address the issue effectively.
 
 Your plan should:
@@ -176,9 +180,9 @@ Your plan should:
 - Be clear and actionable for a developer to follow
 - Exclude testing procedures as those will be handled separately
 
-GitHub Issue:
+GitHub Issue/PR:
 ${issueFence}yml
-${YAML.stringify(issueContent).trim()}
+${issueContent}
 ${issueFence}
 
 Please format your response without any explanatory text as follows:
@@ -194,9 +198,11 @@ ${HEADING_OF_PLAN}
 
 function buildPromptForSelectingFilesAndPlanningCodeChanges(issueFence: string, issueContent: string): string {
   return `
-You are an expert software developer tasked with analyzing GitHub issues and creating implementation plans.
+You are an expert software developer tasked with analyzing GitHub issues or Pull Requests and creating implementation plans.
 
-Review the following GitHub issue and the list of available file paths and their contents (which will be provided in a separate message).
+Review the following GitHub Issue/PR description and the list of available file paths and their contents (which will be provided in a separate message).
+If the provided data includes \`isPullRequest: true\` and a \`codeChanges\` field (a diff), it represents a Pull Request.
+Use this information, especially the diff and any PR comments, to guide your plan and file selection.
 Your task is to:
 1. Create a detailed, step-by-step plan outlining how to resolve the issue effectively
 2. Identify files that need to be modified to resolve the issue
@@ -206,9 +212,9 @@ Your plan should:
 - Be clear and actionable for a developer to follow
 - Exclude testing procedures as those will be handled separately
 
-GitHub Issue:
+GitHub Issue/PR:
 ${issueFence}yml
-${YAML.stringify(issueContent).trim()}
+${issueContent}
 ${issueFence}
 
 Please format your response without any explanatory text as follows:
