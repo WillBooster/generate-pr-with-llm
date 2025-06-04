@@ -9,7 +9,8 @@ export async function runCommand(
   options?: SpawnOptionsWithoutStdio & { ignoreExitStatus?: boolean }
 ): Promise<string> {
   const { ignoreExitStatus, ...spawnOptions } = options ?? {};
-  console.info(ansis.green(`$ ${command} ${args}`));
+  const argsText = args.map((a) => (a.includes(' ') ? `"${a.replaceAll('"', '"')}"` : a)).join(' ');
+  console.info(ansis.green(`$ ${command} ${argsText}`));
   console.info('stdout: ---------------------');
   const ret = await spawnAsync(command, args, spawnOptions);
   const stderr = ret.stderr.trim();

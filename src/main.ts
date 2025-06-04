@@ -46,6 +46,12 @@ export async function main(options: MainOptions): Promise<void> {
   }
 
   await runCommand('python', ['-m', 'pip', 'install', 'aider-install']);
+  try {
+    // Make uv available on asdf environment
+    await runCommand('asdf', ['reshim'], { ignoreExitStatus: true });
+  } catch {
+    // do nothing
+  }
   await runCommand('uv', ['tool', 'uninstall', 'aider-chat'], { ignoreExitStatus: true });
   await runCommand('aider-install', []);
 
