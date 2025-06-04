@@ -105,12 +105,16 @@ export async function main(options: MainOptions): Promise<void> {
         }
       } else {
         console.warn(
-          ansis.yellow(`Could not fetch diff for PR #${options.issueNumber}. stderr: ${prDiffProcessResult.stderr.trim()}`)
+          ansis.yellow(
+            `Could not fetch diff for PR #${options.issueNumber}. stderr: ${prDiffProcessResult.stderr.trim()}`
+          )
         );
       }
     } else {
       console.info(
-        ansis.gray(`Input #${options.issueNumber} is not a Pull Request or 'gh pr view' failed. stderr: ${prCheckProcessResult.stderr.trim()}`)
+        ansis.gray(
+          `Input #${options.issueNumber} is not a Pull Request or 'gh pr view' failed. stderr: ${prCheckProcessResult.stderr.trim()}`
+        )
       );
     }
   } catch (error: any) {
