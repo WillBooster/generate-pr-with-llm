@@ -181,7 +181,7 @@ export function supportsReasoning(provider: string, modelName: string): boolean 
  */
 function getThinkingBudget(reasoningEffort: ReasoningEffort): number {
   const tokenBudgets = {
-    low: 1000, // 1K tokens
+    low: 4000, // 4K tokens
     medium: 8000, // 8K tokens
     high: 24000, // 24K tokens
   };

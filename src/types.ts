@@ -94,6 +94,34 @@ export interface GitHubIssue {
   labels: GitHubLabel[];
   /** The issue's title */
   title: string;
+  /** The URL of the issue or pull request */
+  url: string;
+}
+
+/**
+ * Represents a simplified comment for issue processing
+ */
+export interface IssueComment {
+  /** The comment author's GitHub username */
+  author: string;
+  /** The comment's content */
+  body: string;
+}
+
+/**
+ * Represents processed issue information for AI processing
+ */
+export interface IssueInfo {
+  /** The issue author's GitHub username */
+  author: string;
+  /** The issue title */
+  title: string;
+  /** The cleaned issue description */
+  description: string;
+  /** Simplified comments on the issue */
+  comments: IssueComment[];
+  /** Code changes (only present for PRs with diff content) */
+  code_changes?: string;
 }
 
 /**
