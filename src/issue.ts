@@ -3,6 +3,26 @@ import { runCommand } from './spawn.js';
 import type { GitHubComment, GitHubIssue, GitHubTimelineItem, IssueInfo } from './types.js';
 import { stripHtmlComments } from './utils.js';
 
+interface GraphQLTimelineNode {
+  __typename: string;
+  source?: {
+    __typename: 'Issue' | 'PullRequest';
+    number: number;
+  };
+}
+
+interface GraphQLTimelineResponse {
+  data?: {
+    repository?: {
+      issue?: {
+        timelineItems?: {
+          nodes: GraphQLTimelineNode[];
+        };
+      };
+    };
+  };
+}
+
 async function fetchIssueData(issueNumber: number, processedIssues: Set<number>): Promise<IssueInfo | null> {
   if (processedIssues.has(issueNumber)) {
     return null;
@@ -60,9 +80,9 @@ async function fetchIssueData(issueNumber: number, processedIssues: Set<number>)
 
     if (timelineResult) {
       try {
-        const timelineData = JSON.parse(timelineResult);
+        const timelineData: GraphQLTimelineResponse = JSON.parse(timelineResult);
         if (timelineData.data?.repository?.issue?.timelineItems?.nodes) {
-          issue.timelineItems = timelineData.data.repository.issue.timelineItems.nodes.map((node: any) => {
+          issue.timelineItems = timelineData.data.repository.issue.timelineItems.nodes.map((node) => {
             if (node.source?.__typename === 'Issue') {
               return {
                 __typename: node.__typename,
@@ -75,7 +95,7 @@ async function fetchIssueData(issueNumber: number, processedIssues: Set<number>)
                 source: { pullRequest: { number: node.source.number } },
               };
             }
-            return node;
+            return { __typename: node.__typename };
           });
         }
       } catch (e) {
