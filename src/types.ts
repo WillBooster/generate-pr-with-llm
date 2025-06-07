@@ -81,6 +81,21 @@ export interface GitHubLabel {
 }
 
 /**
+ * Represents a GitHub timeline item
+ */
+export interface GitHubTimelineItem {
+  __typename: string;
+  source?: {
+    issue?: {
+      number: number;
+    };
+    pullRequest?: {
+      number: number;
+    };
+  };
+}
+
+/**
  * Represents a GitHub issue
  */
 export interface GitHubIssue {
@@ -96,6 +111,8 @@ export interface GitHubIssue {
   title: string;
   /** The URL of the issue or pull request */
   url: string;
+  /** Timeline items for the issue */
+  timelineItems?: GitHubTimelineItem[];
 }
 
 /**
@@ -122,6 +139,8 @@ export interface IssueInfo {
   comments: IssueComment[];
   /** Code changes (only present for PRs with diff content) */
   code_changes?: string;
+  /** Referenced issues and pull requests */
+  referenced_issues?: IssueInfo[];
 }
 
 /**
