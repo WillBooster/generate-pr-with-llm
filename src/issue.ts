@@ -43,7 +43,8 @@ async function fetchIssueData(issueNumber: number, processedIssues: Set<number>)
     const referencedIssuesPromises = issue.timelineItems
       .filter(
         (item): item is GitHubTimelineItem & { __typename: 'CrossReferenceEvent' } =>
-          item.__typename === 'CrossReferenceEvent' && (item.source?.issue?.number || item.source?.pullRequest?.number)
+          item.__typename === 'CrossReferenceEvent' &&
+          !!(item.source?.issue?.number || item.source?.pullRequest?.number)
       )
       .map((item) => {
         const referencedIssueNumber = item.source?.issue?.number || item.source?.pullRequest?.number;
