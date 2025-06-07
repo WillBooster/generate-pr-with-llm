@@ -94,6 +94,8 @@ export interface GitHubIssue {
   labels: GitHubLabel[];
   /** The issue's title */
   title: string;
+  /** The URL of the issue or pull request */
+  url: string;
 }
 
 /**

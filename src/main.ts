@@ -72,12 +72,12 @@ export async function main(options: MainOptions): Promise<void> {
     'view',
     options.issueNumber.toString(),
     '--json',
-    'author,title,body,labels,comments',
+    'author,title,body,labels,comments,url',
   ]);
   const issue: GitHubIssue = JSON.parse(issueResult);
 
   const cleanedIssueBody = stripHtmlComments(issue.body);
-  const issueObject = {
+  const issueObject: Record<string, unknown> = {
     author: issue.author.login,
     title: issue.title,
     description: cleanedIssueBody,
@@ -86,6 +86,18 @@ export async function main(options: MainOptions): Promise<void> {
       body: c.body,
     })),
   };
+
+  if (issue.url?.includes('/pull/')) {
+    console.info(ansis.blue(`Issue #${options.issueNumber} is a PR, fetching diff...`));
+    const prDiff = await runCommand('gh', ['pr', 'diff', options.issueNumber.toString()], {
+      ignoreExitStatus: true,
+    });
+    if (prDiff.trim()) {
+      issueObject.code_changes = prDiff.trim();
+      console.info('Diff fetched.');
+    }
+  }
+
   const issueText = YAML.stringify(issueObject).trim();
   const resolutionPlan =
     (options.planningModel &&
