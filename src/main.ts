@@ -3,12 +3,12 @@ import ansis from 'ansis';
 import YAML from 'yaml';
 import { buildAiderArgs } from './aider.js';
 import { configureEnvVars } from './env.js';
+import { createIssueInfo } from './issue.js';
 import { planCodeChanges } from './plan.js';
 import { configureGitUserDetailsIfNeeded } from './profile.js';
 import { runCommand } from './spawn.js';
 import { testAndFix } from './test.js';
-import type { GitHubComment, GitHubIssue, ReasoningEffort } from './types.js';
-import { stripHtmlComments } from './utils.js';
+import type { ReasoningEffort } from './types.js';
 
 /**
  * Options for the main function
@@ -67,38 +67,9 @@ export async function main(options: MainOptions): Promise<void> {
     // await runCommand('aider', ['--install-main-branch', '--yes-always']);
   }
 
-  const issueResult = await runCommand('gh', [
-    'issue',
-    'view',
-    options.issueNumber.toString(),
-    '--json',
-    'author,title,body,labels,comments,url',
-  ]);
-  const issue: GitHubIssue = JSON.parse(issueResult);
+  const issueInfo = await createIssueInfo(options);
+  const issueText = YAML.stringify(issueInfo).trim();
 
-  const cleanedIssueBody = stripHtmlComments(issue.body);
-  const issueObject: Record<string, unknown> = {
-    author: issue.author.login,
-    title: issue.title,
-    description: cleanedIssueBody,
-    comments: issue.comments.map((c: GitHubComment) => ({
-      author: c.author.login,
-      body: c.body,
-    })),
-  };
-
-  if (issue.url?.includes('/pull/')) {
-    console.info(ansis.blue(`Issue #${options.issueNumber} is a PR, fetching diff...`));
-    const prDiff = await runCommand('gh', ['pr', 'diff', options.issueNumber.toString()], {
-      ignoreExitStatus: true,
-    });
-    if (prDiff.trim()) {
-      issueObject.code_changes = prDiff.trim();
-      console.info('Diff fetched.');
-    }
-  }
-
-  const issueText = YAML.stringify(issueObject).trim();
   const resolutionPlan =
     (options.planningModel &&
       (await planCodeChanges(

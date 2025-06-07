@@ -1,0 +1,8 @@
+{
+  "author": { "id": "MDQ6VXNlcjQzNjIzNw==", "is_bot": false, "login": "exKAZUu", "name": "Sakamoto, Kazunori" },
+  "body": "Current Behavior:\nOur tool currently extracts the raw Markdown content from GitHub issue and Pull Request (PR) descriptions. This raw content includes HTML-style comments (e.g., `<!-- This is a comment -->`). While these comments are invisible when rendered on GitHub, they are currently included in the text passed to Large Language Models (LLMs).\n\nProblem:\nIncluding these HTML comments in the input to LLMs is undesirable for several reasons:\n\n1. Increased Token Usage: Comments, even if hidden, consume valuable tokens, leading to higher processing costs.\n2. Potential LLM Confusion/Noise: Irrelevant or internal-facing comments can act as noise, potentially confusing the LLM or degrading the quality of its output.\n3. Accidental Information Leakage: Comments might contain draft notes, internal discussions, or sensitive information not intended to be processed or seen by the LLM or its subsequent outputs.\n\nProposed Solution:\nModify the tool to parse and remove all HTML-style comments (`<!-- ... -->`) from the fetched issue/PR descriptions before the content is sent to the LLM.",
+  "comments": [],
+  "labels": [{ "id": "LA_kwDOOgZ_Wc8AAAAB_Acr9Q", "name": "ai-pr :robot:", "description": "", "color": "00B4D8" }],
+  "title": "feat: Strip HTML comments from issue/PR descriptions before LLM processing",
+  "url": "https://github.com/WillBooster/generate-pr-with-ai/issues/32"
+}
