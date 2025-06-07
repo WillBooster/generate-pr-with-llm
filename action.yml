@@ -8,7 +8,7 @@ inputs:
     description: 'The issue (or PR) number to reference when generating the PR'
     required: true
   planning-model:
-    description: 'LLM to use for planning code changes. Must use llmlite format: provider/model (e.g., openai/gpt-4.1, azure/gpt-4.1, gemini/gemini-2.5-pro-preview-05-06, anthropic/claude-4-sonnet-latest, bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0, vertex/gemini-2.5-pro-preview-05-06)'
+    description: 'LLM to use for planning code changes. Must use llmlite format: provider/model (e.g., openai/gpt-4.1, azure/gpt-4.1, gemini/gemini-2.5-pro-preview-06-05, anthropic/claude-4-sonnet-latest, bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0, vertex/gemini-2.5-pro-preview-06-05)'
     required: false
   two-staged-planning:
     description: 'Enable two-staged planning: first select relevant files, then generate detailed implementation plans (increases LLM cost but improves code quality)'
@@ -20,7 +20,7 @@ inputs:
   repomix-extra-args:
     description: 'Extra arguments for repomix when generating context for planning'
     required: false
-    default: '--model gemini/gemini-2.5-pro-preview-05-06 --edit-format diff-fenced --chat-language English'
+    default: '--model gemini/gemini-2.5-pro-preview-06-05 --edit-format diff-fenced --chat-language English'
   aider-extra-args:
     description: 'Additional arguments to pass to the aider command'
     required: false
