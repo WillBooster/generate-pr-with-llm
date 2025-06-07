@@ -46,14 +46,10 @@ export async function main(options: MainOptions): Promise<void> {
   }
 
   await runCommand('python', ['-m', 'pip', 'install', 'aider-install']);
-  try {
-    // Make uv available on asdf environment
-    await runCommand('asdf', ['reshim'], { ignoreExitStatus: true });
-  } catch {
-    // do nothing
-  }
+  await reshimToDetectNewTools();
   await runCommand('uv', ['tool', 'uninstall', 'aider-chat'], { ignoreExitStatus: true });
   await runCommand('aider-install', []);
+  await reshimToDetectNewTools();
 
   if (options.aiderExtraArgs?.includes('bedrock/')) {
     await runCommand('uv', [
@@ -170,6 +166,15 @@ ${aiderAnswer.slice(0, MAX_ANSWER_LENGTH - prBody.length)}
   }
 
   console.info(`\nIssue #${options.issueNumber} processed successfully.`);
+}
+
+async function reshimToDetectNewTools() {
+  try {
+    // Make uv available on asdf environment
+    await runCommand('asdf', ['reshim'], { ignoreExitStatus: true });
+  } catch {
+    // do nothing
+  }
 }
 
 function getTwoDigits(value: number): string {
