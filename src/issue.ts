@@ -11,13 +11,78 @@ async function fetchIssueData(issueNumber: number, processedIssues: Set<number>)
 
   const issueResult = await runCommand(
     'gh',
-    ['issue', 'view', issueNumber.toString(), '--json', 'author,title,body,labels,comments,url,timelineItems'],
+    ['issue', 'view', issueNumber.toString(), '--json', 'author,title,body,labels,comments,url'],
     { ignoreExitStatus: true }
   );
   if (!issueResult) {
     return null;
   }
   const issue: GitHubIssue = JSON.parse(issueResult);
+
+  const urlMatch = issue.url.match(/github\.com\/([^/]+)\/([^/]+)\//);
+  if (urlMatch) {
+    const [, owner, repo] = urlMatch;
+    const query = `query($owner: String!, $repo: String!, $issueNumber: Int!) {
+      repository(owner: $owner, name: $repo) {
+        issue(number: $issueNumber) {
+          timelineItems(first: 100, itemTypes: [CROSS_REFERENCE_EVENT]) {
+            nodes {
+              __typename
+              ... on CrossReferenceEvent {
+                source {
+                  __typename
+                  ... on Issue { number }
+                  ... on PullRequest { number }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`.replace(/\s+/g, ' ');
+
+    const timelineResult = await runCommand(
+      'gh',
+      [
+        'api',
+        'graphql',
+        '-f',
+        `owner=${owner}`,
+        '-f',
+        `repo=${repo}`,
+        '-f',
+        `issueNumber=${issueNumber}`,
+        '-f',
+        `query=${query}`,
+      ],
+      { ignoreExitStatus: true }
+    );
+
+    if (timelineResult) {
+      try {
+        const timelineData = JSON.parse(timelineResult);
+        if (timelineData.data?.repository?.issue?.timelineItems?.nodes) {
+          issue.timelineItems = timelineData.data.repository.issue.timelineItems.nodes.map((node: any) => {
+            if (node.source?.__typename === 'Issue') {
+              return {
+                __typename: node.__typename,
+                source: { issue: { number: node.source.number } },
+              };
+            }
+            if (node.source?.__typename === 'PullRequest') {
+              return {
+                __typename: node.__typename,
+                source: { pullRequest: { number: node.source.number } },
+              };
+            }
+            return node;
+          });
+        }
+      } catch (e) {
+        // Do nothing if parsing fails
+      }
+    }
+  }
 
   const cleanedIssueBody = stripHtmlComments(issue.body);
   const issueInfo: IssueInfo = {
