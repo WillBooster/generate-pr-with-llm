@@ -11,13 +11,10 @@ export async function runCommand(
   const { ignoreExitStatus, ...spawnOptions } = options ?? {};
   const argsText = args.map((a) => (a.includes(' ') ? `"${a.replaceAll('"', '"')}"` : a)).join(' ');
   console.info(ansis.green(`$ ${command} ${argsText}`));
+
   console.info('stdout: ---------------------');
   const ret = await spawnAsync(command, args, spawnOptions);
-
-  // Truncate stdout for display but return the full output
-  const truncatedStdout = truncateOutput(ret.stdout);
-  console.info(truncatedStdout);
-
+  console.info(truncateOutput(ret.stdout));
   const stderr = ret.stderr.trim();
   if (stderr) {
     console.info('stderr: ---------------------');
@@ -49,7 +46,6 @@ export async function spawnAsync(
       let stdout = '';
       let stderr = '';
       proc.stdout?.on('data', (data) => {
-        process.stdout.write(data);
         stdout += data;
       });
       proc.stderr?.on('data', (data) => {
