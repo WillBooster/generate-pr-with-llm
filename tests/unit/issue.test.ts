@@ -128,17 +128,19 @@ describe('createIssueInfo', () => {
 
     // Issue #8
     const issue8 = result.referenced_issues?.[0];
-    expect(issue8.author).toBe('exKAZUu');
-    expect(issue8.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
-    expect(issue8.code_changes).toBeUndefined(); // Referenced issues don't include diffs
-    expect(issue8.referenced_issues).toBeDefined();
-    expect(issue8.referenced_issues?.length).toBe(1);
+    expect(issue8).toBeDefined();
+    expect(issue8?.author).toBe('exKAZUu');
+    expect(issue8?.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
+    expect(issue8?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
+    expect(issue8?.referenced_issues).toBeDefined();
+    expect(issue8?.referenced_issues?.length).toBe(1);
 
     // Issue #32
-    const issue32 = issue8.referenced_issues?.[0];
-    expect(issue32.author).toBe('exKAZUu');
-    expect(issue32.title).toBe('feat: Strip HTML comments from issue/PR descriptions before LLM processing');
-    expect(issue32.code_changes).toBeUndefined(); // Referenced issues don't include diffs
-    expect(issue32.referenced_issues).toBeUndefined(); // End of chain
+    const issue32 = issue8?.referenced_issues?.[0];
+    expect(issue32).toBeDefined();
+    expect(issue32?.author).toBe('exKAZUu');
+    expect(issue32?.title).toBe('feat: Strip HTML comments from issue/PR descriptions before LLM processing');
+    expect(issue32?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
+    expect(issue32?.referenced_issues).toBeUndefined(); // End of chain
   });
 });
