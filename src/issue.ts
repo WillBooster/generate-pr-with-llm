@@ -23,7 +23,38 @@ interface GraphQLTimelineResponse {
   };
 }
 
-async function fetchIssueData(issueNumber: number, processedIssues: Set<number>): Promise<IssueInfo | null> {
+interface IssueReference {
+  number: number;
+  type: 'issue' | 'pullRequest';
+}
+
+function extractIssueReferences(text: string): IssueReference[] {
+  const references: IssueReference[] = [];
+
+  // Match patterns like #123, #456, etc.
+  const issuePattern = /#(\d+)/g;
+  let match;
+
+  while ((match = issuePattern.exec(text)) !== null) {
+    const number = Number.parseInt(match[1], 10);
+    // For simplicity, we'll treat all references as issues
+    // In a real implementation, you might want to check if it's actually a PR
+    references.push({ number, type: 'issue' });
+  }
+
+  // Remove duplicates
+  const uniqueReferences = references.filter(
+    (ref, index, arr) => arr.findIndex((r) => r.number === ref.number && r.type === ref.type) === index
+  );
+
+  return uniqueReferences;
+}
+
+async function fetchIssueData(
+  issueNumber: number,
+  processedIssues: Set<number>,
+  isReferenced = false
+): Promise<IssueInfo | null> {
   if (processedIssues.has(issueNumber)) {
     return null;
   }
@@ -39,69 +70,15 @@ async function fetchIssueData(issueNumber: number, processedIssues: Set<number>)
   }
   const issue: GitHubIssue = JSON.parse(issueResult);
 
-  const urlMatch = issue.url.match(/github\.com\/([^/]+)\/([^/]+)\//);
-  if (urlMatch) {
-    const [, owner, repo] = urlMatch;
-    const query = `query($owner: String!, $repo: String!, $issueNumber: Int!) {
-      repository(owner: $owner, name: $repo) {
-        issue(number: $issueNumber) {
-          timelineItems(first: 100, itemTypes: [CROSS_REFERENCE_EVENT]) {
-            nodes {
-              __typename
-              ... on CrossReferenceEvent {
-                source {
-                  __typename
-                  ... on Issue { number }
-                  ... on PullRequest { number }
-                }
-              }
-            }
-          }
-        }
-      }
-    }`.replace(/\s+/g, ' ');
+  // Extract issue/PR references from the issue body and comments
+  const allText = [issue.body, ...issue.comments.map((c) => c.body)].join('\n');
+  const issueReferences = extractIssueReferences(allText);
 
-    const timelineResult = await runCommand(
-      'gh',
-      [
-        'api',
-        'graphql',
-        '-f',
-        `owner=${owner}`,
-        '-f',
-        `repo=${repo}`,
-        '-f',
-        `issueNumber=${issueNumber}`,
-        '-f',
-        `query=${query}`,
-      ],
-      { ignoreExitStatus: true }
-    );
-
-    if (timelineResult) {
-      try {
-        const timelineData: GraphQLTimelineResponse = JSON.parse(timelineResult);
-        if (timelineData.data?.repository?.issue?.timelineItems?.nodes) {
-          issue.timelineItems = timelineData.data.repository.issue.timelineItems.nodes.map((node) => {
-            if (node.source?.__typename === 'Issue') {
-              return {
-                __typename: node.__typename,
-                source: { issue: { number: node.source.number } },
-              };
-            }
-            if (node.source?.__typename === 'PullRequest') {
-              return {
-                __typename: node.__typename,
-                source: { pullRequest: { number: node.source.number } },
-              };
-            }
-            return { __typename: node.__typename };
-          });
-        }
-      } catch (e) {
-        // Do nothing if parsing fails
-      }
-    }
+  if (issueReferences.length > 0) {
+    issue.timelineItems = issueReferences.map((ref) => ({
+      __typename: 'ReferenceEvent',
+      source: ref.type === 'issue' ? { issue: { number: ref.number } } : { pullRequest: { number: ref.number } },
+    }));
   }
 
   const cleanedIssueBody = stripHtmlComments(issue.body);
@@ -115,7 +92,7 @@ async function fetchIssueData(issueNumber: number, processedIssues: Set<number>)
     })),
   };
 
-  if (issue.url?.includes('/pull/')) {
+  if (issue.url?.includes('/pull/') && !isReferenced) {
     const prDiff = await runCommand('gh', ['pr', 'diff', issueNumber.toString()], {
       ignoreExitStatus: true,
     });
@@ -127,14 +104,13 @@ async function fetchIssueData(issueNumber: number, processedIssues: Set<number>)
   if (issue.timelineItems) {
     const referencedIssuesPromises = issue.timelineItems
       .filter(
-        (item): item is GitHubTimelineItem & { __typename: 'CrossReferenceEvent' } =>
-          item.__typename === 'CrossReferenceEvent' &&
-          !!(item.source?.issue?.number || item.source?.pullRequest?.number)
+        (item): item is GitHubTimelineItem & { __typename: 'ReferenceEvent' } =>
+          item.__typename === 'ReferenceEvent' && !!(item.source?.issue?.number || item.source?.pullRequest?.number)
       )
       .map((item) => {
         const referencedIssueNumber = item.source?.issue?.number || item.source?.pullRequest?.number;
         if (referencedIssueNumber) {
-          return fetchIssueData(referencedIssueNumber, processedIssues);
+          return fetchIssueData(referencedIssueNumber, processedIssues, true);
         }
         return Promise.resolve(null);
       });

@@ -7,10 +7,7 @@
   "author": "WillBooster Inc.",
   "type": "module",
   "bin": "bin/cli.js",
-  "files": [
-    "bin/index.js",
-    "dist/"
-  ],
+  "files": ["bin/index.js", "dist/"],
   "scripts": {
     "build": "build-ts app --input src/action.ts --input src/cli.ts --bundleBuiltins undici",
     "check-for-ai": "bun install > /dev/null && bun run cleanup && bun run typecheck && bun run test --silent",

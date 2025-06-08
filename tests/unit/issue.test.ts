@@ -19,6 +19,22 @@ describe('createIssueInfo', () => {
     maxTestAttempts: 3,
   };
 
+  // Test with real GitHub issue #8 data (has referenced issues)
+  const issueWithReferencesOptions: MainOptions = {
+    twoStagePlanning: false,
+    dryRun: false,
+    issueNumber: 8,
+    maxTestAttempts: 3,
+  };
+
+  // Test with real GitHub PR #9 data (has nested referenced issues: #9 → #8 → #32)
+  const prWithNestedReferencesOptions: MainOptions = {
+    twoStagePlanning: false,
+    dryRun: false,
+    issueNumber: 9,
+    maxTestAttempts: 3,
+  };
+
   test('should create IssueInfo from real GitHub issue #32', async () => {
     // Act - Call the real function with real GitHub issue #32
     const result = await createIssueInfo(realIssueOptions);
@@ -39,6 +55,9 @@ describe('createIssueInfo', () => {
 
     // Issue #32 is not a PR, so no code_changes
     expect(result.code_changes).toBeUndefined();
+
+    // Issue #32 has no outgoing references in its body or comments
+    expect(result.referenced_issues).toBeUndefined();
   });
 
   test('should verify issue #32 has no comments', async () => {
@@ -113,6 +132,8 @@ describe('createIssueInfo', () => {
     expect(typeof result.description).toBe('string');
     expect(Array.isArray(result.comments)).toBe(true);
     expect(result.comments).toHaveLength(0);
+    // Issue #32 has no outgoing references
+    expect(result.referenced_issues).toBeUndefined();
   });
 
   // Tests for PR #3 - Pull Request functionality
@@ -225,6 +246,8 @@ describe('createIssueInfo', () => {
     expect(result.comments).toHaveLength(0);
     expect(typeof result.code_changes).toBe('string');
     expect(result.code_changes?.length).toBeGreaterThan(0);
+    // PR #3 has no referenced issues
+    expect(result.referenced_issues).toBeUndefined();
   });
 
   test('should verify PR #3 diff contains expected file changes', async () => {
@@ -237,5 +260,262 @@ describe('createIssueInfo', () => {
     expect(result.code_changes).toContain('actions/setup-python@v4');
     expect(result.code_changes).toContain("-        python-version: '3.x'");
     expect(result.code_changes).toContain("+        python-version: '3.13.3'");
+  });
+
+  // Tests for issue #8 - Referenced issues functionality
+  test('should create IssueInfo from real GitHub issue #8 with referenced issues', async () => {
+    // Act - Call the real function with real GitHub issue #8
+    const result = await createIssueInfo(issueWithReferencesOptions);
+
+    // Assert - Verify the expected structure and content based on real issue #8
+    expect(result.author).toBe('exKAZUu');
+    expect(result.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
+
+    // The description should contain the issue content
+    expect(result.description).toContain('Modify `src/index.ts` to print "Hello World"');
+
+    // Issue #8 has comments including one that references #32
+    expect(result.comments.length).toBeGreaterThan(0);
+    expect(result.comments.some((c) => c.body.includes('#32'))).toBe(true);
+
+    // Issue #8 is not a PR, so no code_changes
+    expect(result.code_changes).toBeUndefined();
+
+    // Issue #8 should have referenced issues (references issue #32)
+    expect(result.referenced_issues).toBeDefined();
+    expect(Array.isArray(result.referenced_issues)).toBe(true);
+    expect(result.referenced_issues?.length).toBeGreaterThan(0);
+  });
+
+  test('should verify issue #8 has referenced issues with correct structure', async () => {
+    // Act
+    const result = await createIssueInfo(issueWithReferencesOptions);
+
+    // Assert - Issue #8 should have referenced issues
+    expect(result.referenced_issues).toBeDefined();
+    expect(result.referenced_issues?.length).toBe(1);
+
+    const referencedIssue = result.referenced_issues?.[0];
+    expect(referencedIssue).toHaveProperty('author');
+    expect(referencedIssue).toHaveProperty('title');
+    expect(referencedIssue).toHaveProperty('description');
+    expect(referencedIssue).toHaveProperty('comments');
+
+    // The referenced issue should be issue #32
+    expect(referencedIssue.author).toBe('exKAZUu');
+    expect(referencedIssue.title).toBe('feat: Strip HTML comments from issue/PR descriptions before LLM processing');
+    expect(referencedIssue.description).toContain('Current Behavior:');
+  });
+
+  test('should verify issue #8 referenced issue does not include code changes', async () => {
+    // Act
+    const result = await createIssueInfo(issueWithReferencesOptions);
+
+    // Assert - The referenced issue should not have code_changes (to avoid including diffs)
+    expect(result.referenced_issues).toBeDefined();
+    const referencedIssue = result.referenced_issues?.[0];
+    expect(referencedIssue.code_changes).toBeUndefined();
+  });
+
+  test('should verify issue #8 author and title information', async () => {
+    // Act
+    const result = await createIssueInfo(issueWithReferencesOptions);
+
+    // Assert - Verify the author and title are correctly extracted
+    expect(result.author).toBe('exKAZUu');
+    expect(result.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
+  });
+
+  test('should verify issue #8 has comments', async () => {
+    // Act
+    const result = await createIssueInfo(issueWithReferencesOptions);
+
+    // Assert - Issue #8 should have comments
+    expect(result.comments.length).toBeGreaterThan(0);
+  });
+
+  test('should verify issue #8 is not a pull request', async () => {
+    // Act
+    const result = await createIssueInfo(issueWithReferencesOptions);
+
+    // Assert - Issue #8 should not have code_changes since it's not a PR
+    expect(result.code_changes).toBeUndefined();
+  });
+
+  test('should return proper IssueInfo structure for issue #8 with referenced issues', async () => {
+    // Act
+    const result = await createIssueInfo(issueWithReferencesOptions);
+
+    // Assert - Verify the complete structure including referenced_issues
+    expect(result).toHaveProperty('author');
+    expect(result).toHaveProperty('title');
+    expect(result).toHaveProperty('description');
+    expect(result).toHaveProperty('comments');
+    expect(result).toHaveProperty('referenced_issues');
+    expect(result.author).toBe('exKAZUu');
+    expect(result.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
+    expect(typeof result.description).toBe('string');
+    expect(Array.isArray(result.comments)).toBe(true);
+    expect(result.comments.length).toBeGreaterThan(0);
+    expect(Array.isArray(result.referenced_issues)).toBe(true);
+    expect(result.referenced_issues?.length).toBeGreaterThan(0);
+  });
+
+  // Tests for PR #9 - Nested referenced issues functionality (#9 → #8 → #32)
+  test('should create IssueInfo from real GitHub PR #9 with nested referenced issues', async () => {
+    // Act - Call the real function with real GitHub PR #9
+    const result = await createIssueInfo(prWithNestedReferencesOptions);
+
+    // Assert - Verify the expected structure and content based on real PR #9
+    expect(result.author).toBe('exKAZUu');
+    expect(result.title).toBe('feat: add hello world step');
+
+    // The description should contain the PR content
+    expect(result.description).toContain('Closes #8');
+    expect(result.description).toContain('Hello, World!');
+
+    // PR #9 has no comments
+    expect(result.comments).toEqual([]);
+
+    // PR #9 is a PR, so it should have code_changes (since it's the main issue, not referenced)
+    expect(result.code_changes).toBeDefined();
+    expect(typeof result.code_changes).toBe('string');
+
+    // PR #9 should have referenced issues (references issue #8)
+    expect(result.referenced_issues).toBeDefined();
+    expect(Array.isArray(result.referenced_issues)).toBe(true);
+    expect(result.referenced_issues?.length).toBe(1);
+  });
+
+  test('should verify PR #9 has nested referenced issues structure', async () => {
+    // Act
+    const result = await createIssueInfo(prWithNestedReferencesOptions);
+
+    // Assert - PR #9 should reference issue #8, which in turn references issue #32
+    expect(result.referenced_issues).toBeDefined();
+    expect(result.referenced_issues?.length).toBe(1);
+
+    const referencedIssue8 = result.referenced_issues?.[0];
+    expect(referencedIssue8).toHaveProperty('author');
+    expect(referencedIssue8).toHaveProperty('title');
+    expect(referencedIssue8).toHaveProperty('description');
+    expect(referencedIssue8).toHaveProperty('comments');
+    expect(referencedIssue8).toHaveProperty('referenced_issues');
+
+    // The referenced issue should be issue #8
+    expect(referencedIssue8.author).toBe('exKAZUu');
+    expect(referencedIssue8.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
+    expect(referencedIssue8.description).toContain('Modify `src/index.ts` to print "Hello World"');
+
+    // Issue #8 should have its own referenced issues (issue #32)
+    expect(referencedIssue8.referenced_issues).toBeDefined();
+    expect(referencedIssue8.referenced_issues?.length).toBe(1);
+
+    const referencedIssue32 = referencedIssue8.referenced_issues?.[0];
+    expect(referencedIssue32.author).toBe('exKAZUu');
+    expect(referencedIssue32.title).toBe('feat: Strip HTML comments from issue/PR descriptions before LLM processing');
+    expect(referencedIssue32.description).toContain('Current Behavior:');
+  });
+
+  test('should verify PR #9 referenced issues do not include code changes', async () => {
+    // Act
+    const result = await createIssueInfo(prWithNestedReferencesOptions);
+
+    // Assert - The referenced issues should not have code_changes (to avoid including diffs)
+    expect(result.referenced_issues).toBeDefined();
+    const referencedIssue8 = result.referenced_issues?.[0];
+    expect(referencedIssue8.code_changes).toBeUndefined();
+
+    // The nested referenced issue should also not have code_changes
+    expect(referencedIssue8.referenced_issues).toBeDefined();
+    const referencedIssue32 = referencedIssue8.referenced_issues?.[0];
+    expect(referencedIssue32.code_changes).toBeUndefined();
+  });
+
+  test('should verify PR #9 author and title information', async () => {
+    // Act
+    const result = await createIssueInfo(prWithNestedReferencesOptions);
+
+    // Assert - Verify the author and title are correctly extracted
+    expect(result.author).toBe('exKAZUu');
+    expect(result.title).toBe('feat: add hello world step');
+  });
+
+  test('should verify PR #9 has no comments', async () => {
+    // Act
+    const result = await createIssueInfo(prWithNestedReferencesOptions);
+
+    // Assert - PR #9 should have no comments
+    expect(result.comments).toEqual([]);
+  });
+
+  test('should verify PR #9 is a pull request with code changes', async () => {
+    // Act
+    const result = await createIssueInfo(prWithNestedReferencesOptions);
+
+    // Assert - PR #9 should have code_changes since it's the main PR (not referenced)
+    expect(result.code_changes).toBeDefined();
+    expect(typeof result.code_changes).toBe('string');
+    expect(result.code_changes?.length).toBeGreaterThan(0);
+  });
+
+  test('should verify PR #9 diff contains expected file changes', async () => {
+    // Act
+    const result = await createIssueInfo(prWithNestedReferencesOptions);
+
+    // Assert - Verify the diff contains the expected changes
+    expect(result.code_changes).toContain('action.yml');
+    expect(result.code_changes).toContain('Print Hello World');
+    expect(result.code_changes).toContain('echo "Hello, World!"');
+  });
+
+  test('should return proper IssueInfo structure for PR #9 with nested referenced issues', async () => {
+    // Act
+    const result = await createIssueInfo(prWithNestedReferencesOptions);
+
+    // Assert - Verify the complete structure including nested referenced_issues
+    expect(result).toHaveProperty('author');
+    expect(result).toHaveProperty('title');
+    expect(result).toHaveProperty('description');
+    expect(result).toHaveProperty('comments');
+    expect(result).toHaveProperty('code_changes');
+    expect(result).toHaveProperty('referenced_issues');
+    expect(result.author).toBe('exKAZUu');
+    expect(result.title).toBe('feat: add hello world step');
+    expect(typeof result.description).toBe('string');
+    expect(Array.isArray(result.comments)).toBe(true);
+    expect(result.comments).toHaveLength(0);
+    expect(typeof result.code_changes).toBe('string');
+    expect(result.code_changes?.length).toBeGreaterThan(0);
+    expect(Array.isArray(result.referenced_issues)).toBe(true);
+    expect(result.referenced_issues?.length).toBe(1);
+
+    // Verify nested structure
+    const referencedIssue8 = result.referenced_issues?.[0];
+    expect(Array.isArray(referencedIssue8.referenced_issues)).toBe(true);
+    expect(referencedIssue8.referenced_issues?.length).toBe(1);
+  });
+
+  test('should verify the complete reference chain #9 → #8 → #32', async () => {
+    // Act
+    const result = await createIssueInfo(prWithNestedReferencesOptions);
+
+    // Assert - Verify the complete reference chain
+    // PR #9 references issue #8
+    expect(result.referenced_issues).toBeDefined();
+    expect(result.referenced_issues?.length).toBe(1);
+    expect(result.referenced_issues?.[0].title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
+
+    // Issue #8 references issue #32
+    const issue8 = result.referenced_issues?.[0];
+    expect(issue8.referenced_issues).toBeDefined();
+    expect(issue8.referenced_issues?.length).toBe(1);
+    expect(issue8.referenced_issues?.[0].title).toBe(
+      'feat: Strip HTML comments from issue/PR descriptions before LLM processing'
+    );
+
+    // Issue #32 has no further references
+    const issue32 = issue8.referenced_issues?.[0];
+    expect(issue32.referenced_issues).toBeUndefined();
   });
 });
