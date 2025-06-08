@@ -75,9 +75,9 @@ export async function runAssistantFix(
       env: { ...process.env, NO_COLOR: '1' },
     });
   } else {
-    const claudeCodeArgs = buildClaudeCodeArgs({ prompt, resolutionPlan });
+    const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt, resolutionPlan });
     console.info(ansis.cyan(`Asking Claude Code to fix "${options.testCommand}"...`));
-    assistantResult = await runCommand('claude-code', claudeCodeArgs, {
+    assistantResult = await runCommand('npx', claudeCodeArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
   }

@@ -100,53 +100,57 @@ describe('createIssueInfo', () => {
   });
 
   // Test for PR #12 - PR with nested references (#12 → #8 → #32)
-  test('should handle PR #12 (PR with nested references)', async () => {
-    const options: MainOptions = {
-      twoStagePlanning: false,
-      dryRun: false,
-      issueNumber: 12,
-      maxTestAttempts: 3,
-      codingTool: 'aider',
-    };
+  test(
+    'should handle PR #12 (PR with nested references)',
+    async () => {
+      const options: MainOptions = {
+        twoStagePlanning: false,
+        dryRun: false,
+        issueNumber: 12,
+        maxTestAttempts: 3,
+        codingTool: 'aider',
+      };
 
-    const result = await createIssueInfo(options);
+      const result = await createIssueInfo(options);
 
-    // Basic properties
-    expect(result.author).toBe('app/github-actions');
-    expect(result.title).toBe('feat: Add Hello World step to action workflow');
+      // Basic properties
+      expect(result.author).toBe('app/github-actions');
+      expect(result.title).toBe('feat: Add Hello World step to action workflow');
 
-    // Description content
-    expect(result.description).toContain('Closes #8');
-    expect(result.description).toContain('Hello, World!');
+      // Description content
+      expect(result.description).toContain('Closes #8');
+      expect(result.description).toContain('Hello, World!');
 
-    // PR characteristics
-    expect(result.comments).toEqual([]);
-    expect(result.code_changes).toBeDefined(); // Is a PR
-    expect(result.code_changes).toContain('action.yml');
-    expect(result.code_changes).toContain('Print Hello World');
-    expect(result.code_changes).toContain('echo "Hello, World!"');
+      // PR characteristics
+      expect(result.comments).toEqual([]);
+      expect(result.code_changes).toBeDefined(); // Is a PR
+      expect(result.code_changes).toContain('action.yml');
+      expect(result.code_changes).toContain('Print Hello World');
+      expect(result.code_changes).toContain('echo "Hello, World!"');
 
-    // Referenced issues - should have nested chain #12 → #8 → #32
-    expect(result.referenced_issues).toBeDefined();
-    expect(result.referenced_issues?.length).toBe(1);
+      // Referenced issues - should have nested chain #12 → #8 → #32
+      expect(result.referenced_issues).toBeDefined();
+      expect(result.referenced_issues?.length).toBe(1);
 
-    // Issue #8
-    const issue8 = result.referenced_issues?.[0];
-    expect(issue8).toBeDefined();
-    expect(issue8?.author).toBe('exKAZUu');
-    expect(issue8?.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
-    expect(issue8?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
-    expect(issue8?.referenced_issues).toBeDefined();
-    expect(issue8?.referenced_issues?.length).toBe(1);
+      // Issue #8
+      const issue8 = result.referenced_issues?.[0];
+      expect(issue8).toBeDefined();
+      expect(issue8?.author).toBe('exKAZUu');
+      expect(issue8?.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
+      expect(issue8?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
+      expect(issue8?.referenced_issues).toBeDefined();
+      expect(issue8?.referenced_issues?.length).toBe(1);
 
-    // Issue #32
-    const issue32 = issue8?.referenced_issues?.[0];
-    expect(issue32).toBeDefined();
-    expect(issue32?.author).toBe('exKAZUu');
-    expect(issue32?.title).toBe('feat: Strip HTML comments from issue/PR descriptions before LLM processing');
-    expect(issue32?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
-    expect(issue32?.referenced_issues).toBeUndefined(); // End of chain
-  });
+      // Issue #32
+      const issue32 = issue8?.referenced_issues?.[0];
+      expect(issue32).toBeDefined();
+      expect(issue32?.author).toBe('exKAZUu');
+      expect(issue32?.title).toBe('feat: Strip HTML comments from issue/PR descriptions before LLM processing');
+      expect(issue32?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
+      expect(issue32?.referenced_issues).toBeUndefined(); // End of chain
+    },
+    { timeout: 15000 }
+  );
 
   // Test for PR #9 - PR with large bundled file diff that should be truncated
   test(
@@ -203,6 +207,6 @@ describe('createIssueInfo', () => {
         'feat: print "Hello World" on `src/index.ts` (<- example issue)'
       );
     },
-    { timeout: 10000 }
+    { timeout: 15000 }
   );
 });
