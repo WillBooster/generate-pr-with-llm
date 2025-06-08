@@ -49,6 +49,7 @@ async function fetchIssueData(
   if (issue.url?.includes('/pull/') && !isReferenced) {
     const prDiff = await runCommand('gh', ['pr', 'diff', issueNumber.toString()], {
       ignoreExitStatus: true,
+      truncateStdout: true,
     });
     if (prDiff.trim()) {
       issueInfo.code_changes = processDiffContent(prDiff.trim());
