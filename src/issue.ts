@@ -1,51 +1,14 @@
 import type { MainOptions } from './main.js';
 import { runCommand } from './spawn.js';
-import type { GitHubComment, GitHubIssue, GitHubTimelineItem, IssueInfo } from './types.js';
+import type { GitHubComment, GitHubIssue, IssueInfo } from './types.js';
 import { stripHtmlComments } from './utils.js';
 
-interface GraphQLTimelineNode {
-  __typename: string;
-  source?: {
-    __typename: 'Issue' | 'PullRequest';
-    number: number;
-  };
-}
+function extractIssueReferences(text: string): number[] {
+  const matches = text.match(/#(\d+)/g);
+  if (!matches) return [];
 
-interface GraphQLTimelineResponse {
-  data?: {
-    repository?: {
-      issue?: {
-        timelineItems?: {
-          nodes: GraphQLTimelineNode[];
-        };
-      };
-    };
-  };
-}
-
-interface IssueReference {
-  number: number;
-  type: 'issue' | 'pullRequest';
-}
-
-function extractIssueReferences(text: string): IssueReference[] {
-  const references: IssueReference[] = [];
-
-  for (;;) {
-    // Match patterns like #123, #456, etc.
-    const match = /#(\d+)/g.exec(text);
-    if (!match) break;
-
-    const number = Number.parseInt(match[1], 10);
-    // For simplicity, we'll treat all references as issues
-    // In a real implementation, you might want to check if it's actually a PR
-    references.push({ number, type: 'issue' });
-  }
-
-  // Remove duplicates
-  return references.filter(
-    (ref, index, arr) => arr.findIndex((r) => r.number === ref.number && r.type === ref.type) === index
-  );
+  const numbers = matches.map((match) => Number.parseInt(match.substring(1), 10));
+  return [...new Set(numbers)]; // Remove duplicates
 }
 
 async function fetchIssueData(
@@ -70,20 +33,12 @@ async function fetchIssueData(
 
   // Extract issue/PR references from the issue body and comments
   const allText = [issue.body, ...issue.comments.map((c) => c.body)].join('\n');
-  const issueReferences = extractIssueReferences(allText);
+  const referencedNumbers = extractIssueReferences(allText);
 
-  if (issueReferences.length > 0) {
-    issue.timelineItems = issueReferences.map((ref) => ({
-      __typename: 'ReferenceEvent',
-      source: ref.type === 'issue' ? { issue: { number: ref.number } } : { pullRequest: { number: ref.number } },
-    }));
-  }
-
-  const cleanedIssueBody = stripHtmlComments(issue.body);
   const issueInfo: IssueInfo = {
     author: issue.author.login,
     title: issue.title,
-    description: cleanedIssueBody,
+    description: stripHtmlComments(issue.body),
     comments: issue.comments.map((c: GitHubComment) => ({
       author: c.author.login,
       body: c.body,
@@ -99,19 +54,8 @@ async function fetchIssueData(
     }
   }
 
-  if (issue.timelineItems) {
-    const referencedIssuesPromises = issue.timelineItems
-      .filter(
-        (item): item is GitHubTimelineItem & { __typename: 'ReferenceEvent' } =>
-          item.__typename === 'ReferenceEvent' && !!(item.source?.issue?.number || item.source?.pullRequest?.number)
-      )
-      .map((item) => {
-        const referencedIssueNumber = item.source?.issue?.number || item.source?.pullRequest?.number;
-        if (referencedIssueNumber) {
-          return fetchIssueData(referencedIssueNumber, processedIssues, true);
-        }
-        return Promise.resolve(null);
-      });
+  if (referencedNumbers.length > 0) {
+    const referencedIssuesPromises = referencedNumbers.map((num) => fetchIssueData(num, processedIssues, true));
 
     const referencedIssues = (await Promise.all(referencedIssuesPromises)).filter(
       (issue): issue is IssueInfo => issue !== null
