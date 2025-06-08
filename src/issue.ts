@@ -4,10 +4,14 @@ import type { GitHubComment, GitHubIssue, IssueInfo } from './types.js';
 import { stripHtmlComments } from './utils.js';
 
 function extractIssueReferences(text: string): number[] {
-  const matches = text.match(/#(\d+)/g);
-  if (!matches) return [];
+  const regex = /(?:^|\s)#(\d+)/g;
+  const numbers: number[] = [];
+  for (;;) {
+    const match = regex.exec(text);
+    if (!match) break;
 
-  const numbers = matches.map((match) => Number.parseInt(match.substring(1), 10));
+    numbers.push(Number.parseInt(match[1], 10));
+  }
   return [...new Set(numbers)]; // Remove duplicates
 }
 
