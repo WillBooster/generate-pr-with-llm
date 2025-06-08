@@ -51,7 +51,7 @@ async function fetchIssueData(
       ignoreExitStatus: true,
     });
     if (prDiff.trim()) {
-      issueInfo.code_changes = prDiff.trim();
+      issueInfo.code_changes = processDiffContent(prDiff.trim());
     }
   }
 
@@ -78,4 +78,67 @@ function extractIssueReferences(text: string): number[] {
     numbers.push(Number.parseInt(match[1], 10));
   }
   return [...new Set(numbers)]; // Remove duplicates
+}
+
+/**
+ * Process diff content to handle large diffs by truncating or omitting large fragments
+ */
+function processDiffContent(diffContent: string): string {
+  const MAX_TOTAL_DIFF_SIZE = 50000;
+  const MAX_FILE_DIFF_SIZE = 10000;
+  const LARGE_FILE_PATTERNS = [
+    /^diff --git a\/dist\//m,
+    /^diff --git a\/build\//m,
+    /^diff --git a\/.*\.bundle\./m,
+    /^diff --git a\/.*\.min\./m,
+    /^diff --git a\/node_modules\//m,
+  ];
+
+  // If the entire diff is small enough, return as-is
+  if (diffContent.length <= MAX_TOTAL_DIFF_SIZE) {
+    return diffContent;
+  }
+
+  // Split diff into individual file sections
+  const fileSections = diffContent.split(/(?=^diff --git)/m);
+  const processedSections: string[] = [];
+  let totalSize = 0;
+
+  for (const section of fileSections) {
+    if (!section.trim()) continue;
+
+    const isLargeFile = LARGE_FILE_PATTERNS.some((pattern) => pattern.test(section));
+
+    if (isLargeFile) {
+      // For large/bundled files, include only the header and a truncation notice
+      const lines = section.split('\n');
+      const headerLines = lines.slice(0, 4); // diff --git, index, ---, +++
+      const truncatedSection = [
+        ...headerLines,
+        '@@ ... @@',
+        '... (large bundled/compiled file diff truncated) ...',
+        '',
+      ].join('\n');
+
+      processedSections.push(truncatedSection);
+      totalSize += truncatedSection.length;
+    } else if (section.length > MAX_FILE_DIFF_SIZE) {
+      // For other large files, truncate but keep some content
+      const truncatedSection = `${section.slice(0, MAX_FILE_DIFF_SIZE)}\n... (diff truncated) ...\n`;
+      processedSections.push(truncatedSection);
+      totalSize += truncatedSection.length;
+    } else {
+      // Small files, include as-is
+      processedSections.push(section);
+      totalSize += section.length;
+    }
+
+    // Stop if we're approaching the total size limit
+    if (totalSize > MAX_TOTAL_DIFF_SIZE * 0.9) {
+      processedSections.push('\n... (remaining diffs truncated) ...\n');
+      break;
+    }
+  }
+
+  return processedSections.join('');
 }
