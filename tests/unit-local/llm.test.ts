@@ -19,9 +19,13 @@ describe('callLlmApi', () => {
     expect(await callLlmApi('anthropic/claude-4-sonnet-latest', testMessages)).toContain('Hi');
   });
 
-  test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)('should call Google Gemini API successfully', async () => {
-    expect(await callLlmApi('gemini/gemini-2.5-pro-preview-06-05', testMessages)).toContain('Hi');
-  });
+  test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)(
+    'should call Google Gemini API successfully',
+    async () => {
+      expect(await callLlmApi('gemini/gemini-2.5-pro-preview-06-05', testMessages)).toContain('Hi');
+    },
+    10000
+  );
 
   test.skipIf(!process.env.AZURE_OPENAI_API_KEY)('should call Azure OpenAI API successfully', async () => {
     expect(await callLlmApi('azure/gpt-4.1', testMessages)).toContain('Hi');

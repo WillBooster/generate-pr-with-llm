@@ -17,7 +17,7 @@
         "@types/yargs": "17.0.33",
         "@willbooster/biome-config": "2.1.0",
         "@willbooster/prettier-config": "10.0.0",
-        "@willbooster/wb": "8.1.9",
+        "@willbooster/wb": "8.1.11",
         "ai": "5.0.0-canary.24",
         "ansis": "4.1.0",
         "build-ts": "15.0.3",
@@ -506,7 +506,7 @@
 
     "@willbooster/shared-lib-node": ["@willbooster/shared-lib-node@6.2.1", "", { "dependencies": { "dotenv": "16.5.0", "tree-kill": "1.2.2" } }, "sha512-2DeORLkbZukx/klirsEvip8FI0FXsWAAwkAqFJMeY0IaQhmjpz3f7HtorVOlD4WvpWfZdtmBhhz0UTtXNYut+A=="],
 
-    "@willbooster/wb": ["@willbooster/wb@8.1.9", "", { "dependencies": { "chalk": "5.4.1", "dotenv": "16.5.0", "globby": "14.1.0", "kill-port": "2.0.1", "minimal-promise-pool": "4.1.2", "tree-kill": "1.2.2", "yargs": "18.0.0" }, "bin": { "wb": "bin/index.js" } }, "sha512-BaY6ypyJi66xduWvMtJ5YHZ76KNY08gKK55iYu++CFZFDX0CFlN5RpoGmMqrKxpXwOwY/Nj0/rXOdsQ7qdgiaw=="],
+    "@willbooster/wb": ["@willbooster/wb@8.1.11", "", { "dependencies": { "chalk": "5.4.1", "dotenv": "16.5.0", "globby": "14.1.0", "kill-port": "2.0.1", "minimal-promise-pool": "5.0.0", "tree-kill": "1.2.2", "yargs": "18.0.0" }, "bin": { "wb": "bin/index.js" } }, "sha512-xnQ4DPbn1vhGaR03S8UebJd2bm4/fac6jiGsw6cZpadlq8rGNnnzHa84Ldzhb9oiWiZa0U7rB2ARwD4+u3mL2g=="],
 
     "acorn": ["acorn@8.14.1", "", { "bin": { "acorn": "bin/acorn" } }, "sha512-OvQ/2pUDKmgfCg++xsTX1wGxfTaszcHVcTctW4UJB4hibJx2HXxxO5UmVgyjMa+ZDsiaf5wWLXYpRWMmBI0QHg=="],
 
@@ -896,7 +896,7 @@
 
     "mimic-fn": ["mimic-fn@4.0.0", "", {}, "sha512-vqiC06CuhBTUdZH+RYl8sFrL096vA45Ok5ISO6sE/Mr1jRbGH4Csnhi8f3wKVl7x8mO4Au7Ir9D3Oyv1VYMFJw=="],
 
-    "minimal-promise-pool": ["minimal-promise-pool@4.1.2", "", {}, "sha512-VNzekiDiDMyg+60TVHjl2pJ57V6NjybLHlo6f/oIS5WAUsj5ywuRFHH6UO8q5c9F29c9UjLnst7VP7haaRmorA=="],
+    "minimal-promise-pool": ["minimal-promise-pool@5.0.0", "", {}, "sha512-NRPQLEjEVCm6vWn1HA7zhYPLHkMtMYKQPqDU8qXwGznVKGtPoIUcmnYcAfyx/LiCHtn1V33ZuVqrsSE4+9iRGg=="],
 
     "minimist": ["minimist@1.2.8", "", {}, "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="],
 

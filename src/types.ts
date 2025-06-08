@@ -122,6 +122,8 @@ export interface IssueInfo {
   comments: IssueComment[];
   /** Code changes (only present for PRs with diff content) */
   code_changes?: string;
+  /** Referenced issues and pull requests */
+  referenced_issues?: IssueInfo[];
 }
 
 /**
