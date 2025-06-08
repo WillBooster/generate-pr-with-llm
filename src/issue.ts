@@ -31,11 +31,11 @@ interface IssueReference {
 function extractIssueReferences(text: string): IssueReference[] {
   const references: IssueReference[] = [];
 
-  // Match patterns like #123, #456, etc.
-  const issuePattern = /#(\d+)/g;
-  let match;
+  for (;;) {
+    // Match patterns like #123, #456, etc.
+    const match = /#(\d+)/g.exec(text);
+    if (!match) break;
 
-  while ((match = issuePattern.exec(text)) !== null) {
     const number = Number.parseInt(match[1], 10);
     // For simplicity, we'll treat all references as issues
     // In a real implementation, you might want to check if it's actually a PR
@@ -43,11 +43,9 @@ function extractIssueReferences(text: string): IssueReference[] {
   }
 
   // Remove duplicates
-  const uniqueReferences = references.filter(
+  return references.filter(
     (ref, index, arr) => arr.findIndex((r) => r.number === ref.number && r.type === ref.type) === index
   );
-
-  return uniqueReferences;
 }
 
 async function fetchIssueData(
