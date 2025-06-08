@@ -8,13 +8,13 @@ export async function runCommand(
   args: string[],
   options?: SpawnOptionsWithoutStdio & { ignoreExitStatus?: boolean; truncateStdout?: boolean }
 ): Promise<string> {
-  const { ignoreExitStatus, truncateStdout, ...spawnOptions } = options ?? {};
+  const { ignoreExitStatus, ...spawnOptions } = options ?? {};
   const argsText = args.map((a) => (a.includes(' ') ? `"${a.replaceAll('"', '"')}"` : a)).join(' ');
   console.info(ansis.green(`$ ${command} ${argsText}`));
 
   console.info('stdout: ---------------------');
   const ret = await spawnAsync(command, args, spawnOptions);
-  if (truncateStdout) console.info(truncateOutput(ret.stdout));
+  if (spawnOptions.truncateStdout) console.info(truncateOutput(ret.stdout));
   const stderr = ret.stderr.trim();
   if (stderr) {
     console.info('stderr: ---------------------');
