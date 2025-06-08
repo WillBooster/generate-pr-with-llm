@@ -79,50 +79,17 @@ export async function spawnAsync(
   });
 }
 
+const TRUNCATE_THRESHOLD = 3000;
+
 /**
  * Truncate output to prevent overwhelming console logs
  */
 function truncateOutput(output: string): string {
-  const MAX_OUTPUT_LENGTH = 5000; // Maximum characters to display
-  const TRUNCATE_THRESHOLD = 3000; // Start truncating after this many characters
-
-  if (output.length <= MAX_OUTPUT_LENGTH) {
+  if (output.length <= TRUNCATE_THRESHOLD) {
     return output;
   }
 
-  const lines = output.split('\n');
-  let truncatedOutput = '';
-  let currentLength = 0;
-  let truncatedLines = 0;
-
-  // Include lines from the beginning until we hit the threshold
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const lineWithNewline = `${line}\n`;
-
-    if (currentLength + lineWithNewline.length > TRUNCATE_THRESHOLD) {
-      // Calculate how many lines we're skipping
-      const remainingLines = lines.length - i;
-      truncatedLines = remainingLines;
-      break;
-    }
-
-    truncatedOutput += lineWithNewline;
-    currentLength += lineWithNewline.length;
-  }
-
-  // Add truncation notice
-  if (truncatedLines > 0) {
-    truncatedOutput += `\n... (${truncatedLines} lines truncated, ${output.length - currentLength} characters omitted) ...\n`;
-
-    // Include some lines from the end if there's room
-    const endLinesToShow = Math.min(10, Math.floor((MAX_OUTPUT_LENGTH - truncatedOutput.length) / 50));
-    if (endLinesToShow > 0 && lines.length > endLinesToShow) {
-      const endLines = lines.slice(-endLinesToShow);
-      truncatedOutput += '\n... (showing last few lines) ...\n';
-      truncatedOutput += endLines.join('\n');
-    }
-  }
-
-  return truncatedOutput;
+  const truncated = output.slice(0, TRUNCATE_THRESHOLD);
+  const omitted = output.length - TRUNCATE_THRESHOLD;
+  return `${truncated}\n\n... (${omitted} characters truncated) ...`;
 }
