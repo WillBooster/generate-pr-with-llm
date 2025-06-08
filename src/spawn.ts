@@ -6,15 +6,15 @@ import ansis from 'ansis';
 export async function runCommand(
   command: string,
   args: string[],
-  options?: SpawnOptionsWithoutStdio & { ignoreExitStatus?: boolean }
+  options?: SpawnOptionsWithoutStdio & { ignoreExitStatus?: boolean; truncateStdout?: boolean }
 ): Promise<string> {
-  const { ignoreExitStatus, ...spawnOptions } = options ?? {};
+  const { ignoreExitStatus, truncateStdout, ...spawnOptions } = options ?? {};
   const argsText = args.map((a) => (a.includes(' ') ? `"${a.replaceAll('"', '"')}"` : a)).join(' ');
   console.info(ansis.green(`$ ${command} ${argsText}`));
 
   console.info('stdout: ---------------------');
   const ret = await spawnAsync(command, args, spawnOptions);
-  console.info(truncateOutput(ret.stdout));
+  if (truncateStdout) console.info(truncateOutput(ret.stdout));
   const stderr = ret.stderr.trim();
   if (stderr) {
     console.info('stderr: ---------------------');
@@ -32,7 +32,7 @@ export async function runCommand(
 export async function spawnAsync(
   command: string,
   args?: ReadonlyArray<string>,
-  options?: SpawnOptionsWithoutStdio
+  options?: SpawnOptionsWithoutStdio & { truncateStdout?: boolean }
 ): Promise<Omit<SpawnSyncReturns<string>, 'output' | 'error'>> {
   return new Promise((resolve, reject) => {
     try {
@@ -46,6 +46,7 @@ export async function spawnAsync(
       let stdout = '';
       let stderr = '';
       proc.stdout?.on('data', (data) => {
+        if (!options?.truncateStdout) process.stdout.write(data);
         stdout += data;
       });
       proc.stderr?.on('data', (data) => {
