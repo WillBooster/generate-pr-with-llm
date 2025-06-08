@@ -19,9 +19,9 @@ async function fetchIssueData(
   issueNumber: number,
   processedIssues: Set<number>,
   isReferenced = false
-): Promise<IssueInfo | null> {
+): Promise<IssueInfo | undefined> {
   if (processedIssues.has(issueNumber)) {
-    return null;
+    return;
   }
   processedIssues.add(issueNumber);
 
@@ -31,7 +31,7 @@ async function fetchIssueData(
     { ignoreExitStatus: true }
   );
   if (!issueResult) {
-    return null;
+    return;
   }
   const issue: GitHubIssue = JSON.parse(issueResult);
 
@@ -60,11 +60,9 @@ async function fetchIssueData(
 
   if (referencedNumbers.length > 0) {
     const referencedIssuesPromises = referencedNumbers.map((num) => fetchIssueData(num, processedIssues, true));
-
     const referencedIssues = (await Promise.all(referencedIssuesPromises)).filter(
-      (issue): issue is IssueInfo => issue !== null
+      (issue): issue is IssueInfo => !!issue
     );
-
     if (referencedIssues.length > 0) {
       issueInfo.referenced_issues = referencedIssues;
     }
