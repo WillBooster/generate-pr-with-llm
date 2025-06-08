@@ -2,13 +2,14 @@ import child_process from 'node:child_process';
 import ansis from 'ansis';
 import YAML from 'yaml';
 import { buildAiderArgs } from './aider.js';
+import { buildClaudeCodeArgs } from './claudeCode.js';
 import { configureEnvVars } from './env.js';
 import { createIssueInfo } from './issue.js';
 import { planCodeChanges } from './plan.js';
 import { configureGitUserDetailsIfNeeded } from './profile.js';
 import { runCommand } from './spawn.js';
 import { testAndFix } from './test.js';
-import type { ReasoningEffort } from './types.js';
+import type { CodeAssistant, ReasoningEffort } from './types.js';
 
 /**
  * Options for the main function
@@ -16,6 +17,8 @@ import type { ReasoningEffort } from './types.js';
 export interface MainOptions {
   /** Additional arguments to pass to the aider command */
   aiderExtraArgs?: string;
+  /** Code assistant tool to use */
+  codeAssistant: CodeAssistant;
   /** Enable two-staged planning: first select relevant files, then generate detailed implementation plans */
   twoStagePlanning: boolean;
   /** Run without making actual changes (no branch creation, no PR) */
@@ -30,7 +33,7 @@ export interface MainOptions {
   reasoningEffort?: ReasoningEffort;
   /** Extra arguments for repomix when generating context */
   repomixExtraArgs?: string;
-  /** Command to run after Aider applies changes. If it fails, Aider will try to fix it. */
+  /** Command to run after code assistant applies changes. If it fails, the assistant will try to fix it. */
   testCommand?: string;
 }
 
@@ -45,27 +48,31 @@ export async function main(options: MainOptions): Promise<void> {
     await configureGitUserDetailsIfNeeded();
   }
 
-  await runCommand('python', ['-m', 'pip', 'install', 'aider-install']);
-  await reshimToDetectNewTools();
-  await runCommand('uv', ['tool', 'uninstall', 'aider-chat'], { ignoreExitStatus: true });
-  await runCommand('aider-install', []);
-  await reshimToDetectNewTools();
+  // Install code assistant tools
+  if (options.codeAssistant === 'aider') {
+    await runCommand('python', ['-m', 'pip', 'install', 'aider-install']);
+    await reshimToDetectNewTools();
+    await runCommand('uv', ['tool', 'uninstall', 'aider-chat'], { ignoreExitStatus: true });
+    await runCommand('aider-install', []);
+    await reshimToDetectNewTools();
 
-  if (options.aiderExtraArgs?.includes('bedrock/')) {
-    await runCommand('uv', [
-      'tool',
-      'run',
-      '--from',
-      'aider-chat',
-      'pip',
-      'install',
-      '--upgrade',
-      '--upgrade-strategy',
-      'only-if-needed',
-      'boto3',
-    ]);
-    // await runCommand('aider', ['--install-main-branch', '--yes-always']);
+    if (options.aiderExtraArgs?.includes('bedrock/')) {
+      await runCommand('uv', [
+        'tool',
+        'run',
+        '--from',
+        'aider-chat',
+        'pip',
+        'install',
+        '--upgrade',
+        '--upgrade-strategy',
+        'only-if-needed',
+        'boto3',
+      ]);
+      // await runCommand('aider', ['--install-main-branch', '--yes-always']);
+    }
   }
+  // Claude Code is assumed to be already installed via npm/brew/etc.
 
   const issueInfo = await createIssueInfo(options);
   const issueText = YAML.stringify(issueInfo).trim();
@@ -107,17 +114,26 @@ ${planText}
     console.info(ansis.yellow(`Would create branch: ${branchName}`));
   }
 
-  // Build aider command arguments
-  const aiderArgs = buildAiderArgs(options, { prompt: prompt, resolutionPlan });
-  const aiderResult = await runCommand('aider', aiderArgs, {
-    env: { ...process.env, NO_COLOR: '1' },
-  });
-  let aiderAnswer = aiderResult.trim();
-  if (options.testCommand) {
-    aiderAnswer += await testAndFix(options, resolutionPlan);
+  // Execute code assistant
+  let assistantResult: string;
+  if (options.codeAssistant === 'aider') {
+    const aiderArgs = buildAiderArgs(options, { prompt: prompt, resolutionPlan });
+    assistantResult = await runCommand('aider', aiderArgs, {
+      env: { ...process.env, NO_COLOR: '1' },
+    });
+  } else {
+    const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt: prompt, resolutionPlan });
+    assistantResult = await runCommand('claude-code', claudeCodeArgs, {
+      env: { ...process.env, NO_COLOR: '1' },
+    });
   }
 
-  // Try commiting changes because aider may fail to commit changes due to pre-commit hooks
+  let assistantAnswer = assistantResult.trim();
+  if (options.testCommand) {
+    assistantAnswer += await testAndFix(options, resolutionPlan);
+  }
+
+  // Try commiting changes because code assistant may fail to commit changes due to pre-commit hooks
   await runCommand('git', ['commit', '-m', `fix: Close #${options.issueNumber}`, '--no-verify'], {
     ignoreExitStatus: true,
   });
@@ -133,11 +149,12 @@ ${planText}
 
 ${planText}
 `;
+  const assistantName = options.codeAssistant === 'aider' ? 'Aider' : 'Claude Code';
   prBody += `
-# Aider Log
+# ${assistantName} Log
 
 \`\`\`\`
-${aiderAnswer.slice(0, MAX_ANSWER_LENGTH - prBody.length)}
+${assistantAnswer.slice(0, MAX_ANSWER_LENGTH - prBody.length)}
 \`\`\`\``;
   prBody = prBody.replaceAll(/(?:\s*\n){2,}/g, '\n\n').trim();
   if (!options.dryRun) {
@@ -145,7 +162,11 @@ ${aiderAnswer.slice(0, MAX_ANSWER_LENGTH - prBody.length)}
     await runCommand('gh', ['pr', 'create', '--title', prTitle, '--body', prBody, '--repo', repoName]);
   } else {
     console.info(ansis.yellow(`Would create PR with title: ${prTitle}`));
-    console.info(ansis.yellow(`PR body would include the aider response and close issue #${options.issueNumber}`));
+    console.info(
+      ansis.yellow(
+        `PR body would include the ${assistantName.toLowerCase()} response and close issue #${options.issueNumber}`
+      )
+    );
   }
 
   console.info(`\nIssue #${options.issueNumber} processed successfully.`);

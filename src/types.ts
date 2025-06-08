@@ -134,3 +134,11 @@ export interface IssueInfo {
  * - 'high': More thorough reasoning (may be slower and use more tokens)
  */
 export type ReasoningEffort = 'low' | 'medium' | 'high';
+
+/**
+ * Represents the code assistant tool to use
+ *
+ * - 'aider': Use Aider for code changes
+ * - 'claude-code': Use Claude Code for code changes
+ */
+export type CodeAssistant = 'aider' | 'claude-code';

@@ -1,9 +1,14 @@
 import process from 'node:process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { DEFAULT_AIDER_EXTRA_ARGS, DEFAULT_MAX_TEST_ATTEMPTS, DEFAULT_REPOMIX_EXTRA_ARGS } from './defaultOptions.js';
+import {
+  DEFAULT_AIDER_EXTRA_ARGS,
+  DEFAULT_CODE_ASSISTANT,
+  DEFAULT_MAX_TEST_ATTEMPTS,
+  DEFAULT_REPOMIX_EXTRA_ARGS,
+} from './defaultOptions.js';
 import { main } from './main.js';
-import type { ReasoningEffort } from './types.js';
+import type { CodeAssistant, ReasoningEffort } from './types.js';
 
 // Parse command line arguments using yargs
 const argv = await yargs(hideBin(process.argv))
@@ -33,9 +38,16 @@ const argv = await yargs(hideBin(process.argv))
     type: 'string',
     choices: ['low', 'medium', 'high'],
   })
+  .option('code-assistant', {
+    alias: 'c',
+    description: 'Code assistant tool to use for making changes',
+    type: 'string',
+    choices: ['aider', 'claude-code'],
+    default: DEFAULT_CODE_ASSISTANT,
+  })
   .option('aider-extra-args', {
     alias: 'a',
-    description: 'Additional arguments to pass to the aider command',
+    description: 'Additional arguments to pass to the aider command (only used when code-assistant is aider)',
     type: 'string',
     default: DEFAULT_AIDER_EXTRA_ARGS,
   })
@@ -47,7 +59,8 @@ const argv = await yargs(hideBin(process.argv))
   })
   .option('test-command', {
     alias: 't',
-    description: 'Command to run after Aider applies changes. If it fails, Aider will try to fix it.',
+    description:
+      'Command to run after the code assistant applies changes. If it fails, the assistant will try to fix it.',
     type: 'string',
   })
   .option('max-test-attempts', {
@@ -77,6 +90,7 @@ if (argv['working-dir']) {
 
 await main({
   aiderExtraArgs: argv['aider-extra-args'],
+  codeAssistant: argv['code-assistant'] as CodeAssistant,
   dryRun: argv['dry-run'],
   twoStagePlanning: argv['two-staged-planning'],
   issueNumber: argv['issue-number'],
