@@ -3,16 +3,13 @@ import { runCommand } from './spawn.js';
 import type { GitHubComment, GitHubIssue, IssueInfo } from './types.js';
 import { stripHtmlComments } from './utils.js';
 
-function extractIssueReferences(text: string): number[] {
-  const regex = /(?:^|\s)#(\d+)/g;
-  const numbers: number[] = [];
-  for (;;) {
-    const match = regex.exec(text);
-    if (!match) break;
-
-    numbers.push(Number.parseInt(match[1], 10));
+export async function createIssueInfo(options: MainOptions): Promise<IssueInfo> {
+  const processedIssues = new Set<number>();
+  const issueInfo = await fetchIssueData(options.issueNumber, processedIssues);
+  if (!issueInfo) {
+    throw new Error(`Failed to fetch issue data for issue #${options.issueNumber}`);
   }
-  return [...new Set(numbers)]; // Remove duplicates
+  return issueInfo;
 }
 
 async function fetchIssueData(
@@ -71,11 +68,14 @@ async function fetchIssueData(
   return issueInfo;
 }
 
-export async function createIssueInfo(options: MainOptions): Promise<IssueInfo> {
-  const processedIssues = new Set<number>();
-  const issueInfo = await fetchIssueData(options.issueNumber, processedIssues);
-  if (!issueInfo) {
-    throw new Error(`Failed to fetch issue data for issue #${options.issueNumber}`);
+function extractIssueReferences(text: string): number[] {
+  const regex = /(?:^|\s)#(\d+)/g;
+  const numbers: number[] = [];
+  for (;;) {
+    const match = regex.exec(text);
+    if (!match) break;
+
+    numbers.push(Number.parseInt(match[1], 10));
   }
-  return issueInfo;
+  return [...new Set(numbers)]; // Remove duplicates
 }
