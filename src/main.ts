@@ -9,7 +9,7 @@ import { planCodeChanges } from './plan.js';
 import { configureGitUserDetailsIfNeeded } from './profile.js';
 import { runCommand } from './spawn.js';
 import { testAndFix } from './test.js';
-import type { CodeAssistant, ReasoningEffort } from './types.js';
+import type { CodingTool, ReasoningEffort } from './types.js';
 
 /**
  * Options for the main function
@@ -17,8 +17,10 @@ import type { CodeAssistant, ReasoningEffort } from './types.js';
 export interface MainOptions {
   /** Additional arguments to pass to the aider command */
   aiderExtraArgs?: string;
-  /** Code assistant tool to use */
-  codeAssistant: CodeAssistant;
+  /** Additional arguments to pass to the claude-code command */
+  claudeCodeExtraArgs?: string;
+  /** Coding tool to use */
+  codingTool: CodingTool;
   /** Enable two-staged planning: first select relevant files, then generate detailed implementation plans */
   twoStagePlanning: boolean;
   /** Run without making actual changes (no branch creation, no PR) */
@@ -33,7 +35,7 @@ export interface MainOptions {
   reasoningEffort?: ReasoningEffort;
   /** Extra arguments for repomix when generating context */
   repomixExtraArgs?: string;
-  /** Command to run after code assistant applies changes. If it fails, the assistant will try to fix it. */
+  /** Command to run after coding tool applies changes. If it fails, the assistant will try to fix it. */
   testCommand?: string;
 }
 
@@ -48,8 +50,8 @@ export async function main(options: MainOptions): Promise<void> {
     await configureGitUserDetailsIfNeeded();
   }
 
-  // Install code assistant tools
-  if (options.codeAssistant === 'aider') {
+  // Install coding tools
+  if (options.codingTool === 'aider') {
     await runCommand('python', ['-m', 'pip', 'install', 'aider-install']);
     await reshimToDetectNewTools();
     await runCommand('uv', ['tool', 'uninstall', 'aider-chat'], { ignoreExitStatus: true });
@@ -72,7 +74,7 @@ export async function main(options: MainOptions): Promise<void> {
       // await runCommand('aider', ['--install-main-branch', '--yes-always']);
     }
   }
-  // Claude Code is assumed to be already installed via npm/brew/etc.
+  // Claude Code will be run via npx to get the latest version
 
   const issueInfo = await createIssueInfo(options);
   const issueText = YAML.stringify(issueInfo).trim();
@@ -114,16 +116,16 @@ ${planText}
     console.info(ansis.yellow(`Would create branch: ${branchName}`));
   }
 
-  // Execute code assistant
+  // Execute coding tool
   let assistantResult: string;
-  if (options.codeAssistant === 'aider') {
+  if (options.codingTool === 'aider') {
     const aiderArgs = buildAiderArgs(options, { prompt: prompt, resolutionPlan });
     assistantResult = await runCommand('aider', aiderArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
   } else {
     const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt: prompt, resolutionPlan });
-    assistantResult = await runCommand('claude-code', claudeCodeArgs, {
+    assistantResult = await runCommand('npx', claudeCodeArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
   }
@@ -133,7 +135,7 @@ ${planText}
     assistantAnswer += await testAndFix(options, resolutionPlan);
   }
 
-  // Try commiting changes because code assistant may fail to commit changes due to pre-commit hooks
+  // Try commiting changes because coding tool may fail to commit changes due to pre-commit hooks
   await runCommand('git', ['commit', '-m', `fix: Close #${options.issueNumber}`, '--no-verify'], {
     ignoreExitStatus: true,
   });
@@ -149,7 +151,7 @@ ${planText}
 
 ${planText}
 `;
-  const assistantName = options.codeAssistant === 'aider' ? 'Aider' : 'Claude Code';
+  const assistantName = options.codingTool === 'aider' ? 'Aider' : 'Claude Code';
   prBody += `
 # ${assistantName} Log
 

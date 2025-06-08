@@ -136,9 +136,9 @@ export interface IssueInfo {
 export type ReasoningEffort = 'low' | 'medium' | 'high';
 
 /**
- * Represents the code assistant tool to use
+ * Represents the coding tool to use
  *
  * - 'aider': Use Aider for code changes
  * - 'claude-code': Use Claude Code for code changes
  */
-export type CodeAssistant = 'aider' | 'claude-code';
+export type CodingTool = 'aider' | 'claude-code';

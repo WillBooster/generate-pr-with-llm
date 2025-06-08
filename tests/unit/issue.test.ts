@@ -10,6 +10,7 @@ describe('createIssueInfo', () => {
       dryRun: false,
       issueNumber: 32,
       maxTestAttempts: 3,
+      codingTool: 'aider',
     };
 
     const result = await createIssueInfo(options);
@@ -36,6 +37,7 @@ describe('createIssueInfo', () => {
       dryRun: false,
       issueNumber: 3,
       maxTestAttempts: 3,
+      codingTool: 'aider',
     };
 
     const result = await createIssueInfo(options);
@@ -70,6 +72,7 @@ describe('createIssueInfo', () => {
       dryRun: false,
       issueNumber: 8,
       maxTestAttempts: 3,
+      codingTool: 'aider',
     };
 
     const result = await createIssueInfo(options);
@@ -103,6 +106,7 @@ describe('createIssueInfo', () => {
       dryRun: false,
       issueNumber: 12,
       maxTestAttempts: 3,
+      codingTool: 'aider',
     };
 
     const result = await createIssueInfo(options);
@@ -153,6 +157,7 @@ describe('createIssueInfo', () => {
         dryRun: false,
         issueNumber: 9,
         maxTestAttempts: 3,
+        codingTool: 'aider',
       };
 
       const result = await createIssueInfo(options);

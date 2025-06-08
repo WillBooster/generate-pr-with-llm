@@ -58,24 +58,24 @@ Please analyze the output and fix the errors.
 }
 
 /**
- * Helper function to run code assistant with a fix prompt
+ * Helper function to run coding tool with a fix prompt
  */
 export async function runAssistantFix(
   options: MainOptions,
   prompt: string,
   resolutionPlan?: ResolutionPlan
 ): Promise<string> {
-  const assistantName = options.codeAssistant === 'aider' ? 'Aider' : 'Claude Code';
+  const assistantName = options.codingTool === 'aider' ? 'Aider' : 'Claude Code';
   let assistantResult: string;
 
-  if (options.codeAssistant === 'aider') {
+  if (options.codingTool === 'aider') {
     const aiderArgs = buildAiderArgs(options, { prompt, resolutionPlan });
     console.info(ansis.cyan(`Asking Aider to fix "${options.testCommand}"...`));
     assistantResult = await runCommand('aider', aiderArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
   } else {
-    const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt, resolutionPlan });
+    const claudeCodeArgs = buildClaudeCodeArgs({ prompt, resolutionPlan });
     console.info(ansis.cyan(`Asking Claude Code to fix "${options.testCommand}"...`));
     assistantResult = await runCommand('claude-code', claudeCodeArgs, {
       env: { ...process.env, NO_COLOR: '1' },
