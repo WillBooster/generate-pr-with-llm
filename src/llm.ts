@@ -50,7 +50,7 @@ export async function callLlmApi(
               },
             } satisfies AnthropicProviderOptions,
           };
-        } else if (provider === 'google') {
+        } else if (provider === 'gemini') {
           requestParams.providerOptions = {
             google: {
               thinkingConfig: {
@@ -159,7 +159,7 @@ export function supportsReasoning(provider: string, modelName: string): boolean 
       // Anthropic: only Claude 3.7 and Claude 4 models support thinking budget
       return /^claude-(opus-4|sonnet-4|3-7-sonnet)/.test(modelName);
 
-    case 'google':
+    case 'gemini':
       // Google: only Gemini 2.5 models support thinking budget
       return /^gemini-2\.5/.test(modelName);
 
