@@ -1,9 +1,15 @@
 import process from 'node:process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { DEFAULT_AIDER_EXTRA_ARGS, DEFAULT_MAX_TEST_ATTEMPTS, DEFAULT_REPOMIX_EXTRA_ARGS } from './defaultOptions.js';
+import {
+  DEFAULT_AIDER_EXTRA_ARGS,
+  DEFAULT_CLAUDE_CODE_EXTRA_ARGS,
+  DEFAULT_CODING_TOOL,
+  DEFAULT_MAX_TEST_ATTEMPTS,
+  DEFAULT_REPOMIX_EXTRA_ARGS,
+} from './defaultOptions.js';
 import { main } from './main.js';
-import type { ReasoningEffort } from './types.js';
+import type { CodingTool, ReasoningEffort } from './types.js';
 
 // Parse command line arguments using yargs
 const argv = await yargs(hideBin(process.argv))
@@ -33,11 +39,23 @@ const argv = await yargs(hideBin(process.argv))
     type: 'string',
     choices: ['low', 'medium', 'high'],
   })
+  .option('coding-tool', {
+    alias: 'c',
+    description: 'Coding tool to use for making changes',
+    type: 'string',
+    choices: ['aider', 'claude-code'],
+    default: DEFAULT_CODING_TOOL,
+  })
   .option('aider-extra-args', {
     alias: 'a',
-    description: 'Additional arguments to pass to the aider command',
+    description: 'Additional arguments to pass to the aider command (only used when coding-tool is aider)',
     type: 'string',
     default: DEFAULT_AIDER_EXTRA_ARGS,
+  })
+  .option('claude-code-extra-args', {
+    description: 'Additional arguments to pass to the claude-code command (only used when coding-tool is claude-code)',
+    type: 'string',
+    default: DEFAULT_CLAUDE_CODE_EXTRA_ARGS,
   })
   .option('repomix-extra-args', {
     alias: 'r',
@@ -47,7 +65,7 @@ const argv = await yargs(hideBin(process.argv))
   })
   .option('test-command', {
     alias: 't',
-    description: 'Command to run after Aider applies changes. If it fails, Aider will try to fix it.',
+    description: 'Command to run after the coding tool applies changes. If it fails, the assistant will try to fix it.',
     type: 'string',
   })
   .option('max-test-attempts', {
@@ -77,6 +95,8 @@ if (argv['working-dir']) {
 
 await main({
   aiderExtraArgs: argv['aider-extra-args'],
+  claudeCodeExtraArgs: argv['claude-code-extra-args'],
+  codingTool: argv['coding-tool'] as CodingTool,
   dryRun: argv['dry-run'],
   twoStagePlanning: argv['two-staged-planning'],
   issueNumber: argv['issue-number'],

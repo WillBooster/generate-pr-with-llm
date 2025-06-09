@@ -36,15 +36,15 @@ describe('model reasoning support detection', () => {
     });
 
     test('should correctly identify Google Gemini 2.5 models as supporting reasoning', () => {
-      expect(supportsReasoning('google', 'gemini-2.5-pro')).toBe(true);
-      expect(supportsReasoning('google', 'gemini-2.5-flash-preview')).toBe(true);
-      expect(supportsReasoning('google', 'gemini-2.5-flash-preview-04-17')).toBe(true);
+      expect(supportsReasoning('gemini', 'gemini-2.5-pro')).toBe(true);
+      expect(supportsReasoning('gemini', 'gemini-2.5-flash-preview')).toBe(true);
+      expect(supportsReasoning('gemini', 'gemini-2.5-flash-preview-04-17')).toBe(true);
     });
 
     test('should correctly identify older Google Gemini models as NOT supporting reasoning', () => {
-      expect(supportsReasoning('google', 'gemini-1.5-pro')).toBe(false);
-      expect(supportsReasoning('google', 'gemini-1.5-flash')).toBe(false);
-      expect(supportsReasoning('google', 'gemini-pro')).toBe(false);
+      expect(supportsReasoning('gemini', 'gemini-1.5-pro')).toBe(false);
+      expect(supportsReasoning('gemini', 'gemini-1.5-flash')).toBe(false);
+      expect(supportsReasoning('gemini', 'gemini-pro')).toBe(false);
     });
 
     test('should correctly identify Bedrock Anthropic Claude models as supporting reasoning', () => {

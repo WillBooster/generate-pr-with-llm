@@ -1,5 +1,6 @@
 import ansis from 'ansis';
 import { buildAiderArgs } from './aider.js';
+import { buildClaudeCodeArgs } from './claudeCode.js';
 import type { MainOptions } from './main.js';
 import type { ResolutionPlan } from './plan.js';
 import { runCommand, spawnAsync } from './spawn.js';
@@ -50,26 +51,36 @@ ${testResult.stderr}
 Please analyze the output and fix the errors.
 `.trim();
 
-    fixResult += await runAiderFix(options, prompt, resolutionPlan);
+    fixResult += await runAssistantFix(options, prompt, resolutionPlan);
   }
 
   return fixResult;
 }
 
 /**
- * Helper function to run Aider with a fix prompt
+ * Helper function to run coding tool with a fix prompt
  */
-export async function runAiderFix(
+export async function runAssistantFix(
   options: MainOptions,
   prompt: string,
   resolutionPlan?: ResolutionPlan
 ): Promise<string> {
-  const aiderArgs = buildAiderArgs(options, { prompt, resolutionPlan });
+  const assistantName = options.codingTool === 'aider' ? 'Aider' : 'Claude Code';
+  let assistantResult: string;
 
-  console.info(ansis.cyan(`Asking Aider to fix "${options.testCommand}"...`));
-  const aiderResult = await runCommand('aider', aiderArgs, {
-    env: { ...process.env, NO_COLOR: '1' },
-  });
+  if (options.codingTool === 'aider') {
+    const aiderArgs = buildAiderArgs(options, { prompt, resolutionPlan });
+    console.info(ansis.cyan(`Asking Aider to fix "${options.testCommand}"...`));
+    assistantResult = await runCommand('aider', aiderArgs, {
+      env: { ...process.env, NO_COLOR: '1' },
+    });
+  } else {
+    const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt, resolutionPlan });
+    console.info(ansis.cyan(`Asking Claude Code to fix "${options.testCommand}"...`));
+    assistantResult = await runCommand('npx', claudeCodeArgs, {
+      env: { ...process.env, NO_COLOR: '1' },
+    });
+  }
 
-  return `\n\n# Aider fix attempt for "${options.testCommand}"\n\n${aiderResult.trim()}`;
+  return `\n\n# ${assistantName} fix attempt for "${options.testCommand}"\n\n${assistantResult.trim()}`;
 }
