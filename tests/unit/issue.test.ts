@@ -2,102 +2,116 @@ import { describe, expect, test } from 'bun:test';
 import { createIssueInfo } from '../../src/issue.js';
 import type { MainOptions } from '../../src/main.js';
 
+const TIMEOUT = 20000;
+
 describe('createIssueInfo', () => {
   // Test for issue #32 - Basic issue functionality
-  test('should handle issue #32 (basic issue without references)', async () => {
-    const options: MainOptions = {
-      twoStagePlanning: false,
-      dryRun: false,
-      issueNumber: 32,
-      maxTestAttempts: 3,
-      codingTool: 'aider',
-    };
+  test(
+    'should handle issue #32 (basic issue without references)',
+    async () => {
+      const options: MainOptions = {
+        twoStagePlanning: false,
+        dryRun: false,
+        issueNumber: 32,
+        maxTestAttempts: 3,
+        codingTool: 'aider',
+      };
 
-    const result = await createIssueInfo(options);
+      const result = await createIssueInfo(options);
 
-    // Basic properties
-    expect(result.author).toBe('exKAZUu');
-    expect(result.title).toBe('feat: Strip HTML comments from issue/PR descriptions before LLM processing');
+      // Basic properties
+      expect(result.author).toBe('exKAZUu');
+      expect(result.title).toBe('feat: Strip HTML comments from issue/PR descriptions before LLM processing');
 
-    // Description content
-    expect(result.description).toContain('Current Behavior:');
-    expect(result.description).toContain('Problem:');
-    expect(result.description).toContain('Proposed Solution:');
+      // Description content
+      expect(result.description).toContain('Current Behavior:');
+      expect(result.description).toContain('Problem:');
+      expect(result.description).toContain('Proposed Solution:');
 
-    // Issue characteristics
-    expect(result.comments).toEqual([]);
-    expect(result.code_changes).toBeUndefined(); // Not a PR
-    expect(result.referenced_issues).toBeUndefined(); // No references
-  });
+      // Issue characteristics
+      expect(result.comments).toEqual([]);
+      expect(result.code_changes).toBeUndefined(); // Not a PR
+      expect(result.referenced_issues).toBeUndefined(); // No references
+    },
+    { timeout: TIMEOUT }
+  );
 
   // Test for PR #3 - Basic pull request functionality
-  test('should handle PR #3 (basic PR without references)', async () => {
-    const options: MainOptions = {
-      twoStagePlanning: false,
-      dryRun: false,
-      issueNumber: 3,
-      maxTestAttempts: 3,
-      codingTool: 'aider',
-    };
+  test(
+    'should handle PR #3 (basic PR without references)',
+    async () => {
+      const options: MainOptions = {
+        twoStagePlanning: false,
+        dryRun: false,
+        issueNumber: 3,
+        maxTestAttempts: 3,
+        codingTool: 'aider',
+      };
 
-    const result = await createIssueInfo(options);
+      const result = await createIssueInfo(options);
 
-    // Basic properties
-    expect(result.author).toBe('app/renovate');
-    expect(result.title).toBe('chore(deps): pin dependency python to 3.13.3');
+      // Basic properties
+      expect(result.author).toBe('app/renovate');
+      expect(result.title).toBe('chore(deps): pin dependency python to 3.13.3');
 
-    // Description content
-    expect(result.description).toContain('This PR contains the following updates:');
-    expect(result.description).toContain('python');
-    expect(result.description).toContain('3.x');
-    expect(result.description).toContain('3.13.3');
+      // Description content
+      expect(result.description).toContain('This PR contains the following updates:');
+      expect(result.description).toContain('python');
+      expect(result.description).toContain('3.x');
+      expect(result.description).toContain('3.13.3');
 
-    // HTML comments should be stripped
-    expect(result.description).not.toContain('<!--renovate-debug:');
-    expect(result.description).not.toContain('<!-- rebase-check -->');
+      // HTML comments should be stripped
+      expect(result.description).not.toContain('<!--renovate-debug:');
+      expect(result.description).not.toContain('<!-- rebase-check -->');
 
-    // PR characteristics
-    expect(result.comments).toEqual([]);
-    expect(result.code_changes).toBeDefined(); // Is a PR
-    expect(result.code_changes).toContain('action.yml');
-    expect(result.code_changes).toContain("-        python-version: '3.x'");
-    expect(result.code_changes).toContain("+        python-version: '3.13.3'");
-    expect(result.referenced_issues).toBeUndefined(); // No references
-  });
+      // PR characteristics
+      expect(result.comments).toEqual([]);
+      expect(result.code_changes).toBeDefined(); // Is a PR
+      expect(result.code_changes).toContain('action.yml');
+      expect(result.code_changes).toContain("-        python-version: '3.x'");
+      expect(result.code_changes).toContain("+        python-version: '3.13.3'");
+      expect(result.referenced_issues).toBeUndefined(); // No references
+    },
+    { timeout: TIMEOUT }
+  );
 
   // Test for issue #8 - Issue with references
-  test('should handle issue #8 (issue with references to #32)', async () => {
-    const options: MainOptions = {
-      twoStagePlanning: false,
-      dryRun: false,
-      issueNumber: 8,
-      maxTestAttempts: 3,
-      codingTool: 'aider',
-    };
+  test(
+    'should handle issue #8 (issue with references to #32)',
+    async () => {
+      const options: MainOptions = {
+        twoStagePlanning: false,
+        dryRun: false,
+        issueNumber: 8,
+        maxTestAttempts: 3,
+        codingTool: 'aider',
+      };
 
-    const result = await createIssueInfo(options);
+      const result = await createIssueInfo(options);
 
-    // Basic properties
-    expect(result.author).toBe('exKAZUu');
-    expect(result.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
+      // Basic properties
+      expect(result.author).toBe('exKAZUu');
+      expect(result.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
 
-    // Description content
-    expect(result.description).toContain('Modify `src/index.ts` to print "Hello World"');
+      // Description content
+      expect(result.description).toContain('Modify `src/index.ts` to print "Hello World"');
 
-    // Issue characteristics
-    expect(result.comments.length).toBeGreaterThan(0);
-    expect(result.comments.some((c) => c.body.includes('#32'))).toBe(true);
-    expect(result.code_changes).toBeUndefined(); // Not a PR
+      // Issue characteristics
+      expect(result.comments.length).toBeGreaterThan(0);
+      expect(result.comments.some((c) => c.body.includes('#32'))).toBe(true);
+      expect(result.code_changes).toBeUndefined(); // Not a PR
 
-    // Referenced issues
-    expect(result.referenced_issues).toBeDefined();
-    expect(result.referenced_issues?.length).toBe(1);
-    expect(result.referenced_issues?.[0].author).toBe('exKAZUu');
-    expect(result.referenced_issues?.[0].title).toBe(
-      'feat: Strip HTML comments from issue/PR descriptions before LLM processing'
-    );
-    expect(result.referenced_issues?.[0].code_changes).toBeUndefined(); // Referenced issues don't include diffs
-  });
+      // Referenced issues
+      expect(result.referenced_issues).toBeDefined();
+      expect(result.referenced_issues?.length).toBe(1);
+      expect(result.referenced_issues?.[0].author).toBe('exKAZUu');
+      expect(result.referenced_issues?.[0].title).toBe(
+        'feat: Strip HTML comments from issue/PR descriptions before LLM processing'
+      );
+      expect(result.referenced_issues?.[0].code_changes).toBeUndefined(); // Referenced issues don't include diffs
+    },
+    { timeout: TIMEOUT }
+  );
 
   // Test for PR #12 - PR with nested references (#12 → #8 → #32)
   test(
@@ -149,7 +163,7 @@ describe('createIssueInfo', () => {
       expect(issue32?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
       expect(issue32?.referenced_issues).toBeUndefined(); // End of chain
     },
-    { timeout: 15000 }
+    { timeout: TIMEOUT }
   );
 
   // Test for PR #9 - PR with large bundled file diff that should be truncated
@@ -207,6 +221,6 @@ describe('createIssueInfo', () => {
         'feat: print "Hello World" on `src/index.ts` (<- example issue)'
       );
     },
-    { timeout: 15000 }
+    { timeout: TIMEOUT }
   );
 });
