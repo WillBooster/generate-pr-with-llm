@@ -74,7 +74,6 @@ export async function main(options: MainOptions): Promise<void> {
       // await runCommand('aider', ['--install-main-branch', '--yes-always']);
     }
   }
-  // Claude Code will be run via npx to get the latest version
 
   const issueInfo = await createIssueInfo(options);
   const issueText = YAML.stringify(issueInfo).trim();
