@@ -1,14 +1,15 @@
 import child_process from 'node:child_process';
 import ansis from 'ansis';
 import YAML from 'yaml';
-import { buildAiderArgs } from './aider.js';
-import { buildClaudeCodeArgs } from './claudeCode.js';
 import { configureEnvVars } from './env.js';
 import { createIssueInfo } from './issue.js';
 import { planCodeChanges } from './plan.js';
 import { configureGitUserDetailsIfNeeded } from './profile.js';
 import { runCommand } from './spawn.js';
 import { testAndFix } from './test.js';
+import { buildAiderArgs } from './tools/aider.js';
+import { buildClaudeCodeArgs } from './tools/claudeCode.js';
+import { buildCodexArgs } from './tools/codex.js';
 import type { CodingTool, ReasoningEffort } from './types.js';
 
 /**
@@ -19,6 +20,8 @@ export interface MainOptions {
   aiderExtraArgs?: string;
   /** Additional arguments to pass to the claude-code command */
   claudeCodeExtraArgs?: string;
+  /** Additional arguments to pass to the codex command */
+  codexExtraArgs?: string;
   /** Coding tool to use */
   codingTool: CodingTool;
   /** Enable two-staged planning: first select relevant files, then generate detailed implementation plans */
@@ -88,6 +91,8 @@ export async function main(options: MainOptions): Promise<void> {
         options.repomixExtraArgs
       ))) ||
     undefined;
+  console.log('Resolution plan:', resolutionPlan);
+
   const planText =
     resolutionPlan && 'plan' in resolutionPlan && resolutionPlan.plan
       ? `
@@ -104,7 +109,6 @@ ${issueText}
 
 ${planText}
 `.trim();
-  console.log('Resolution plan:', resolutionPlan);
 
   const now = new Date();
 
@@ -122,9 +126,14 @@ ${planText}
     assistantResult = await runCommand('aider', aiderArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
-  } else {
+  } else if (options.codingTool === 'claude-code') {
     const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt: prompt, resolutionPlan });
     assistantResult = await runCommand('npx', claudeCodeArgs, {
+      env: { ...process.env, NO_COLOR: '1' },
+    });
+  } else {
+    const codexArgs = buildCodexArgs(options, { prompt: prompt, resolutionPlan });
+    assistantResult = await runCommand('npx', codexArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
   }
@@ -150,7 +159,8 @@ ${planText}
 
 ${planText}
 `;
-  const assistantName = options.codingTool === 'aider' ? 'Aider' : 'Claude Code';
+  const assistantName =
+    options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
   prBody += `
 # ${assistantName} Log
 

@@ -15,6 +15,7 @@ const dryRun = core.getInput('dry-run', { required: false }) === 'true';
 const codingTool = (core.getInput('coding-tool', { required: false }) || DEFAULT_CODING_TOOL) as CodingTool;
 const aiderExtraArgs = core.getInput('aider-extra-args', { required: false });
 const claudeCodeExtraArgs = core.getInput('claude-code-extra-args', { required: false });
+const codexExtraArgs = core.getInput('codex-extra-args', { required: false });
 const repomixExtraArgs = core.getInput('repomix-extra-args', { required: false });
 const testCommand = core.getInput('test-command', { required: false });
 const maxTestAttemptsInput = core.getInput('max-test-attempts', { required: false });
@@ -27,8 +28,10 @@ if (reasoningEffort && !['low', 'medium', 'high'].includes(reasoningEffort)) {
   process.exit(1);
 }
 
-if (!['aider', 'claude-code'].includes(codingTool)) {
-  console.error(`Invalid coding-tool value: ${codingTool}. Using default. Valid values are: aider, claude-code`);
+if (!['aider', 'claude-code', 'codex'].includes(codingTool)) {
+  console.error(
+    `Invalid coding-tool value: ${codingTool}. Using default. Valid values are: aider, claude-code, codex`
+  );
   process.exit(1);
 }
 
@@ -38,6 +41,7 @@ fs.rmSync(path.join(os.homedir(), '.config', 'gh'), { force: true, recursive: tr
 void main({
   aiderExtraArgs,
   claudeCodeExtraArgs,
+  codexExtraArgs,
   codingTool,
   twoStagePlanning,
   dryRun,

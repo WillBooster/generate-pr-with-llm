@@ -1,4 +1,4 @@
-name: Generate PR with Claude Opus 4
+name: Generate PR with Aider and Claude Opus 4
 
 on:
   issues:
@@ -24,9 +24,9 @@ jobs:
           planning-model: bedrock/us.anthropic.claude-opus-4-20250514-v1:0
           reasoning-effort: high
           repomix-extra-args: "--compress --remove-empty-lines --include 'src/**/*.ts'"
-          aider-extra-args: '--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --chat-language English'
+          aider-extra-args: '--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --no-gitignore'
           test-command: 'yarn check-for-ai'
-          max-test-attempts: 10
+          max-test-attempts: 5
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

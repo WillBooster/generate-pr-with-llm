@@ -1,0 +1,35 @@
+name: Generate PR with Claude Code
+
+on:
+  issues:
+    types:
+      - labeled
+
+jobs:
+  generate-pr:
+    runs-on: ubuntu-latest
+    # Only run if the label name includes 'ai-pr' and an issue number is available
+    if: contains(github.event.label.name, 'ai-pr') && github.event.issue.number != null
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install
+      - name: Generate PR with AI
+        uses: WillBooster/generate-pr-with-llm@v2
+        with:
+          # required options
+          issue-number: ${{ github.event.issue.number }}
+          # optional options
+          coding-tool: claude-code
+          claude-code-extra-args: '--allowedTools Bash Edit Write'
+          planning-model: gemini/gemini-2.5-pro-preview-06-05
+          reasoning-effort: high
+          repomix-extra-args: "--compress --remove-empty-lines --include 'src/**/*.ts'"
+          test-command: 'yarn check-for-ai'
+          max-test-attempts: 5
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-west-2
+          GH_TOKEN: ${{ secrets.PUBLIC_GH_BOT_PAT }}

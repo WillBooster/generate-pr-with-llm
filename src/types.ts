@@ -140,5 +140,6 @@ export type ReasoningEffort = 'low' | 'medium' | 'high';
  *
  * - 'aider': Use Aider for code changes
  * - 'claude-code': Use Claude Code for code changes
+ * - 'codex': Use codex for code changes
  */
-export type CodingTool = 'aider' | 'claude-code';
+export type CodingTool = 'aider' | 'claude-code' | 'codex';
