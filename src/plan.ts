@@ -174,7 +174,7 @@ Create a detailed, step-by-step plan outlining how to address the issue effectiv
 Your plan should:
 - Focus on implementation details for each file that needs modification
 - Be clear and actionable for a developer to follow
-- Exclude testing procedures as those will be handled separately
+- Exclude testing procedures unless users explicitly request
 
 GitHub Issue:
 ${issueFence}yml
