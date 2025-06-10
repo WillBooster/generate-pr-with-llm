@@ -1,6 +1,7 @@
 import ansis from 'ansis';
 import { buildAiderArgs } from './aider.js';
 import { buildClaudeCodeArgs } from './claudeCode.js';
+import { buildCodexArgs } from './codex.js';
 import type { MainOptions } from './main.js';
 import type { ResolutionPlan } from './plan.js';
 import { runCommand, spawnAsync } from './spawn.js';
@@ -65,7 +66,12 @@ export async function runAssistantFix(
   prompt: string,
   resolutionPlan?: ResolutionPlan
 ): Promise<string> {
-  const assistantName = options.codingTool === 'aider' ? 'Aider' : 'Claude Code';
+  const assistantName =
+    options.codingTool === 'aider'
+      ? 'Aider'
+      : options.codingTool === 'claude-code'
+        ? 'Claude Code'
+        : 'Codex';
   let assistantResult: string;
 
   if (options.codingTool === 'aider') {
@@ -74,10 +80,16 @@ export async function runAssistantFix(
     assistantResult = await runCommand('aider', aiderArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
-  } else {
+  } else if (options.codingTool === 'claude-code') {
     const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt, resolutionPlan });
     console.info(ansis.cyan(`Asking Claude Code to fix "${options.testCommand}"...`));
     assistantResult = await runCommand('npx', claudeCodeArgs, {
+      env: { ...process.env, NO_COLOR: '1' },
+    });
+  } else {
+    const codexArgs = buildCodexArgs(options, { prompt, resolutionPlan });
+    console.info(ansis.cyan(`Asking Codex to fix "${options.testCommand}"...`));
+    assistantResult = await runCommand('npx', codexArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
   }

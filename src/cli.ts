@@ -4,6 +4,7 @@ import { hideBin } from 'yargs/helpers';
 import {
   DEFAULT_AIDER_EXTRA_ARGS,
   DEFAULT_CLAUDE_CODE_EXTRA_ARGS,
+  DEFAULT_CODEX_EXTRA_ARGS,
   DEFAULT_CODING_TOOL,
   DEFAULT_MAX_TEST_ATTEMPTS,
   DEFAULT_REPOMIX_EXTRA_ARGS,
@@ -43,7 +44,7 @@ const argv = await yargs(hideBin(process.argv))
     alias: 'c',
     description: 'Coding tool to use for making changes',
     type: 'string',
-    choices: ['aider', 'claude-code'],
+    choices: ['aider', 'claude-code', 'codex'],
     default: DEFAULT_CODING_TOOL,
   })
   .option('aider-extra-args', {
@@ -56,6 +57,11 @@ const argv = await yargs(hideBin(process.argv))
     description: 'Additional arguments to pass to the claude-code command (only used when coding-tool is claude-code)',
     type: 'string',
     default: DEFAULT_CLAUDE_CODE_EXTRA_ARGS,
+  })
+  .option('codex-extra-args', {
+    description: 'Additional arguments to pass to the codex command (only used when coding-tool is codex)',
+    type: 'string',
+    default: DEFAULT_CODEX_EXTRA_ARGS,
   })
   .option('repomix-extra-args', {
     alias: 'r',
@@ -96,6 +102,7 @@ if (argv['working-dir']) {
 await main({
   aiderExtraArgs: argv['aider-extra-args'],
   claudeCodeExtraArgs: argv['claude-code-extra-args'],
+  codexExtraArgs: argv['codex-extra-args'],
   codingTool: argv['coding-tool'] as CodingTool,
   dryRun: argv['dry-run'],
   twoStagePlanning: argv['two-staged-planning'],
