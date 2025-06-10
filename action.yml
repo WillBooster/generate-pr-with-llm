@@ -26,13 +26,17 @@ inputs:
     required: false
     default: '--compress --remove-empty-lines --include "src/**/*.{ts,tsx},**/*.md"'
   aider-extra-args:
-    description: 'Additional arguments to pass to the aider command (only used when coding-tool is aider)'
+    description: 'Additional arguments to pass to the aider command ("--yes-always --no-check-update --no-show-release-notes" is always applied)'
     required: false
-    default: '--model gemini/gemini-2.5-pro-preview-06-05 --edit-format diff-fenced --chat-language English'
+    default: '--no-gitignore --no-show-model-warnings --model gemini/gemini-2.5-pro-preview-06-05 --edit-format diff-fenced'
   claude-code-extra-args:
-    description: 'Additional arguments to pass to the claude-code command (only used when coding-tool is claude-code)'
+    description: 'Additional arguments to pass to the claude-code command ("--print" is always applied)'
     required: false
-    default: ''
+    default: '--allowedTools Bash Edit Write'
+  codex-extra-args:
+    description: 'Additional arguments to pass to the codex command (nothing is always applied)'
+    required: false
+    default: '--approval-mode full-auto --quiet'
   test-command:
     description: 'Command to run after the coding tool applies changes. If it fails, the assistant will try to fix it.'
     required: false

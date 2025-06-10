@@ -1,10 +1,10 @@
 import ansis from 'ansis';
-import { buildAiderArgs } from './aider.js';
-import { buildClaudeCodeArgs } from './claudeCode.js';
-import { buildCodexArgs } from './codex.js';
 import type { MainOptions } from './main.js';
 import type { ResolutionPlan } from './plan.js';
 import { runCommand, spawnAsync } from './spawn.js';
+import { buildAiderArgs } from './tools/aider.js';
+import { buildClaudeCodeArgs } from './tools/claudeCode.js';
+import { buildCodexArgs } from './tools/codex.js';
 import { parseCommandLineArgs } from './utils.js';
 
 export async function testAndFix(options: MainOptions, resolutionPlan?: ResolutionPlan): Promise<string> {
@@ -67,11 +67,7 @@ export async function runAssistantFix(
   resolutionPlan?: ResolutionPlan
 ): Promise<string> {
   const assistantName =
-    options.codingTool === 'aider'
-      ? 'Aider'
-      : options.codingTool === 'claude-code'
-        ? 'Claude Code'
-        : 'Codex';
+    options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
   let assistantResult: string;
 
   if (options.codingTool === 'aider') {

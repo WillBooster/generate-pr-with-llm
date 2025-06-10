@@ -1,15 +1,15 @@
 import child_process from 'node:child_process';
 import ansis from 'ansis';
 import YAML from 'yaml';
-import { buildAiderArgs } from './aider.js';
-import { buildClaudeCodeArgs } from './claudeCode.js';
-import { buildCodexArgs } from './codex.js';
 import { configureEnvVars } from './env.js';
 import { createIssueInfo } from './issue.js';
 import { planCodeChanges } from './plan.js';
 import { configureGitUserDetailsIfNeeded } from './profile.js';
 import { runCommand } from './spawn.js';
 import { testAndFix } from './test.js';
+import { buildAiderArgs } from './tools/aider.js';
+import { buildClaudeCodeArgs } from './tools/claudeCode.js';
+import { buildCodexArgs } from './tools/codex.js';
 import type { CodingTool, ReasoningEffort } from './types.js';
 
 /**
@@ -91,6 +91,8 @@ export async function main(options: MainOptions): Promise<void> {
         options.repomixExtraArgs
       ))) ||
     undefined;
+  console.log('Resolution plan:', resolutionPlan);
+
   const planText =
     resolutionPlan && 'plan' in resolutionPlan && resolutionPlan.plan
       ? `
@@ -107,7 +109,6 @@ ${issueText}
 
 ${planText}
 `.trim();
-  console.log('Resolution plan:', resolutionPlan);
 
   const now = new Date();
 
@@ -159,11 +160,7 @@ ${planText}
 ${planText}
 `;
   const assistantName =
-    options.codingTool === 'aider'
-      ? 'Aider'
-      : options.codingTool === 'claude-code'
-        ? 'Claude Code'
-        : 'Codex';
+    options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
   prBody += `
 # ${assistantName} Log
 
