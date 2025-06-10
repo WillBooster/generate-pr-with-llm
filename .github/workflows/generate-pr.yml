@@ -44,4 +44,5 @@ jobs:
           AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
           # for Anthropic
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # for gh commands
           GH_TOKEN: ${{ secrets.PUBLIC_GH_BOT_PAT }}
