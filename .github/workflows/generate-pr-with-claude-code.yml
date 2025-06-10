@@ -32,4 +32,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-west-2
+          CLAUDE_CODE_USE_BEDROCK: 1
           GH_TOKEN: ${{ secrets.PUBLIC_GH_BOT_PAT }}
