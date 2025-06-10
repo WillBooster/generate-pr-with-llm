@@ -10,6 +10,8 @@ A CLI and GitHub Action that automatically generate pull requests using AI (spec
 - For development:
   - [asdf](https://asdf-vm.com/)
 - For execution:
+  - Node.js and npx (for `@openai/codex` and `@anthropic-ai/claude-code`)
+  - Python (for `aider`)
   - [gh](https://github.com/cli/cli)
 
 ## Usage

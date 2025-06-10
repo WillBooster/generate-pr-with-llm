@@ -49,17 +49,18 @@ const argv = await yargs(hideBin(process.argv))
   })
   .option('aider-extra-args', {
     alias: 'a',
-    description: 'Additional arguments to pass to the aider command (only used when coding-tool is aider)',
+    description:
+      'Additional arguments to pass to the aider command ("--yes-always --no-check-update --no-show-release-notes" is always applied)',
     type: 'string',
     default: DEFAULT_AIDER_EXTRA_ARGS,
   })
   .option('claude-code-extra-args', {
-    description: 'Additional arguments to pass to the claude-code command (only used when coding-tool is claude-code)',
+    description: 'Additional arguments to pass to the claude-code command ("--print" is always applied)',
     type: 'string',
     default: DEFAULT_CLAUDE_CODE_EXTRA_ARGS,
   })
   .option('codex-extra-args', {
-    description: 'Additional arguments to pass to the codex command (only used when coding-tool is codex)',
+    description: 'Additional arguments to pass to the codex command (nothing is always applied)',
     type: 'string',
     default: DEFAULT_CODEX_EXTRA_ARGS,
   })

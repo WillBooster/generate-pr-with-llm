@@ -18,7 +18,7 @@ inputs:
     description: 'Constrains effort on reasoning for reasoning models. Supported values are low, medium, and high. Reducing reasoning effort can result in faster responses and fewer tokens used.'
     required: false
   coding-tool:
-    description: 'Coding tool to use for making changes (aider or claude-code)'
+    description: 'Coding tool to use for making changes (aider, claude-code or codex)'
     required: false
     default: 'aider'
   repomix-extra-args:
