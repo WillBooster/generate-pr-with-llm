@@ -7,6 +7,7 @@ import { planCodeChanges } from './plan.js';
 import { configureGitUserDetailsIfNeeded } from './profile.js';
 import { runCommand } from './spawn.js';
 import { testAndFix } from './test.js';
+import { truncateText } from './text.js';
 import { buildAiderArgs } from './tools/aider.js';
 import { buildClaudeCodeArgs } from './tools/claudeCode.js';
 import { buildCodexArgs } from './tools/codex.js';
@@ -42,7 +43,7 @@ export interface MainOptions {
   testCommand?: string;
 }
 
-const MAX_ANSWER_LENGTH = 65000;
+const MAX_PR_BODY_LENGTH = 60000; // GitHub's limit is 65536, leave some buffer
 
 export async function main(options: MainOptions): Promise<void> {
   configureEnvVars();
@@ -138,9 +139,9 @@ ${planText}
     });
   }
 
-  let assistantAnswer = assistantResult.trim();
+  let assistantResponse = assistantResult.trim();
   if (options.testCommand) {
-    assistantAnswer += await testAndFix(options, resolutionPlan);
+    assistantResponse += await testAndFix(options, resolutionPlan);
   }
 
   // Try commiting changes because coding tool may fail to commit changes due to pre-commit hooks
@@ -157,17 +158,19 @@ ${planText}
   const prTitle = getHeaderOfFirstCommit();
   let prBody = `Close #${options.issueNumber}
 
-${planText}
+${truncateText(planText, (planText.length * (planText.length + assistantResponse.length)) / MAX_PR_BODY_LENGTH)}
 `;
   const assistantName =
     options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
+
   prBody += `
 # ${assistantName} Log
 
 \`\`\`\`
-${assistantAnswer.slice(0, MAX_ANSWER_LENGTH - prBody.length)}
+${truncateText(assistantResponse, (assistantResponse.length * (planText.length + assistantResponse.length)) / MAX_PR_BODY_LENGTH)}
 \`\`\`\``;
   prBody = prBody.replaceAll(/(?:\s*\n){2,}/g, '\n\n').trim();
+
   if (!options.dryRun) {
     const repoName = getGitRepoName();
     await runCommand('gh', ['pr', 'create', '--title', prTitle, '--body', prBody, '--repo', repoName]);

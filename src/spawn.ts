@@ -1,7 +1,9 @@
-import type { SpawnOptionsWithoutStdio } from 'node:child_process';
-import type { SpawnSyncReturns } from 'node:child_process';
+import type { SpawnOptionsWithoutStdio, SpawnSyncReturns } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import ansis from 'ansis';
+import { truncateText } from './text.js';
+
+const MAX_LOG_LENGTH = 3000;
 
 export async function runCommand(
   command: string,
@@ -14,11 +16,11 @@ export async function runCommand(
 
   console.info('stdout: ---------------------');
   const ret = await spawnAsync(command, args, spawnOptions);
-  if (spawnOptions.truncateStdout) console.info(truncateOutput(ret.stdout));
+  if (spawnOptions.truncateStdout) console.info(truncateText(ret.stdout, MAX_LOG_LENGTH));
   const stderr = ret.stderr.trim();
   if (stderr) {
     console.info('stderr: ---------------------');
-    const truncatedStderr = truncateOutput(stderr);
+    const truncatedStderr = truncateText(stderr, MAX_LOG_LENGTH);
     console.info(ansis.yellow(truncatedStderr));
   }
   console.info('-----------------------------');
@@ -74,19 +76,4 @@ export async function spawnAsync(
       reject(error);
     }
   });
-}
-
-const TRUNCATE_THRESHOLD = 3000;
-
-/**
- * Truncate output to prevent overwhelming console logs
- */
-function truncateOutput(output: string): string {
-  if (output.length <= TRUNCATE_THRESHOLD) {
-    return output;
-  }
-
-  const truncated = output.slice(0, TRUNCATE_THRESHOLD);
-  const omitted = output.length - TRUNCATE_THRESHOLD;
-  return `${truncated}\n\n... (${omitted} characters truncated) ...`;
 }

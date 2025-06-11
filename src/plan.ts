@@ -174,6 +174,7 @@ Create a detailed, step-by-step plan outlining how to address the issue effectiv
 Your plan should:
 - Focus on implementation details for each file that needs modification
 - Be clear and actionable for a developer to follow
+- Prefer showing diffs rather than complete file contents when describing changes
 - Exclude testing procedures unless users explicitly request
 
 GitHub Issue:
@@ -204,6 +205,7 @@ Your task is to:
 Your plan should:
 - Focus on implementation details for each file that needs modification
 - Be clear and actionable for a developer to follow
+- Prefer showing diffs rather than complete file contents when describing changes
 - Exclude testing procedures as those will be handled separately
 
 GitHub Issue:
