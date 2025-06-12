@@ -1,12 +1,12 @@
 /**
- * Truncate long text
+ * Truncate long text.
  */
-export function truncateText(output: string, maxLength: number): string {
-  if (output.length <= maxLength) {
-    return output;
+export function truncateText(text: string, maxLength: number): string {
+  if (text.length <= maxLength) {
+    return text;
   }
 
-  const truncated = output.slice(0, maxLength);
-  const omitted = output.length - maxLength;
-  return `${truncated}\n\n... (${omitted} characters truncated) ...`;
+  const truncated = text.slice(0, maxLength);
+  const omitted = text.length - maxLength;
+  return `${truncated}\n\n... (${Math.floor(omitted)} characters truncated) ...`;
 }
