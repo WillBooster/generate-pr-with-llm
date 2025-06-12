@@ -1,4 +1,4 @@
-name: Generate PR (example)
+name: Generate PR with Aider and Gemini 2.5 Pro (example)
 
 on:
   issues:
@@ -45,5 +45,9 @@ jobs:
           AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
           # for Anthropic
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # for Claude Code
+          ANTHROPIC_MODEL: 'us.anthropic.claude-opus-4-20250514-v1:0'
+          ANTHROPIC_SMALL_FAST_MODEL: 'us.anthropic.claude-3-5-haiku-20241022-v1:0'
+          CLAUDE_CODE_USE_BEDROCK: 1
           # for gh commands
           GH_TOKEN: ${{ secrets.PUBLIC_GH_BOT_PAT }}

@@ -23,7 +23,7 @@ jobs:
           # optional options
           coding-tool: codex
           codex-extra-args: '--approval-mode full-auto --quiet'
-          planning-model: gemini/gemini-2.5-pro-preview-06-05
+          planning-model: openai/o4-mini
           reasoning-effort: high
           repomix-extra-args: "--compress --remove-empty-lines --include 'src/**/*.ts'"
           test-command: 'yarn check-for-ai'

@@ -23,12 +23,14 @@ jobs:
           # optional options
           coding-tool: claude-code
           claude-code-extra-args: '--allowedTools Bash Edit Write'
-          planning-model: gemini/gemini-2.5-pro-preview-06-05
+          planning-model: bedrock/us.anthropic.claude-opus-4-20250514-v1:0
           reasoning-effort: high
           repomix-extra-args: "--compress --remove-empty-lines --include 'src/**/*.ts'"
           test-command: 'yarn check-for-ai'
           max-test-attempts: 5
         env:
+          ANTHROPIC_MODEL: 'us.anthropic.claude-opus-4-20250514-v1:0'
+          ANTHROPIC_SMALL_FAST_MODEL: 'us.anthropic.claude-3-5-haiku-20241022-v1:0'
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-west-2
