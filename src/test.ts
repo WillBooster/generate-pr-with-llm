@@ -1,5 +1,6 @@
 import ansis from 'ansis';
 import type { MainOptions } from './main.js';
+import { findDistinctFence } from './markdown.js';
 import type { ResolutionPlan } from './plan.js';
 import { runCommand, spawnAsync } from './spawn.js';
 import { buildAiderArgs } from './tools/aider.js';
@@ -34,20 +35,22 @@ export async function testAndFix(options: MainOptions, resolutionPlan?: Resoluti
       break;
     }
 
+    const stdoutFence = findDistinctFence(testResult.stdout);
+    const stderrFence = findDistinctFence(testResult.stderr);
     const prompt = `
 The previous changes were applied, but the test command \`${options.testCommand}\` failed.
 
 Exit code: ${testResult.status}
 
 Stdout:
-\`\`\`
+${stdoutFence}
 ${testResult.stdout}
-\`\`\`
+${stdoutFence}
 
 Stderr:
-\`\`\`
+${stderrFence}
 ${testResult.stderr}
-\`\`\`
+${stderrFence}
 
 Please analyze the output and fix the errors.
 `.trim();

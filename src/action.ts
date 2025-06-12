@@ -29,9 +29,7 @@ if (reasoningEffort && !['low', 'medium', 'high'].includes(reasoningEffort)) {
 }
 
 if (!['aider', 'claude-code', 'codex'].includes(codingTool)) {
-  console.error(
-    `Invalid coding-tool value: ${codingTool}. Using default. Valid values are: aider, claude-code, codex`
-  );
+  console.error(`Invalid coding-tool value: ${codingTool}. Using default. Valid values are: aider, claude-code, codex`);
   process.exit(1);
 }
 

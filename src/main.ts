@@ -3,6 +3,7 @@ import ansis from 'ansis';
 import YAML from 'yaml';
 import { configureEnvVars } from './env.js';
 import { createIssueInfo } from './issue.js';
+import { findDistinctFence } from './markdown.js';
 import { planCodeChanges } from './plan.js';
 import { configureGitUserDetailsIfNeeded } from './profile.js';
 import { runCommand } from './spawn.js';
@@ -102,11 +103,15 @@ export async function main(options: MainOptions): Promise<void> {
 ${resolutionPlan.plan}
 `.trim()
       : '';
+  const issueFence = findDistinctFence(issueText);
   const prompt = `
-Modify the code to resolve the following GitHub issue:
-\`\`\`\`yml
+Modify the code to resolve the GitHub issue${planText ? ' based on the plan' : ''}.
+
+# Issue
+
+${issueFence}yml
 ${issueText}
-\`\`\`\`
+${issueFence}
 
 ${planText}
 `.trim();
@@ -145,6 +150,7 @@ ${planText}
   }
 
   // Try commiting changes because coding tool may fail to commit changes due to pre-commit hooks
+  await runCommand('git', ['add', '-A'], { ignoreExitStatus: true });
   await runCommand('git', ['commit', '-m', `fix: Close #${options.issueNumber}`, '--no-verify'], {
     ignoreExitStatus: true,
   });
@@ -163,12 +169,13 @@ ${truncateText(planText, (planText.length * (planText.length + assistantResponse
   const assistantName =
     options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
 
+  const responseFence = findDistinctFence(assistantResponse);
   prBody += `
 # ${assistantName} Log
 
-\`\`\`\`
+${responseFence}
 ${truncateText(assistantResponse, (assistantResponse.length * (planText.length + assistantResponse.length)) / MAX_PR_BODY_LENGTH)}
-\`\`\`\``;
+${responseFence}`;
   prBody = prBody.replaceAll(/(?:\s*\n){2,}/g, '\n\n').trim();
 
   if (!options.dryRun) {
