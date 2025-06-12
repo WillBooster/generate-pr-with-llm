@@ -40,6 +40,12 @@ Claude Code with Planning of Gemini 2.5 Pro:
 bun start --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-06-05 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool claude-code
 ```
 
+Codex with Planning of Gemini 2.5 Pro:
+
+```sh
+bun start --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-06-05 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
+```
+
 #### Supported Model Format
 
 The tool requires **model names defined on [llmlite](https://docs.litellm.ai/docs/providers)** in the format `provider/model-name`:

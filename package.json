@@ -12,7 +12,7 @@
     "dist/"
   ],
   "scripts": {
-    "build": "build-ts app --input src/action.ts --input src/cli.ts --bundleBuiltins undici",
+    "build": "build-ts app --input src/action.ts --input src/cli.ts",
     "check-for-ai": "bun install > /dev/null && bun run cleanup && bun run typecheck && bun run test --silent",
     "cleanup": "bun --bun wb lint --fix --format",
     "format": "bun --bun wb lint --format",

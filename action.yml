@@ -51,8 +51,13 @@ inputs:
 
 # Define the runs configuration
 runs:
-  using: 'node20'
-  main: 'dist/action.js'
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+    - name: Run action
+      run: node ${{ github.action_path }}/dist/action.js
+      shell: bash
 
 # Add branding to make your action stand out in the marketplace
 branding:
