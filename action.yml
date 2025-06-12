@@ -2,7 +2,6 @@ name: 'Generate PR with AI'
 description: 'A GitHub Action that generates pull requests using AI (LLM).'
 author: 'WillBooster Inc.'
 
-# Define the inputs for your action
 inputs:
   issue-number:
     description: 'The issue (or PR) number to reference when generating the PR'
@@ -49,17 +48,26 @@ inputs:
     required: false
     default: 'false'
 
-# Define the runs configuration
 runs:
   using: 'composite'
   steps:
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
     - name: Run action
       run: node ${{ github.action_path }}/dist/action.js
       shell: bash
+      env:
+        INPUT_ISSUE-NUMBER: ${{ inputs.issue-number }}
+        INPUT_PLANNING-MODEL: ${{ inputs.planning-model }}
+        INPUT_TWO-STAGED-PLANNING: ${{ inputs.two-staged-planning }}
+        INPUT_REASONING-EFFORT: ${{ inputs.reasoning-effort }}
+        INPUT_CODING-TOOL: ${{ inputs.coding-tool }}
+        INPUT_REPOMIX-EXTRA-ARGS: ${{ inputs.repomix-extra-args }}
+        INPUT_AIDER-EXTRA-ARGS: ${{ inputs.aider-extra-args }}
+        INPUT_CLAUDE-CODE-EXTRA-ARGS: ${{ inputs.claude-code-extra-args }}
+        INPUT_CODEX-EXTRA-ARGS: ${{ inputs.codex-extra-args }}
+        INPUT_TEST-COMMAND: ${{ inputs.test-command }}
+        INPUT_MAX-TEST-ATTEMPTS: ${{ inputs.max-test-attempts }}
+        INPUT_DRY-RUN: ${{ inputs.dry-run }}
 
-# Add branding to make your action stand out in the marketplace
 branding:
   icon: 'git-pull-request'
   color: 'blue'
