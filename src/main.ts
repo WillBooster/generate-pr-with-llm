@@ -162,9 +162,17 @@ ${planText}
 
   // Create a PR using GitHub CLI
   const prTitle = getHeaderOfFirstCommit();
-  let prBody = `Close #${options.issueNumber}
+  let prBody = `Close #${options.issueNumber}`;
 
-${truncateText(planText, (planText.length * (planText.length + assistantResponse.length)) / MAX_PR_BODY_LENGTH)}
+  if (options.planningModel) {
+    prBody += `
+
+**Planning Model:** ${options.planningModel}`;
+  }
+
+  prBody += `
+
+${truncateText(planText, (planText.length / (planText.length + assistantResponse.length)) * MAX_PR_BODY_LENGTH)}
 `;
   const assistantName =
     options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
@@ -174,7 +182,7 @@ ${truncateText(planText, (planText.length * (planText.length + assistantResponse
 # ${assistantName} Log
 
 ${responseFence}
-${truncateText(assistantResponse, (assistantResponse.length * (planText.length + assistantResponse.length)) / MAX_PR_BODY_LENGTH)}
+${truncateText(assistantResponse, (assistantResponse.length / (planText.length + assistantResponse.length)) * MAX_PR_BODY_LENGTH)}
 ${responseFence}`;
   prBody = prBody.replaceAll(/(?:\s*\n){2,}/g, '\n\n').trim();
 
