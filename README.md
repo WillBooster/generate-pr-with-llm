@@ -3,7 +3,9 @@
 [![Test](https://github.com/WillBooster/generate-pr-with-ai/actions/workflows/test.yml/badge.svg)](https://github.com/WillBooster/generate-pr-with-ai/actions/workflows/test.yml)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-A CLI and GitHub Action that automatically generate pull requests using AI (specifically, a Large Language Model or LLM).
+A CLI and GitHub Action that automatically generate pull requests using AI (specifically, Large Language Models or LLMs).
+
+This tool embodies the ultimate "Vibe Coding" experience, where humans can focus solely on writing issues while AI handles all the implementation details. Our vision is to create a workflow where developers only need to describe what they want, and the AI takes care of translating those requirements into working code.
 
 ## Requirements
 
