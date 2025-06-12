@@ -201,8 +201,8 @@ describe('createIssueInfo', () => {
       // Should contain the src/index.ts change
       expect(result.code_changes).toContain('src/index.ts');
 
-      // Should have truncated the large bundled dist/index.js file
-      expect(result.code_changes).toContain('dist/index.js');
+      // Should have truncated the large bundled dist/gen-pr.js file
+      expect(result.code_changes).toContain('dist/gen-pr.js');
       expect(result.code_changes).toContain('(large bundled/compiled file diff truncated)');
 
       // Should not contain the full bundled content (which would be very long)

@@ -1,14 +1,14 @@
 {
-  "name": "generate-pr-with-ai",
+  "name": "gen-pr",
   "version": "0.0.0-semantically-released",
   "private": true,
-  "repository": "github:WillBooster/generate-pr-with-ai",
+  "repository": "github:WillBooster/gen-pr",
   "license": "Apache-2.0",
   "author": "WillBooster Inc.",
   "type": "module",
-  "bin": "bin/cli.js",
+  "bin": "bin/gen-pr.js",
   "files": [
-    "bin/index.js",
+    "bin/gen-pr.js",
     "dist/"
   ],
   "scripts": {
@@ -53,5 +53,8 @@
     "undici": "7.10.0",
     "yaml": "2.8.0",
     "yargs": "18.0.0"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

@@ -1,6 +1,6 @@
-# generate-pr-with-ai
+# gen-pr
 
-[![Test](https://github.com/WillBooster/generate-pr-with-ai/actions/workflows/test.yml/badge.svg)](https://github.com/WillBooster/generate-pr-with-ai/actions/workflows/test.yml)
+[![Test](https://github.com/WillBooster/gen-pr/actions/workflows/test.yml/badge.svg)](https://github.com/WillBooster/gen-pr/actions/workflows/test.yml)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 A CLI and GitHub Action that automatically generate pull requests using AI (specifically, Large Language Models or LLMs).
@@ -36,25 +36,25 @@ See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/wor
 Gemini 2.5 Pro (for planning) and Aider (for coding):
 
 ```sh
-bun start --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-06-05 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model gemini/gemini-2.5-pro-preview-06-05 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test"
+npx --yes gen-pr --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-06-05 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model gemini/gemini-2.5-pro-preview-06-05 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test"
 ```
 
 Claude Opus 4 on Bedrock (for planning) and Aider (for coding):
 
 ```sh
-bun start --issue-number 8 --planning-model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --test-cmd='yarn check-for-ai' --auto-test"
+npx --yes gen-pr --issue-number 8 --planning-model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --test-cmd='yarn check-for-ai' --auto-test"
 ```
 
 Gemini 2.5 Pro (for planning) and Claude Code (for coding):
 
 ```sh
-bun start --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-06-05 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool claude-code
+npx --yes gen-pr --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-06-05 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool claude-code
 ```
 
 o4-mini (for planning) and Codex (for coding):
 
 ```sh
-bun start --issue-number 8 --planning-model openai/o4-mini --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
+npx --yes gen-pr --issue-number 8 --planning-model openai/o4-mini --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
 ```
 
 #### Supported Model Format
