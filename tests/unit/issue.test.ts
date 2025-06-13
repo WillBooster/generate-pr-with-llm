@@ -91,7 +91,7 @@ describe('createIssueInfo', () => {
 
       // Basic properties
       expect(result.author).toBe('exKAZUu');
-      expect(result.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
+      expect(result.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue for debugging gen-pr)');
 
       // Description content
       expect(result.description).toContain('Modify `src/index.ts` to print "Hello World"');
@@ -150,7 +150,7 @@ describe('createIssueInfo', () => {
       const issue8 = result.referenced_issues?.[0];
       expect(issue8).toBeDefined();
       expect(issue8?.author).toBe('exKAZUu');
-      expect(issue8?.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue)');
+      expect(issue8?.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue for debugging gen-pr)');
       expect(issue8?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
       expect(issue8?.referenced_issues).toBeDefined();
       expect(issue8?.referenced_issues?.length).toBe(1);
@@ -201,8 +201,8 @@ describe('createIssueInfo', () => {
       // Should contain the src/index.ts change
       expect(result.code_changes).toContain('src/index.ts');
 
-      // Should have truncated the large bundled dist/gen-pr.js file
-      expect(result.code_changes).toContain('dist/gen-pr.js');
+      // Should have truncated the large bundled dist/index.js file
+      expect(result.code_changes).toContain('dist/index.js');
       expect(result.code_changes).toContain('(large bundled/compiled file diff truncated)');
 
       // Should not contain the full bundled content (which would be very long)
@@ -218,7 +218,7 @@ describe('createIssueInfo', () => {
       expect(result.referenced_issues).toBeDefined();
       expect(result.referenced_issues?.length).toBe(1);
       expect(result.referenced_issues?.[0].title).toBe(
-        'feat: print "Hello World" on `src/index.ts` (<- example issue)'
+        'feat: print "Hello World" on `src/index.ts` (<- example issue for debugging gen-pr)'
       );
     },
     { timeout: TIMEOUT }
