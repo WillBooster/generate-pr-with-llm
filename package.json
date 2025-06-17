@@ -26,6 +26,7 @@
     "typecheck": "bun --bun wb typecheck"
   },
   "prettier": "@willbooster/prettier-config",
+  "dependencies": {},
   "devDependencies": {
     "@actions/core": "1.11.1",
     "@ai-sdk/amazon-bedrock": "3.0.0-canary.19",
@@ -45,7 +46,7 @@
     "ansis": "4.1.0",
     "build-ts": "15.0.5",
     "conventional-changelog-conventionalcommits": "9.0.0",
-    "lefthook": "1.11.13",
+    "lefthook": "1.11.14",
     "prettier": "3.5.3",
     "semantic-release": "24.2.5",
     "sort-package-json": "3.2.1",
