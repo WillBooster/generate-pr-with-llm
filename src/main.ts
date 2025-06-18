@@ -131,21 +131,27 @@ ${planText}
   if (options.codingTool === 'aider') {
     const aiderArgs = buildAiderArgs(options, { prompt: prompt, resolutionPlan });
     toolCommand = buildToolCommandString('aider', aiderArgs, prompt);
-    assistantResult = await runCommand('aider', aiderArgs, {
-      env: { ...process.env, NO_COLOR: '1' },
-    });
+    assistantResult = (
+      await runCommand('aider', aiderArgs, {
+        env: { ...process.env, NO_COLOR: '1' },
+      })
+    ).stdout;
   } else if (options.codingTool === 'claude-code') {
     const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt: prompt, resolutionPlan });
     toolCommand = buildToolCommandString('npx', claudeCodeArgs, prompt);
-    assistantResult = await runCommand('npx', claudeCodeArgs, {
-      env: { ...process.env, NO_COLOR: '1' },
-    });
+    assistantResult = (
+      await runCommand('npx', claudeCodeArgs, {
+        env: { ...process.env, NO_COLOR: '1' },
+      })
+    ).stdout;
   } else {
     const codexArgs = buildCodexArgs(options, { prompt: prompt, resolutionPlan });
     toolCommand = buildToolCommandString('npx', codexArgs, prompt);
-    assistantResult = await runCommand('npx', codexArgs, {
-      env: { ...process.env, NO_COLOR: '1' },
-    });
+    assistantResult = (
+      await runCommand('npx', codexArgs, {
+        env: { ...process.env, NO_COLOR: '1' },
+      })
+    ).stdout;
   }
 
   let assistantResponse = assistantResult.trim();
@@ -155,9 +161,17 @@ ${planText}
 
   // Try commiting changes because coding tool may fail to commit changes due to pre-commit hooks
   await runCommand('git', ['add', '-A'], { ignoreExitStatus: true });
-  await runCommand('git', ['commit', '-m', `fix: Close #${options.issueNumber}`, '--no-verify'], {
-    ignoreExitStatus: true,
-  });
+  if (
+    (
+      await runCommand('git', ['commit', '-m', `fix: Close #${options.issueNumber}`], {
+        ignoreExitStatus: true,
+      })
+    ).status !== 0
+  ) {
+    await runCommand('git', ['commit', '-m', `fix: Close #${options.issueNumber}`, '--no-verify'], {
+      ignoreExitStatus: true,
+    });
+  }
   if (!options.dryRun) {
     await runCommand('git', ['push', 'origin', branchName, '--no-verify']);
   } else {

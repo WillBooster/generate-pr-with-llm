@@ -9,7 +9,7 @@ export async function runCommand(
   command: string,
   args: string[],
   options?: SpawnOptionsWithoutStdio & { ignoreExitStatus?: boolean; truncateStdout?: boolean }
-): Promise<string> {
+): Promise<Omit<SpawnSyncReturns<string>, 'output' | 'error'>> {
   const { ignoreExitStatus, ...spawnOptions } = options ?? {};
   const argsText = args.map((a) => (a.includes(' ') ? `"${a.replaceAll('"', '"')}"` : a)).join(' ');
   console.info(ansis.green(`$ ${command} ${argsText}`));
@@ -28,7 +28,7 @@ export async function runCommand(
   if (!ignoreExitStatus && ret.status !== 0 && ret.status !== null) {
     process.exit(ret.status);
   }
-  return ret.stdout;
+  return ret;
 }
 
 export async function spawnAsync(

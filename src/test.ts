@@ -76,21 +76,27 @@ export async function runAssistantFix(
   if (options.codingTool === 'aider') {
     const aiderArgs = buildAiderArgs(options, { prompt, resolutionPlan });
     console.info(ansis.cyan(`Asking Aider to fix "${options.testCommand}"...`));
-    assistantResult = await runCommand('aider', aiderArgs, {
-      env: { ...process.env, NO_COLOR: '1' },
-    });
+    assistantResult = (
+      await runCommand('aider', aiderArgs, {
+        env: { ...process.env, NO_COLOR: '1' },
+      })
+    ).stdout;
   } else if (options.codingTool === 'claude-code') {
     const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt, resolutionPlan });
     console.info(ansis.cyan(`Asking Claude Code to fix "${options.testCommand}"...`));
-    assistantResult = await runCommand('npx', claudeCodeArgs, {
-      env: { ...process.env, NO_COLOR: '1' },
-    });
+    assistantResult = (
+      await runCommand('npx', claudeCodeArgs, {
+        env: { ...process.env, NO_COLOR: '1' },
+      })
+    ).stdout;
   } else {
     const codexArgs = buildCodexArgs(options, { prompt, resolutionPlan });
     console.info(ansis.cyan(`Asking Codex to fix "${options.testCommand}"...`));
-    assistantResult = await runCommand('npx', codexArgs, {
-      env: { ...process.env, NO_COLOR: '1' },
-    });
+    assistantResult = (
+      await runCommand('npx', codexArgs, {
+        env: { ...process.env, NO_COLOR: '1' },
+      })
+    ).stdout;
   }
 
   return `\n\n# ${assistantName} fix attempt for "${options.testCommand}"\n\n${assistantResult.trim()}`;

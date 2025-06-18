@@ -22,7 +22,7 @@ async function fetchIssueData(
   }
   processedIssues.add(issueNumber);
 
-  const issueResult = await runCommand(
+  const { stdout: issueResult } = await runCommand(
     'gh',
     ['issue', 'view', issueNumber.toString(), '--json', 'author,title,body,labels,comments,url'],
     { ignoreExitStatus: true }
@@ -47,7 +47,7 @@ async function fetchIssueData(
   };
 
   if (issue.url?.includes('/pull/') && !isReferenced) {
-    const prDiff = await runCommand('gh', ['pr', 'diff', issueNumber.toString()], {
+    const { stdout: prDiff } = await runCommand('gh', ['pr', 'diff', issueNumber.toString()], {
       ignoreExitStatus: true,
       truncateStdout: true,
     });

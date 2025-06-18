@@ -2,10 +2,10 @@ import ansis from 'ansis';
 import { runCommand } from './spawn.js';
 
 export async function configureGitUserDetailsIfNeeded(): Promise<void> {
-  const gitUserName = (await runCommand('git', ['config', 'user.name'], { ignoreExitStatus: true })).trim();
+  const gitUserName = (await runCommand('git', ['config', 'user.name'], { ignoreExitStatus: true })).stdout.trim();
   if (!gitUserName) {
     console.log(ansis.dim('Git user.name not set. Attempting to configure from GitHub profile...'));
-    const githubNameOutput = (await runCommand('gh', ['api', 'user', '--jq', '.name'])).trim();
+    const githubNameOutput = (await runCommand('gh', ['api', 'user', '--jq', '.name'])).stdout.trim();
     if (githubNameOutput && githubNameOutput !== 'null') {
       const nameToSet = githubNameOutput.replace(/^"|"$/g, ''); // Remove potential surrounding quotes
       await runCommand('git', ['config', 'user.name', nameToSet]);
@@ -15,10 +15,10 @@ export async function configureGitUserDetailsIfNeeded(): Promise<void> {
     }
   }
 
-  const gitUserEmail = (await runCommand('git', ['config', 'user.email'], { ignoreExitStatus: true })).trim();
+  const gitUserEmail = (await runCommand('git', ['config', 'user.email'], { ignoreExitStatus: true })).stdout.trim();
   if (!gitUserEmail) {
     console.log(ansis.dim('Git user.email not set. Attempting to configure from GitHub profile...'));
-    const githubEmailOutput = (await runCommand('gh', ['api', 'user', '--jq', '.email'])).trim();
+    const githubEmailOutput = (await runCommand('gh', ['api', 'user', '--jq', '.email'])).stdout.trim();
     if (githubEmailOutput && githubEmailOutput !== 'null') {
       const emailToSet = githubEmailOutput.replace(/^"|"$/g, ''); // Remove potential surrounding quotes
       await runCommand('git', ['config', 'user.email', emailToSet]);
