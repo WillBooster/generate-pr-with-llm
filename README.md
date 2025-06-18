@@ -38,25 +38,25 @@ See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/wor
 Gemini 2.5 Pro (for planning) and Aider (for coding):
 
 ```sh
-npx --yes gen-pr --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-06-05 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model gemini/gemini-2.5-pro-preview-06-05 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test"
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-06-05 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model gemini/gemini-2.5-pro-preview-06-05 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test"
 ```
 
 Claude Opus 4 on Bedrock (for planning) and Aider (for coding):
 
 ```sh
-npx --yes gen-pr --issue-number 8 --planning-model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --test-cmd='yarn check-for-ai' --auto-test"
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --test-cmd='yarn check-for-ai' --auto-test"
 ```
 
 Gemini 2.5 Pro (for planning) and Claude Code (for coding):
 
 ```sh
-npx --yes gen-pr --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-06-05 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool claude-code
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model gemini/gemini-2.5-pro-preview-06-05 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool claude-code
 ```
 
 o4-mini (for planning) and Codex (for coding):
 
 ```sh
-npx --yes gen-pr --issue-number 8 --planning-model openai/o4-mini --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model openai/o4-mini --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
 ```
 
 #### Supported Model Format
