@@ -1,3 +1,5 @@
+![Cover](./cover.svg)
+
 # gen-pr
 
 [![Test](https://github.com/WillBooster/gen-pr/actions/workflows/test.yml/badge.svg)](https://github.com/WillBooster/gen-pr/actions/workflows/test.yml)
