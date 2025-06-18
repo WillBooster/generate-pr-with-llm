@@ -171,15 +171,15 @@ ${planText}
   if (options.planningModel) {
     prBody += `
 
-**Planning Model:** ${options.planningModel}`;
+- **Planning Model:** ${options.planningModel}`;
   }
 
   const assistantName =
     options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
 
   prBody += `
-**Coding Tool:** ${assistantName}
-**Command:** \`${toolCommand}\``;
+- **Coding Tool:** ${assistantName}
+- **Coding Command:** \`${toolCommand}\``;
 
   prBody += `
 
