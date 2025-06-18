@@ -127,18 +127,22 @@ ${planText}
 
   // Execute coding tool
   let assistantResult: string;
+  let toolCommand: string;
   if (options.codingTool === 'aider') {
     const aiderArgs = buildAiderArgs(options, { prompt: prompt, resolutionPlan });
+    toolCommand = buildToolCommandString('aider', aiderArgs, prompt);
     assistantResult = await runCommand('aider', aiderArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
   } else if (options.codingTool === 'claude-code') {
     const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt: prompt, resolutionPlan });
+    toolCommand = buildToolCommandString('npx', claudeCodeArgs, prompt);
     assistantResult = await runCommand('npx', claudeCodeArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
   } else {
     const codexArgs = buildCodexArgs(options, { prompt: prompt, resolutionPlan });
+    toolCommand = buildToolCommandString('npx', codexArgs, prompt);
     assistantResult = await runCommand('npx', codexArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
@@ -167,15 +171,20 @@ ${planText}
   if (options.planningModel) {
     prBody += `
 
-**Planning Model:** ${options.planningModel}`;
+- **Planning Model:** ${options.planningModel}`;
   }
+
+  const assistantName =
+    options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
+
+  prBody += `
+- **Coding Tool:** ${assistantName}
+- **Coding Command:** \`${toolCommand}\``;
 
   prBody += `
 
 ${truncateText(planText, (planText.length / (planText.length + assistantResponse.length)) * MAX_PR_BODY_LENGTH)}
 `;
-  const assistantName =
-    options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
 
   const responseFence = findDistinctFence(assistantResponse);
   prBody += `
@@ -230,4 +239,20 @@ function getHeaderOfFirstCommit(): string {
     stdio: 'pipe',
   });
   return firstCommitResult.stdout.trim().split('\n')[0];
+}
+
+/**
+ * Builds a command string for display, replacing the prompt argument with ...
+ */
+function buildToolCommandString(command: string, args: string[], prompt: string): string {
+  const escapedArgs = args.map((arg) => {
+    if (arg === prompt) {
+      return '...';
+    }
+    if (arg.includes(' ') || arg.includes('"') || arg.includes("'")) {
+      return `"${arg.replace(/"/g, '\\"')}"`;
+    }
+    return arg;
+  });
+  return `${command} ${escapedArgs.join(' ')}`;
 }
