@@ -127,18 +127,22 @@ ${planText}
 
   // Execute coding tool
   let assistantResult: string;
+  let toolCommand: string;
   if (options.codingTool === 'aider') {
     const aiderArgs = buildAiderArgs(options, { prompt: prompt, resolutionPlan });
+    toolCommand = buildToolCommandString('aider', aiderArgs, prompt);
     assistantResult = await runCommand('aider', aiderArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
   } else if (options.codingTool === 'claude-code') {
     const claudeCodeArgs = buildClaudeCodeArgs(options, { prompt: prompt, resolutionPlan });
+    toolCommand = buildToolCommandString('npx', claudeCodeArgs, prompt);
     assistantResult = await runCommand('npx', claudeCodeArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
   } else {
     const codexArgs = buildCodexArgs(options, { prompt: prompt, resolutionPlan });
+    toolCommand = buildToolCommandString('npx', codexArgs, prompt);
     assistantResult = await runCommand('npx', codexArgs, {
       env: { ...process.env, NO_COLOR: '1' },
     });
@@ -170,12 +174,19 @@ ${planText}
 **Planning Model:** ${options.planningModel}`;
   }
 
+  const assistantName =
+    options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
+
+  prBody += `
+
+**Coding Tool:** ${assistantName}
+
+**Command:** \`${toolCommand}\``;
+
   prBody += `
 
 ${truncateText(planText, (planText.length / (planText.length + assistantResponse.length)) * MAX_PR_BODY_LENGTH)}
 `;
-  const assistantName =
-    options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
 
   const responseFence = findDistinctFence(assistantResponse);
   prBody += `
@@ -230,4 +241,22 @@ function getHeaderOfFirstCommit(): string {
     stdio: 'pipe',
   });
   return firstCommitResult.stdout.trim().split('\n')[0];
+}
+
+/**
+ * Builds a command string for display, excluding the prompt argument
+ */
+function buildToolCommandString(command: string, args: string[], prompt: string): string {
+  // Filter out the prompt from the arguments
+  const filteredArgs = args.filter((arg) => arg !== prompt);
+
+  // Escape arguments that contain spaces or special characters
+  const escapedArgs = filteredArgs.map((arg) => {
+    if (arg.includes(' ') || arg.includes('"') || arg.includes("'")) {
+      return `"${arg.replace(/"/g, '\\"')}"`;
+    }
+    return arg;
+  });
+
+  return `${command} ${escapedArgs.join(' ')}`;
 }
