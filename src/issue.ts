@@ -42,7 +42,7 @@ async function fetchIssueData(
     description: stripHtmlComments(issue.body),
     comments: issue.comments.map((c: GitHubComment) => ({
       author: c.author.login,
-      body: c.body,
+      body: stripHtmlComments(c.body),
     })),
   };
 
