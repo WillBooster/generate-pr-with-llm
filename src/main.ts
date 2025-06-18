@@ -178,9 +178,7 @@ ${planText}
     options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
 
   prBody += `
-
 **Coding Tool:** ${assistantName}
-
 **Command:** \`${toolCommand}\``;
 
   prBody += `
@@ -244,19 +242,17 @@ function getHeaderOfFirstCommit(): string {
 }
 
 /**
- * Builds a command string for display, excluding the prompt argument
+ * Builds a command string for display, replacing the prompt argument with ...
  */
 function buildToolCommandString(command: string, args: string[], prompt: string): string {
-  // Filter out the prompt from the arguments
-  const filteredArgs = args.filter((arg) => arg !== prompt);
-
-  // Escape arguments that contain spaces or special characters
-  const escapedArgs = filteredArgs.map((arg) => {
+  const escapedArgs = args.map((arg) => {
+    if (arg === prompt) {
+      return '...';
+    }
     if (arg.includes(' ') || arg.includes('"') || arg.includes("'")) {
       return `"${arg.replace(/"/g, '\\"')}"`;
     }
     return arg;
   });
-
   return `${command} ${escapedArgs.join(' ')}`;
 }
