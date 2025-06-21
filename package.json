@@ -44,7 +44,7 @@
     "@willbooster/wb": "8.1.13",
     "ai": "5.0.0-canary.24",
     "ansis": "4.1.0",
-    "build-ts": "15.0.5",
+    "build-ts": "15.0.6",
     "conventional-changelog-conventionalcommits": "9.0.0",
     "lefthook": "1.11.14",
     "prettier": "3.5.3",
