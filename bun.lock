@@ -17,7 +17,7 @@
         "@types/yargs": "17.0.33",
         "@willbooster/biome-config": "2.1.0",
         "@willbooster/prettier-config": "10.0.0",
-        "@willbooster/wb": "8.1.12",
+        "@willbooster/wb": "8.1.13",
         "ai": "5.0.0-canary.24",
         "ansis": "4.1.0",
         "build-ts": "15.0.5",
@@ -504,7 +504,7 @@
 
     "@willbooster/shared-lib-node": ["@willbooster/shared-lib-node@6.2.2", "", { "dependencies": { "dotenv": "16.5.0", "tree-kill": "1.2.2" } }, "sha512-PI2XEjKEjJKP6Pz1yM+RnrOZRBXJZQ8CJpImkhklaug87mo6+gVFSdImCMkWWweZEX164aTOg+hK1EliLU+qjA=="],
 
-    "@willbooster/wb": ["@willbooster/wb@8.1.12", "", { "dependencies": { "chalk": "5.4.1", "dotenv": "16.5.0", "globby": "14.1.0", "kill-port": "2.0.1", "minimal-promise-pool": "5.0.0", "tree-kill": "1.2.2", "yargs": "18.0.0" }, "bin": { "wb": "bin/index.js" } }, "sha512-Ga1vs3oxmftEr5TggGrfYEIta86kPJRGDs0oRmX/5sAoJX8oLEUqIpgnJZ4J9DJQ/J6zD3iU0yLeG6bDjbnGXw=="],
+    "@willbooster/wb": ["@willbooster/wb@8.1.13", "", { "dependencies": { "chalk": "5.4.1", "dotenv": "16.5.0", "globby": "14.1.0", "kill-port": "2.0.1", "minimal-promise-pool": "5.0.0", "tree-kill": "1.2.2", "yargs": "18.0.0" }, "bin": { "wb": "bin/index.js" } }, "sha512-qDBib0LpNVote5PchLREqHgMZvfccyDfhbNOxpOt2SvVXVkK0r/2Grjxl8dZeV3+31ILyJ/PsF76DxzC41aV7g=="],
 
     "acorn": ["acorn@8.15.0", "", { "bin": { "acorn": "bin/acorn" } }, "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg=="],
 
