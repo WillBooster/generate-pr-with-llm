@@ -94,7 +94,7 @@ describe('callLlmApi', () => {
         // THis should fail because 'invalid' is not a supported provider
         await callLlmApi('invalid/model', testMessages);
         expect.unreachable('Should have thrown an error');
-      } catch (error) {
+      } catch {
         expect(errorLogged).toBe(true);
         expect(exitCalled).toBe(true);
       } finally {
