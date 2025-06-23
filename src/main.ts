@@ -243,7 +243,7 @@ function getGitRepoName(): string {
     stdio: 'pipe',
   });
   const repoUrl = repoUrlResult.stdout.trim();
-  const repoMatch = repoUrl.match(/github\.com[\/:]([\w-]+\/[\w-]+)(\.git)?$/);
+  const repoMatch = repoUrl.match(/github\.com[/:]([\w-]+\/[\w-]+)(\.git)?$/);
   return repoMatch ? repoMatch[1] : '';
 }
 
