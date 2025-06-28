@@ -7,10 +7,10 @@
     [
       "@semantic-release/github",
       {
-        "successComment": false,
         "labels": ["r: semantic-release"],
         "releasedLabels": ["released :bookmark:"],
-        "failComment": false
+        "successCommentCondition": false,
+        "failCommentCondition": false
       }
     ]
   ]

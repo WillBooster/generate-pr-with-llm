@@ -13,7 +13,8 @@
   ],
   "scripts": {
     "build": "build-ts app --input src/action.ts --input src/cli.ts",
-    "check-for-ai": "bun install > /dev/null && bun run cleanup && bun run typecheck && bun run test --silent",
+    "check-all-for-ai": "bun run check-for-ai && bun run test --silent",
+    "check-for-ai": "bun install > /dev/null && bun run cleanup && bun run typecheck",
     "cleanup": "bun --bun wb lint --fix --format",
     "format": "bun --bun wb lint --format",
     "lint": "bun --bun wb lint",
@@ -22,7 +23,7 @@
     "release": "bun semantic-release && git tag -f v2 main && git push origin v2 --force",
     "start": "bun --env-file=.env src/cli.ts",
     "test": "bun wb test",
-    "test-local": "bun --env-file=.env test tests/unit-local",
+    "test-local": "bun --env-file=.env test test/unit-local",
     "typecheck": "bun --bun wb typecheck"
   },
   "prettier": "@willbooster/prettier-config",
