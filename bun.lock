@@ -17,7 +17,7 @@
         "@types/yargs": "17.0.33",
         "@willbooster/biome-config": "3.1.4",
         "@willbooster/prettier-config": "10.1.3",
-        "@willbooster/wb": "8.1.16",
+        "@willbooster/wb": "9.0.0",
         "ai": "5.0.0-canary.24",
         "ansis": "4.1.0",
         "build-ts": "15.0.8",
@@ -514,7 +514,7 @@
 
     "@willbooster/shared-lib-node": ["@willbooster/shared-lib-node@6.2.5", "", { "dependencies": { "dotenv": "16.6.1", "tree-kill": "1.2.2" } }, "sha512-9ijWZg8mFB/L5Txqx9Ht1EnRbbenjUt/2kGWa2uIAsk/hZ+0+6xFbAbTtZUqWCJeCs7b1pwYOyHPg4OdzpzLYA=="],
 
-    "@willbooster/wb": ["@willbooster/wb@8.1.16", "", { "dependencies": { "chalk": "5.4.1", "dotenv": "16.6.1", "globby": "14.1.0", "kill-port": "2.0.1", "minimal-promise-pool": "5.0.0", "tree-kill": "1.2.2", "yargs": "18.0.0" }, "bin": { "wb": "bin/index.js" } }, "sha512-SZEBlOzHM1Na4Pr9970OfBmUxanMewNXRNhQr7AX+8O5Wpdq+UGOsWnUZqlSELa7w3k299x5H7yLjl9Ldl8MPA=="],
+    "@willbooster/wb": ["@willbooster/wb@9.0.0", "", { "dependencies": { "chalk": "5.4.1", "dotenv": "17.0.0", "globby": "14.1.0", "kill-port": "2.0.1", "minimal-promise-pool": "5.0.0", "tree-kill": "1.2.2", "yargs": "18.0.0" }, "bin": { "wb": "bin/index.js" } }, "sha512-Iz2z9WEBIHPRwiB3xoLVnXACnFTfHcGpxY8NGdLrMDboUp8LzEKsNPHVdyqGdCiZZPzjoxkFRGXD/Y460sUu/A=="],
 
     "acorn": ["acorn@8.15.0", "", { "bin": { "acorn": "bin/acorn" } }, "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg=="],
 
@@ -654,7 +654,7 @@
 
     "dot-prop": ["dot-prop@5.3.0", "", { "dependencies": { "is-obj": "^2.0.0" } }, "sha512-QM8q3zDe58hqUqjraQOmzZ1LIH9SWQJTlEKCH4kJ2oQvLZk7RbQXvtDM2XEq3fwkV9CCvvH4LA0AV+ogFsBM2Q=="],
 
-    "dotenv": ["dotenv@16.6.1", "", {}, "sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow=="],
+    "dotenv": ["dotenv@17.0.0", "", {}, "sha512-A0BJ5lrpJVSfnMMXjmeO0xUnoxqsBHWCoqqTnGwGYVdnctqXXUEhJOO7LxmgxJon9tEZFGpe0xPRX0h2v3AANQ=="],
 
     "duplexer2": ["duplexer2@0.1.4", "", { "dependencies": { "readable-stream": "^2.0.2" } }, "sha512-asLFVfWWtJ90ZyOUHMqk7/S2w2guQKxUI2itj3d92ADHhxUSbCMGi1f1cBcJ7xM1To+pE/Khbwo1yuNbMEPKeA=="],
 
@@ -1307,6 +1307,8 @@
     "@rollup/plugin-replace/@rollup/pluginutils": ["@rollup/pluginutils@5.1.4", "", { "dependencies": { "@types/estree": "^1.0.0", "estree-walker": "^2.0.2", "picomatch": "^4.0.2" }, "peerDependencies": { "rollup": "^1.20.0||^2.0.0||^3.0.0||^4.0.0" }, "optionalPeers": ["rollup"] }, "sha512-USm05zrsFxYLPdWWq+K3STlWiT/3ELn3RcV5hJMghpeAIhxfsUIg6mt12CBJBInWMV4VneoV7SfGv8xIwo2qNQ=="],
 
     "@semantic-release/release-notes-generator/get-stream": ["get-stream@7.0.1", "", {}, "sha512-3M8C1EOFN6r8AMUhwUAACIoXZJEOufDU5+0gFFN5uNs6XYOralD2Pqkl7m046va6x77FwposWXbAhPPIOus7mQ=="],
+
+    "@willbooster/shared-lib-node/dotenv": ["dotenv@16.6.1", "", {}, "sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow=="],
 
     "babel-plugin-polyfill-corejs2/@babel/helper-define-polyfill-provider": ["@babel/helper-define-polyfill-provider@0.6.4", "", { "dependencies": { "@babel/helper-compilation-targets": "^7.22.6", "@babel/helper-plugin-utils": "^7.22.5", "debug": "^4.1.1", "lodash.debounce": "^4.0.8", "resolve": "^1.14.2" }, "peerDependencies": { "@babel/core": "^7.4.0 || ^8.0.0-0 <8.0.0" } }, "sha512-jljfR1rGnXXNWnmQg2K3+bvhkxB51Rl32QRaOTuwwjviGrHzIbSc8+x9CpraDtbT7mfyjXObULP4w/adunNwAw=="],
 
