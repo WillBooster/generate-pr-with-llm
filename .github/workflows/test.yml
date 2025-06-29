@@ -1,16 +1,10 @@
 name: Test
 on:
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - '**/docs/**'
   push:
     branches:
       - main
       - wbfy
-    paths-ignore:
-      - '**.md'
-      - '**/docs/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
