@@ -1,7 +1,6 @@
-import type { SpawnSyncReturns } from 'node:child_process';
+import type { SpawnOptions, SpawnSyncReturns } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import ansis from 'ansis';
-import type { SpawnOptions } from 'child_process';
 import { truncateText } from './text.js';
 
 const MAX_LOG_LENGTH = 3000;
