@@ -53,7 +53,6 @@ export async function spawnAsync(
         stdout += data;
       });
       proc.stderr?.on('data', (data) => {
-        process.stderr.write(data);
         stderr += data;
       });
 
