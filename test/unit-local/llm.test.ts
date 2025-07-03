@@ -22,7 +22,7 @@ describe('callLlmApi', () => {
   test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)(
     'should call Google Gemini API successfully',
     async () => {
-      expect(await callLlmApi('gemini/gemini-2.5', testMessages)).toContain('Hi');
+      expect(await callLlmApi('gemini/gemini-2.5-pro', testMessages)).toContain('Hi');
     },
     10000
   );
@@ -41,11 +41,11 @@ describe('callLlmApi', () => {
   test.skipIf(!process.env.GOOGLE_APPLICATION_CREDENTIALS)(
     'should call Google Vertex AI API successfully',
     async () => {
-      expect(await callLlmApi('vertex/gemini-2.5', testMessages)).toContain('Hi');
+      expect(await callLlmApi('vertex/gemini-2.5-pro', testMessages)).toContain('Hi');
     }
   );
 
-  describe('reasoning effort with tHinking budget', () => {
+  describe('reasoning effort with thinking budget', () => {
     test.skipIf(!process.env.OPENAI_API_KEY)('should work with OpenAI reasoning effort low', async () => {
       expect(await callLlmApi('openai/o4-mini', testMessages, 'low')).toContain('Hi');
     });
@@ -54,7 +54,7 @@ describe('callLlmApi', () => {
       expect(await callLlmApi('anthropic/claude-4-sonnet-20250514', testMessages, 'low')).toContain('Hi');
     });
 
-    test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)('should work with Google tHinking budget', async () => {
+    test.skipIf(!process.env.GOOGLE_GENERATIVE_AI_API_KEY)('should work with Google thinking budget', async () => {
       expect(await callLlmApi('gemini/gemini-2.5-flash-preview-04-17', testMessages, 'low')).toContain('Hi');
     });
 
