@@ -40,8 +40,8 @@ Here are some examples for creating PRs for issue #89.
 
 #### With Planning (Strongly Recommended for Aider)
 
-`gen-pr` generates plan by reading the whole files of the target repository with [Repomix](https://github.com/yamadashy/repomix).
-This feature is very useful for non-agentic coding tools like Aider.
+`gen-pr` generates a plan by reading files in the target repository using [Repomix](https://github.com/yamadashy/repomix).
+This feature is particularly useful for non-agentic coding tools like Aider.
 
 Gemini 2.5 Pro for planning and Aider:
 
