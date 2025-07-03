@@ -16,6 +16,7 @@ This tool embodies the ultimate "Vibe Coding" experience, where humans can focus
   - [Aider](https://aider.chat/): An interactive AI pair programming tool
   - [Codex CLI](https://github.com/openai/codex): OpenAI's coding agent
   - [Claude Code](https://github.com/anthropics/claude-code): Anthropic's agentic coding tool
+  - [Gemini CLI](https://github.com/google/gemini-cli): Google's AI coding assistant
 - **Flexible Integration**: Works as both a CLI tool and a GitHub Action
 
 ## Requirements
@@ -23,7 +24,7 @@ This tool embodies the ultimate "Vibe Coding" experience, where humans can focus
 - For development:
   - [asdf](https://asdf-vm.com/)
 - For execution:
-  - Node.js and npx (for `@openai/codex` and `@anthropic-ai/claude-code`)
+  - Node.js and npx (for `@openai/codex`, `@anthropic-ai/claude-code`, and `@google/gemini-cli`)
   - Python (for `aider`)
   - [gh](https://github.com/cli/cli)
 
@@ -57,6 +58,12 @@ o4-mini (for planning) and Codex (for coding):
 
 ```sh
 npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model openai/o4-mini --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
+```
+
+Gemini 2.5 Pro (for planning) and Gemini CLI (for coding):
+
+```sh
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model gemini/gemini-2.5 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool gemini
 ```
 
 #### Supported Model Format
