@@ -16,7 +16,7 @@ This tool embodies the ultimate "Vibe Coding" experience, where humans can focus
   - [Aider](https://aider.chat/): An interactive AI pair programming tool
   - [Codex CLI](https://github.com/openai/codex): OpenAI's coding agent
   - [Claude Code](https://github.com/anthropics/claude-code): Anthropic's agentic coding tool
-  - [Gemini CLI](https://github.com/google/gemini-cli): Google's AI coding assistant
+  - [Gemini CLI](https://github.com/google-gemini/gemini-cli): Google's AI coding assistant
 - **Flexible Integration**: Works as both a CLI tool and a GitHub Action
 
 ## Requirements
