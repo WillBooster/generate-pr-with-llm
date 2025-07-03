@@ -40,7 +40,7 @@ Here are some examples for creating PRs for issue #89.
 
 #### With Planning (Strongly Recommended for Aider)
 
-`gen-pr` can generate a implementation plan by reading files in the target repository using [Repomix](https://github.com/yamadashy/repomix).
+`gen-pr` can generate an implementation plan by reading files in the target repository using [Repomix](https://github.com/yamadashy/repomix).
 This feature is particularly useful for non-agentic coding tools like Aider.
 
 Gemini 2.5 Pro for planning and Aider:
