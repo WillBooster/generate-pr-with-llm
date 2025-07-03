@@ -87,6 +87,7 @@ export async function runAssistantFix(
     assistantResult = (
       await runCommand('npx', claudeCodeArgs, {
         env: { ...process.env, NO_COLOR: '1' },
+        stdio: 'inherit',
       })
     ).stdout;
   } else {

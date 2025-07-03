@@ -1,4 +1,4 @@
-import type { SpawnOptionsWithoutStdio, SpawnSyncReturns } from 'node:child_process';
+import type { SpawnOptions, SpawnSyncReturns } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import ansis from 'ansis';
 import { truncateText } from './text.js';
@@ -8,7 +8,7 @@ const MAX_LOG_LENGTH = 3000;
 export async function runCommand(
   command: string,
   args: string[],
-  options?: SpawnOptionsWithoutStdio & { ignoreExitStatus?: boolean; truncateStdout?: boolean }
+  options?: SpawnOptions & { ignoreExitStatus?: boolean; truncateStdout?: boolean }
 ): Promise<Omit<SpawnSyncReturns<string>, 'output' | 'error'>> {
   const { ignoreExitStatus, ...spawnOptions } = options ?? {};
   const argsText = args.map((a) => (a.includes(' ') ? `"${a.replaceAll('"', '"')}"` : a)).join(' ');
@@ -33,8 +33,8 @@ export async function runCommand(
 
 export async function spawnAsync(
   command: string,
-  args?: ReadonlyArray<string>,
-  options?: SpawnOptionsWithoutStdio & { truncateStdout?: boolean }
+  args: ReadonlyArray<string>,
+  options: SpawnOptions & { truncateStdout?: boolean }
 ): Promise<Omit<SpawnSyncReturns<string>, 'output' | 'error'>> {
   return new Promise((resolve, reject) => {
     try {

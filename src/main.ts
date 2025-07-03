@@ -108,7 +108,7 @@ ${resolutionPlan.plan}
       : '';
   const issueFence = findDistinctFence(issueText);
   const prompt = `
-Modify the code to resolve the GitHub issue${planText ? ' based on the plan' : ''}.
+Modify the code to resolve the following GitHub issue${planText ? ' based on the plan' : ''}.
 
 # Issue
 
@@ -145,6 +145,7 @@ ${planText}
     assistantResult = (
       await runCommand('npx', claudeCodeArgs, {
         env: { ...process.env, NO_COLOR: '1' },
+        stdio: 'inherit',
       })
     ).stdout;
   } else if (options.codingTool === 'codex') {
