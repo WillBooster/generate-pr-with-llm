@@ -35,13 +35,13 @@ export async function runCommand(
 export async function spawnAsync(
   command: string,
   args: ReadonlyArray<string>,
-  options?: SpawnOptions & { truncateStdout?: boolean }
+  options: SpawnOptions & { truncateStdout?: boolean }
 ): Promise<Omit<SpawnSyncReturns<string>, 'output' | 'error'>> {
   return new Promise((resolve, reject) => {
     try {
       // Sanitize args to remove null bytes
       const sanitizedArgs = (args ?? []).map((arg) => arg.replace(/\0/g, ''));
-      const proc = spawn(command, sanitizedArgs, options ?? {});
+      const proc = spawn(command, sanitizedArgs, options);
       // `setEncoding` is undefined in Bun
       proc.stdout?.setEncoding?.('utf8');
       proc.stderr?.setEncoding?.('utf8');
