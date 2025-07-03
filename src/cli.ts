@@ -56,7 +56,8 @@ const argv = await yargs(hideBin(process.argv))
     default: DEFAULT_AIDER_EXTRA_ARGS,
   })
   .option('claude-code-extra-args', {
-    description: 'Additional arguments to pass to the claude-code command ("--print" is always applied)',
+    description:
+      'Additional arguments to pass to the claude-code command ("--dangerously-skip-permissions --print" is always applied)',
     type: 'string',
     default: DEFAULT_CLAUDE_CODE_EXTRA_ARGS,
   })
