@@ -36,34 +36,49 @@ See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/wor
 
 ### CLI
 
-Gemini 2.5 Pro (for planning) and Aider (for coding):
+Here are some examples for creating PRs for issue #89.
+
+#### With Planning (Strongly Recommended for Aider)
+
+`gen-pr` generates plan by reading the whole files of the target repository with [Repomix](https://github.com/yamadashy/repomix).
+This feature is very useful for non-agentic coding tools like Aider.
+
+Gemini 2.5 Pro for planning and Aider:
 
 ```sh
-npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model gemini/gemini-2.5 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model gemini/gemini-2.5 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test"
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 89 --planning-model gemini/gemini-2.5 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model gemini/gemini-2.5 --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test"
 ```
 
 Claude Opus 4 on Bedrock (for planning) and Aider (for coding):
 
 ```sh
-npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --test-cmd='yarn check-for-ai' --auto-test"
-```
-
-Gemini 2.5 Pro (for planning) and Claude Code (for coding):
-
-```sh
-npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model gemini/gemini-2.5 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool claude-code
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 89 --planning-model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --test-cmd='yarn check-for-ai' --auto-test"
 ```
 
 o4-mini (for planning) and Codex (for coding):
 
 ```sh
-npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model openai/o4-mini --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 89 --planning-model openai/o4-mini --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
 ```
 
-Gemini 2.5 Pro (for planning) and Gemini CLI (for coding):
+#### Without Planning
+
+Claude Code (for coding):
 
 ```sh
-npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 8 --planning-model gemini/gemini-2.5 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool gemini
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 89 --coding-tool claude-code
+```
+
+Codex (for coding):
+
+```sh
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 89 --coding-tool codex
+```
+
+Gemini CLI (for coding):
+
+```sh
+npx --yes dotenv-cli -- npx --yes gen-pr --issue-number 89 --coding-tool gemini
 ```
 
 #### Supported Model Format
