@@ -90,7 +90,7 @@ The tool requires **model names defined on [llmlite](https://docs.litellm.ai/doc
 - **Google Gemini**: `gemini/gemini-2.5-pro`, `gemini/gemini-2.5-flash`
 - **Anthropic**: `anthropic/claude-4-sonnet-latest`, `anthropic/claude-3-5-haiku-latest`
 - **AWS Bedrock**: `bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0`, `bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0`
-- **Google Vertex AI**: `vertex/gemini-2.5`, `vertex/gemini-2.5-flash`
+- **Google Vertex AI**: `vertex/gemini-2.5-pro`, `vertex/gemini-2.5-flash`
 
 #### Environment Variables
 

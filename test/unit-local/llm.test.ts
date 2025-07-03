@@ -41,7 +41,7 @@ describe('callLlmApi', () => {
   test.skipIf(!process.env.GOOGLE_APPLICATION_CREDENTIALS)(
     'should call Google Vertex AI API successfully',
     async () => {
-      expect(await callLlmApi('vertex/gemini-2.5', testMessages)).toContain('Hi');
+      expect(await callLlmApi('vertex/gemini-2.5-pro', testMessages)).toContain('Hi');
     }
   );
 
