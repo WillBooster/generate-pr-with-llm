@@ -141,5 +141,6 @@ export type ReasoningEffort = 'low' | 'medium' | 'high';
  * - 'aider': Use Aider for code changes
  * - 'claude-code': Use Claude Code for code changes
  * - 'codex': Use codex for code changes
+ * - 'gemini': Use Gemini CLI for code changes
  */
-export type CodingTool = 'aider' | 'claude-code' | 'codex';
+export type CodingTool = 'aider' | 'claude-code' | 'codex' | 'gemini';

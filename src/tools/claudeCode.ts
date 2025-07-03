@@ -1,4 +1,4 @@
-import { DEFAULT_CODEX_EXTRA_ARGS } from '../defaultOptions.js';
+import { DEFAULT_CLAUDE_CODE_EXTRA_ARGS } from '../defaultOptions.js';
 import type { MainOptions } from '../main.js';
 import type { ResolutionPlan } from '../plan.js';
 import { parseCommandLineArgs } from '../utils.js';
@@ -18,9 +18,11 @@ export function buildClaudeCodeArgs(
   return [
     '--yes',
     '@anthropic-ai/claude-code@latest',
+    ...parseCommandLineArgs(options.claudeCodeExtraArgs || DEFAULT_CLAUDE_CODE_EXTRA_ARGS),
+    // Bypass all permission checks
+    '--dangerously-skip-permissions',
     // Print response without interactive mode
     '--print',
-    ...parseCommandLineArgs(options.claudeCodeExtraArgs || DEFAULT_CODEX_EXTRA_ARGS),
     args.prompt,
   ];
 }

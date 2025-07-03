@@ -6,6 +6,7 @@ import {
   DEFAULT_CLAUDE_CODE_EXTRA_ARGS,
   DEFAULT_CODEX_EXTRA_ARGS,
   DEFAULT_CODING_TOOL,
+  DEFAULT_GEMINI_EXTRA_ARGS,
   DEFAULT_MAX_TEST_ATTEMPTS,
   DEFAULT_REPOMIX_EXTRA_ARGS,
 } from './defaultOptions.js';
@@ -44,7 +45,7 @@ const argv = await yargs(hideBin(process.argv))
     alias: 'c',
     description: 'Coding tool to use for making changes',
     type: 'string',
-    choices: ['aider', 'claude-code', 'codex'],
+    choices: ['aider', 'claude-code', 'codex', 'gemini'],
     default: DEFAULT_CODING_TOOL,
   })
   .option('aider-extra-args', {
@@ -55,7 +56,8 @@ const argv = await yargs(hideBin(process.argv))
     default: DEFAULT_AIDER_EXTRA_ARGS,
   })
   .option('claude-code-extra-args', {
-    description: 'Additional arguments to pass to the claude-code command ("--print" is always applied)',
+    description:
+      'Additional arguments to pass to the claude-code command ("--dangerously-skip-permissions --print" is always applied)',
     type: 'string',
     default: DEFAULT_CLAUDE_CODE_EXTRA_ARGS,
   })
@@ -63,6 +65,11 @@ const argv = await yargs(hideBin(process.argv))
     description: 'Additional arguments to pass to the codex command (nothing is always applied)',
     type: 'string',
     default: DEFAULT_CODEX_EXTRA_ARGS,
+  })
+  .option('gemini-extra-args', {
+    description: 'Additional arguments to pass to the gemini command ("--yolo" is always applied)',
+    type: 'string',
+    default: DEFAULT_GEMINI_EXTRA_ARGS,
   })
   .option('repomix-extra-args', {
     alias: 'r',
@@ -104,6 +111,7 @@ await main({
   aiderExtraArgs: argv['aider-extra-args'],
   claudeCodeExtraArgs: argv['claude-code-extra-args'],
   codexExtraArgs: argv['codex-extra-args'],
+  geminiExtraArgs: argv['gemini-extra-args'],
   codingTool: argv['coding-tool'] as CodingTool,
   dryRun: argv['dry-run'],
   twoStagePlanning: argv['two-staged-planning'],

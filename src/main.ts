@@ -12,6 +12,7 @@ import { truncateText } from './text.js';
 import { buildAiderArgs } from './tools/aider.js';
 import { buildClaudeCodeArgs } from './tools/claudeCode.js';
 import { buildCodexArgs } from './tools/codex.js';
+import { buildGeminiArgs } from './tools/gemini.js';
 import type { CodingTool, ReasoningEffort } from './types.js';
 
 /**
@@ -24,6 +25,8 @@ export interface MainOptions {
   claudeCodeExtraArgs?: string;
   /** Additional arguments to pass to the codex command */
   codexExtraArgs?: string;
+  /** Additional arguments to pass to the gemini command */
+  geminiExtraArgs?: string;
   /** Coding tool to use */
   codingTool: CodingTool;
   /** Enable two-staged planning: first select relevant files, then generate detailed implementation plans */
@@ -118,7 +121,7 @@ ${planText}
 
   const now = new Date();
 
-  const branchName = `ai-pr-${options.issueNumber}-${now.getFullYear()}_${getTwoDigits(now.getMonth() + 1)}${getTwoDigits(now.getDate())}_${getTwoDigits(now.getHours())}${getTwoDigits(now.getMinutes())}${getTwoDigits(now.getSeconds())}`;
+  const branchName = `gen-pr-${options.issueNumber}-${options.codingTool}-${now.getFullYear()}_${getTwoDigits(now.getMonth() + 1)}${getTwoDigits(now.getDate())}_${getTwoDigits(now.getHours())}${getTwoDigits(now.getMinutes())}${getTwoDigits(now.getSeconds())}`;
   if (!options.dryRun) {
     await runCommand('git', ['switch', '-C', branchName]);
   } else {
@@ -144,11 +147,19 @@ ${planText}
         env: { ...process.env, NO_COLOR: '1' },
       })
     ).stdout;
-  } else {
+  } else if (options.codingTool === 'codex') {
     const codexArgs = buildCodexArgs(options, { prompt: prompt, resolutionPlan });
     toolCommand = buildToolCommandString('npx', codexArgs, prompt);
     assistantResult = (
       await runCommand('npx', codexArgs, {
+        env: { ...process.env, NO_COLOR: '1' },
+      })
+    ).stdout;
+  } else {
+    const geminiArgs = buildGeminiArgs(options, { prompt: prompt, resolutionPlan });
+    toolCommand = buildToolCommandString('npx', geminiArgs, prompt);
+    assistantResult = (
+      await runCommand('npx', geminiArgs, {
         env: { ...process.env, NO_COLOR: '1' },
       })
     ).stdout;

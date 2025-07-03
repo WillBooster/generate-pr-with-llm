@@ -77,7 +77,7 @@ describe('createIssueInfo', () => {
 
   // Test for issue #8 - Issue with references
   test(
-    'should handle issue #8 (issue with references to #32)',
+    'should handle issue #8 (issue with references to #89)',
     async () => {
       const options: MainOptions = {
         twoStagePlanning: false,
@@ -91,23 +91,21 @@ describe('createIssueInfo', () => {
 
       // Basic properties
       expect(result.author).toBe('exKAZUu');
-      expect(result.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue for debugging gen-pr)');
+      expect(result.title).toBe('feat: print "Hello World" (<- example issue for debugging gen-pr)');
 
       // Description content
-      expect(result.description).toContain('Modify `src/index.ts` to print "Hello World"');
+      expect(result.description).toContain('Modify `src/main.ts` to print "Hello World"');
 
       // Issue characteristics
       expect(result.comments.length).toBeGreaterThan(0);
-      expect(result.comments.some((c) => c.body.includes('#32'))).toBe(true);
+      expect(result.comments.some((c) => c.body.includes('#89'))).toBe(true);
       expect(result.code_changes).toBeUndefined(); // Not a PR
 
       // Referenced issues
       expect(result.referenced_issues).toBeDefined();
       expect(result.referenced_issues?.length).toBe(1);
       expect(result.referenced_issues?.[0].author).toBe('exKAZUu');
-      expect(result.referenced_issues?.[0].title).toBe(
-        'feat: Strip HTML comments from issue/PR descriptions before LLM processing'
-      );
+      expect(result.referenced_issues?.[0].title).toBe('feat: print "Hi" (<- example issue for debugging gen-pr)');
       expect(result.referenced_issues?.[0].code_changes).toBeUndefined(); // Referenced issues don't include diffs
     },
     { timeout: TIMEOUT }
@@ -142,7 +140,7 @@ describe('createIssueInfo', () => {
       expect(result.code_changes).toContain('Print Hello World');
       expect(result.code_changes).toContain('echo "Hello, World!"');
 
-      // Referenced issues - should have nested chain #12 → #8 → #32
+      // Referenced issues - should have nested chain #12 → #8 → #89
       expect(result.referenced_issues).toBeDefined();
       expect(result.referenced_issues?.length).toBe(1);
 
@@ -150,18 +148,18 @@ describe('createIssueInfo', () => {
       const issue8 = result.referenced_issues?.[0];
       expect(issue8).toBeDefined();
       expect(issue8?.author).toBe('exKAZUu');
-      expect(issue8?.title).toBe('feat: print "Hello World" on `src/index.ts` (<- example issue for debugging gen-pr)');
+      expect(issue8?.title).toBe('feat: print "Hello World" (<- example issue for debugging gen-pr)');
       expect(issue8?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
       expect(issue8?.referenced_issues).toBeDefined();
       expect(issue8?.referenced_issues?.length).toBe(1);
 
-      // Issue #32
-      const issue32 = issue8?.referenced_issues?.[0];
-      expect(issue32).toBeDefined();
-      expect(issue32?.author).toBe('exKAZUu');
-      expect(issue32?.title).toBe('feat: Strip HTML comments from issue/PR descriptions before LLM processing');
-      expect(issue32?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
-      expect(issue32?.referenced_issues).toBeUndefined(); // End of chain
+      // Issue #89
+      const issue89 = issue8?.referenced_issues?.[0];
+      expect(issue89).toBeDefined();
+      expect(issue89?.author).toBe('exKAZUu');
+      expect(issue89?.title).toBe('feat: print "Hi" (<- example issue for debugging gen-pr)');
+      expect(issue89?.code_changes).toBeUndefined(); // Referenced issues don't include diffs
+      expect(issue89?.referenced_issues).toBeUndefined(); // End of chain
     },
     { timeout: TIMEOUT }
   );
@@ -218,7 +216,7 @@ describe('createIssueInfo', () => {
       expect(result.referenced_issues).toBeDefined();
       expect(result.referenced_issues?.length).toBe(1);
       expect(result.referenced_issues?.[0].title).toBe(
-        'feat: print "Hello World" on `src/index.ts` (<- example issue for debugging gen-pr)'
+        'feat: print "Hello World" (<- example issue for debugging gen-pr)'
       );
     },
     { timeout: TIMEOUT }
