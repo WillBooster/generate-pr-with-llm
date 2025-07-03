@@ -40,7 +40,9 @@ export async function spawnAsync(
     try {
       // Sanitize args to remove null bytes
       const sanitizedArgs = (args ?? []).map((arg) => arg.replace(/\0/g, ''));
-      const proc = spawn(command, sanitizedArgs, options);
+      const proc = sanitizedArgs.some((a) => a.includes('anthropic-ai/claude-code'))
+        ? spawn(command, sanitizedArgs, { ...options, stdio: 'inherit' })
+        : spawn(command, sanitizedArgs, options);
       // `setEncoding` is undefined in Bun
       proc.stdout?.setEncoding?.('utf8');
       proc.stderr?.setEncoding?.('utf8');
@@ -52,6 +54,7 @@ export async function spawnAsync(
         stdout += data;
       });
       proc.stderr?.on('data', (data) => {
+        process.stderr.write(data);
         stderr += data;
       });
 

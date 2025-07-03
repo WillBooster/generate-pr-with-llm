@@ -26,7 +26,7 @@ export function findDistinctFence(content: string): string {
   const maxBackticks = backticksMatch ? Math.max(...backticksMatch.map((seq) => seq.length)) : 0;
 
   // Use one more backtick than the maximum found to properly fence the code block
-  const fenceLength = maxBackticks + 1;
+  const fenceLength = Math.max(3, maxBackticks + 1);
   return '`'.repeat(fenceLength);
 }
 

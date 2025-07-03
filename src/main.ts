@@ -108,7 +108,7 @@ ${resolutionPlan.plan}
       : '';
   const issueFence = findDistinctFence(issueText);
   const prompt = `
-Modify the code to resolve the GitHub issue${planText ? ' based on the plan' : ''}.
+Modify the code to resolve the following GitHub issue${planText ? ' based on the plan' : ''}.
 
 # Issue
 
