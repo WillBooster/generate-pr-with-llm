@@ -22,7 +22,7 @@ export function buildClaudeCodeArgs(
     // Bypass all permission checks
     '--dangerously-skip-permissions',
     // Print response without interactive mode
-    // '--print',
+    '--print',
     args.prompt,
   ];
 }

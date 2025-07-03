@@ -1,6 +1,7 @@
-import type { SpawnOptionsWithoutStdio, SpawnSyncReturns } from 'node:child_process';
+import type { SpawnSyncReturns } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import ansis from 'ansis';
+import type { SpawnOptions } from 'child_process';
 import { truncateText } from './text.js';
 
 const MAX_LOG_LENGTH = 3000;
@@ -8,7 +9,7 @@ const MAX_LOG_LENGTH = 3000;
 export async function runCommand(
   command: string,
   args: string[],
-  options?: SpawnOptionsWithoutStdio & { ignoreExitStatus?: boolean; truncateStdout?: boolean }
+  options?: SpawnOptions & { ignoreExitStatus?: boolean; truncateStdout?: boolean }
 ): Promise<Omit<SpawnSyncReturns<string>, 'output' | 'error'>> {
   const { ignoreExitStatus, ...spawnOptions } = options ?? {};
   const argsText = args.map((a) => (a.includes(' ') ? `"${a.replaceAll('"', '"')}"` : a)).join(' ');
@@ -33,16 +34,14 @@ export async function runCommand(
 
 export async function spawnAsync(
   command: string,
-  args?: ReadonlyArray<string>,
-  options?: SpawnOptionsWithoutStdio & { truncateStdout?: boolean }
+  args: ReadonlyArray<string>,
+  options?: SpawnOptions & { truncateStdout?: boolean }
 ): Promise<Omit<SpawnSyncReturns<string>, 'output' | 'error'>> {
   return new Promise((resolve, reject) => {
     try {
       // Sanitize args to remove null bytes
       const sanitizedArgs = (args ?? []).map((arg) => arg.replace(/\0/g, ''));
-      const proc = sanitizedArgs.some((a) => a.includes('anthropic-ai/claude-code'))
-        ? spawn(command, sanitizedArgs, { ...options, stdio: 'inherit' })
-        : spawn(command, sanitizedArgs, options);
+      const proc = spawn(command, sanitizedArgs, options ?? {});
       // `setEncoding` is undefined in Bun
       proc.stdout?.setEncoding?.('utf8');
       proc.stderr?.setEncoding?.('utf8');
