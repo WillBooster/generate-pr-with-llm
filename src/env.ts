@@ -1,4 +1,8 @@
+import { config } from 'dotenv';
+
 export function configureEnvVars(): void {
+  config();
+
   if (!process.env.AWS_REGION && process.env.AWS_REGION_NAME) {
     process.env.AWS_REGION = process.env.AWS_REGION_NAME;
   } else if (process.env.AWS_REGION && !process.env.AWS_REGION_NAME) {
