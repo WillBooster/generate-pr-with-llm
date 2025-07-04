@@ -76,6 +76,12 @@ export async function callLlmApi(
           //     reasoningConfig: { type: 'enabled', budgetTokens: thinkingBudget },
           //   } satisfies BedrockProviderOptions,
           // };
+        } else if (provider === 'ollama') {
+          // Ollama: Limited reasoning support via OpenAI-compatible interface
+          // Most local models don't support reasoning parameters, but we can try
+          console.log(
+            `Note: Ollama reasoning support is limited and depends on the model. Model ${modelName} will use default reasoning settings.`
+          );
         }
       }
     }
@@ -162,9 +168,20 @@ function getModelInstance(model: string): [LanguageModelV2, string, string] {
       return [openrouterProvider(modelName), provider, modelName];
     }
 
+    case 'ollama': {
+      // Ollama is compatible with OpenAI API, so we use the OpenAI provider with Ollama's base URL
+      // Default Ollama server runs on http://localhost:11434
+      const ollamaBaseURL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434/v1';
+      const ollamaProvider = createOpenAI({
+        baseURL: ollamaBaseURL,
+        apiKey: process.env.OLLAMA_API_KEY || 'ollama', // Ollama doesn't require a real API key
+      });
+      return [ollamaProvider(modelName), provider, modelName];
+    }
+
     default:
       console.error(
-        `Unsupported provider: ${provider}. Supported providers: openai, azure, google, anthropic, bedrock, vertex, openrouter`
+        `Unsupported provider: ${provider}. Supported providers: openai, azure, google, anthropic, bedrock, vertex, openrouter, ollama`
       );
       process.exit(1);
   }
@@ -210,6 +227,18 @@ export function supportsReasoning(provider: string, modelName: string): boolean 
         /^(google\/)?gemini.*thinking/.test(modelName) ||
         // DeepSeek R1 models
         /^(deepseek\/)?deepseek-r1/.test(modelName)
+      );
+
+    case 'ollama':
+      // Ollama: Limited reasoning support, depends on the underlying model
+      // Most local models don't support reasoning tokens, but some might
+      return (
+        // DeepSeek R1 models if available locally
+        /^deepseek-r1/.test(modelName) ||
+        // Qwen models with reasoning capabilities
+        /^qwen.*thinking/.test(modelName) ||
+        // Any model explicitly marked as reasoning/thinking
+        /thinking|reasoning/.test(modelName)
       );
 
     default:

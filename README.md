@@ -73,6 +73,12 @@ DeepSeek R1 on OpenRouter (`deepseek/deepseek-r1-0528:free`) for planning and Ge
 npx --yes gen-pr --issue-number 89 --planning-model openrouter/deepseek/deepseek-r1-0528:free --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool gemini
 ```
 
+Local Gemma 3n via Ollama (`ollama/gemma3n`) for planning and Aider for coding:
+
+```sh
+npx --yes gen-pr --issue-number 89 --planning-model ollama/gemma3n --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model ollama/gemma3n --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test"
+```
+
 #### Without Planning
 
 Claude Code:
@@ -104,6 +110,7 @@ The tool requires **model names defined on [llmlite](https://docs.litellm.ai/doc
 - **AWS Bedrock**: `bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0`, `bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0` and more
 - **Google Vertex AI**: `vertex/gemini-2.5-pro`, `vertex/gemini-2.5-flash` and more
 - **OpenRouter**: `deepseek/deepseek-r1-0528:free` and more
+- **Ollama**: `ollama/gemma3n:e4b`, `ollama/deepseek-r1:8b`, `ollama/qwen3:8b` and more
 
 #### Environment Variables
 
@@ -116,6 +123,7 @@ Each provider uses standard environment variables for authentication:
 - **AWS Bedrock**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (or `AWS_REGION_NAME`)
 - **Google Vertex AI**: `GOOGLE_APPLICATION_CREDENTIALS` or default service account
 - **OpenRouter**: `OPENROUTER_API_KEY`
+- **Ollama**: `OLLAMA_BASE_URL` (default: `http://localhost:11434/v1`), `OLLAMA_API_KEY` (optional)
 
 ## License
 
