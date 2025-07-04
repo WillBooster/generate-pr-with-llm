@@ -6,17 +6,6 @@ import { logResult } from './llm.js';
 import type { ReasoningEffort } from './types.js';
 
 /**
- * Convert AI SDK v5 ModelMessage[] to AI SDK v4 Message[] format
- */
-function convertToV4Messages(messages: ModelMessage[]): Message[] {
-  return messages.map((msg, index) => ({
-    id: `msg-${index}`,
-    role: msg.role === 'tool' ? 'data' : msg.role,
-    content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
-  }));
-}
-
-/**
  * Call AI SDK v4 provider API (for OpenRouter and Ollama)
  */
 export async function callV4ProviderApi(
@@ -73,4 +62,15 @@ export async function callV4ProviderApi(
     console.error(`${provider.charAt(0).toUpperCase() + provider.slice(1)} API error for model ${model}:`, error);
     process.exit(1);
   }
+}
+
+/**
+ * Convert AI SDK v5 ModelMessage[] to AI SDK v4 Message[] format
+ */
+function convertToV4Messages(messages: ModelMessage[]): Message[] {
+  return messages.map((msg, index) => ({
+    id: `msg-${index}`,
+    role: msg.role === 'tool' ? 'data' : msg.role,
+    content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
+  }));
 }
