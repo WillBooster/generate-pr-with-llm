@@ -208,7 +208,7 @@ ${planText}
 
 ${truncateText(planText, (planText.length / (planText.length + assistantResponse.length)) * MAX_PR_BODY_LENGTH)}
 `;
-  if (options.codingTool !== 'claude-code') {
+  if (assistantResponse) {
     const responseFence = findDistinctFence(assistantResponse);
     prBody += `
 # ${assistantName} Log
