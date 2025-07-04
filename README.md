@@ -67,7 +67,7 @@ o4-mini (`openai/o4-mini`) for planning and Codex for coding:
 npx --yes gen-pr --issue-number 89 --planning-model openai/o4-mini --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
 ```
 
-DeepSeek R1 on OpenRouter (`deepseek/deepseek-r1-0528:free`) for planning and Gemini CLI for coding:
+DeepSeek R1 on OpenRouter (`openrouter/deepseek/deepseek-r1-0528:free`) for planning and Gemini CLI for coding:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --planning-model openrouter/deepseek/deepseek-r1-0528:free --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool gemini
@@ -109,8 +109,8 @@ The tool requires **model names defined on [llmlite](https://docs.litellm.ai/doc
 - **Anthropic**: `anthropic/claude-4-sonnet-latest`, `anthropic/claude-3-5-haiku-latest` and more
 - **AWS Bedrock**: `bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0`, `bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0` and more
 - **Google Vertex AI**: `vertex/gemini-2.5-pro`, `vertex/gemini-2.5-flash` and more
-- **OpenRouter**: `deepseek/deepseek-r1-0528:free` and more
-- **Ollama**: `ollama/gemma3n:e4b`, `ollama/deepseek-r1:8b`, `ollama/qwen3:8b` and more
+- **OpenRouter**: `openrouter/deepseek/deepseek-r1-0528:free`, `openrouter/anthropic/claude-3.5-sonnet` and more
+- **Ollama**: `ollama/gemma3n`, `ollama/deepseek-r1`, `ollama/qwen3` and more
 
 #### Environment Variables
 
@@ -123,7 +123,11 @@ Each provider uses standard environment variables for authentication:
 - **AWS Bedrock**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (or `AWS_REGION_NAME`)
 - **Google Vertex AI**: `GOOGLE_APPLICATION_CREDENTIALS` or default service account
 - **OpenRouter**: `OPENROUTER_API_KEY`
-- **Ollama**: `OLLAMA_BASE_URL` (default: `http://localhost:11434/v1`), `OLLAMA_API_KEY` (optional)
+- **Ollama**: `OLLAMA_BASE_URL` (default: `http://localhost:11434`), `OLLAMA_API_KEY` (optional)
+
+### Known Limitations
+
+- **AI SDK 5.0.0-beta**: The beta version uses the newer Responses API (`/v1/responses`) instead of Chat Completions API (`/v1/chat/completions`). For maximum compatibility, OpenRouter and Ollama providers use AI SDK v4 while other providers use AI SDK v5.
 
 ## License
 

@@ -147,7 +147,7 @@ ${YAML.stringify(issueContent).trim()}
 ${issueFence}
 
 Please format your response without any explanatory text as follows:
-\`\`\`
+\`\`\`md
 ${HEADING_OF_FILE_PATHS_TO_BE_MODIFIED}
 
 - \`<filePath1>\`
@@ -182,7 +182,7 @@ ${YAML.stringify(issueContent).trim()}
 ${issueFence}
 
 Please format your response without any explanatory text as follows:
-\`\`\`
+\`\`\`md
 ${HEADING_OF_PLAN}
 
 1. <Specific implementation step>
@@ -213,7 +213,7 @@ ${YAML.stringify(issueContent).trim()}
 ${issueFence}
 
 Please format your response without any explanatory text as follows:
-\`\`\`
+\`\`\`md
 ${HEADING_OF_PLAN}
 
 1. <Specific implementation step>

@@ -6,6 +6,7 @@ import { createVertex } from '@ai-sdk/google-vertex';
 import { createOpenAI, type OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
 import type { LanguageModelV2 } from '@ai-sdk/provider';
 import { generateText, type ModelMessage } from 'ai';
+import { callV4ProviderApi } from './llmv4.js';
 import type { ReasoningEffort } from './types.js';
 
 /**
@@ -17,6 +18,11 @@ export async function callLlmApi(
   reasoningEffort?: ReasoningEffort
 ): Promise<string> {
   try {
+    // Special handling for Ollama and OpenRouter using AI SDK v4
+    if (model.startsWith('ollama/') || model.startsWith('openrouter/')) {
+      return await callV4ProviderApi(model, messages, reasoningEffort);
+    }
+
     const [modelInstance, provider, modelName] = getModelInstance(model);
 
     // Build the request parameters
@@ -58,14 +64,6 @@ export async function callLlmApi(
               },
             } satisfies GoogleGenerativeAIProviderOptions,
           };
-        } else if (provider === 'openrouter') {
-          // OpenRouter uses a unified reasoning parameter that needs to be in the request body
-          // Since we're using the OpenAI provider, we can't directly add custom body parameters
-          // However, OpenRouter also accepts some parameters through the OpenAI-compatible interface
-          // For now, we'll rely on OpenRouter's automatic reasoning detection for supported models
-          console.log(
-            `Note: OpenRouter reasoning support is limited when using OpenAI provider. Model ${modelName} will use default reasoning settings.`
-          );
         } else if (provider === 'bedrock') {
           // The latest AI SDK doesn't work on Bedrock with reasoning.
           console.log(
@@ -76,35 +74,36 @@ export async function callLlmApi(
           //     reasoningConfig: { type: 'enabled', budgetTokens: thinkingBudget },
           //   } satisfies BedrockProviderOptions,
           // };
-        } else if (provider === 'ollama') {
-          // Ollama: Limited reasoning support via OpenAI-compatible interface
-          // Most local models don't support reasoning parameters, but we can try
-          console.log(
-            `Note: Ollama reasoning support is limited and depends on the model. Model ${modelName} will use default reasoning settings.`
-          );
         }
       }
     }
 
     const result = await generateText(requestParams);
-    console.log(
-      `${model}:`,
-      JSON.stringify(
-        {
-          text: result.text,
-          usage: result.usage,
-          finishReason: result.finishReason,
-        },
-        null,
-        2
-      )
-    );
+    logResult(model, result);
 
     return result.text;
   } catch (error) {
     console.error(`LLM API error for model ${model}:`, error);
     process.exit(1);
   }
+}
+
+/**
+ * Log the result of an LLM API call
+ */
+export function logResult(model: string, result: { text: string; usage?: unknown; finishReason?: string }): void {
+  console.log(
+    `${model}:`,
+    JSON.stringify(
+      {
+        text: result.text,
+        usage: result.usage,
+        finishReason: result.finishReason,
+      },
+      null,
+      2
+    )
+  );
 }
 
 function getModelInstance(model: string): [LanguageModelV2, string, string] {
@@ -152,31 +151,6 @@ function getModelInstance(model: string): [LanguageModelV2, string, string] {
       // cf. https://ai-sdk.dev/providers/ai-sdk-providers/google-vertex
       const vertexProvider = createVertex();
       return [vertexProvider(modelName), provider, modelName];
-    }
-
-    case 'openrouter': {
-      // OpenRouter is compatible with OpenAI API, so we use the OpenAI provider with OpenRouter's base URL
-      // This avoids compatibility issues between @openrouter/ai-sdk-provider and AI SDK v5.0.0-canary
-      const openrouterProvider = createOpenAI({
-        baseURL: 'https://openrouter.ai/api/v1',
-        apiKey: process.env.OPENROUTER_API_KEY,
-        headers: {
-          'HTTP-Referer': 'https://github.com/WillBooster/gen-pr',
-          'X-Title': 'gen-pr',
-        },
-      });
-      return [openrouterProvider(modelName), provider, modelName];
-    }
-
-    case 'ollama': {
-      // Ollama is compatible with OpenAI API, so we use the OpenAI provider with Ollama's base URL
-      // Default Ollama server runs on http://localhost:11434
-      const ollamaBaseURL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434/v1';
-      const ollamaProvider = createOpenAI({
-        baseURL: ollamaBaseURL,
-        apiKey: process.env.OLLAMA_API_KEY || 'ollama', // Ollama doesn't require a real API key
-      });
-      return [ollamaProvider(modelName), provider, modelName];
     }
 
     default:
@@ -230,15 +204,19 @@ export function supportsReasoning(provider: string, modelName: string): boolean 
       );
 
     case 'ollama':
-      // Ollama: Limited reasoning support, depends on the underlying model
-      // Most local models don't support reasoning tokens, but some might
+      // Ollama: Native thinking mode support for reasoning-capable models
+      // Based on Ollama's official thinking mode documentation
       return (
-        // DeepSeek R1 models if available locally
+        // DeepSeek R1 family - open reasoning models
         /^deepseek-r1/.test(modelName) ||
+        // Granite 3.2 family - IBM's thinking models
+        /^granite-3\.2/.test(modelName) ||
+        // Llama 3.1 intuitive thinker models
+        /^llama3\.1.*intuitive.*thinker/.test(modelName) ||
+        // Any model explicitly marked as thinking/reasoning
+        /thinking|reasoning/.test(modelName) ||
         // Qwen models with reasoning capabilities
-        /^qwen.*thinking/.test(modelName) ||
-        // Any model explicitly marked as reasoning/thinking
-        /thinking|reasoning/.test(modelName)
+        /^qwen.*thinking/.test(modelName)
       );
 
     default:

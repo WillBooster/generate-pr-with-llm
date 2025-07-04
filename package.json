@@ -27,7 +27,12 @@
     "typecheck": "bun --bun wb typecheck"
   },
   "prettier": "@willbooster/prettier-config",
-  "dependencies": {},
+  "dependencies": {
+    "@openrouter/ai-sdk-provider": "0.7.2",
+    "ai": "5.0.0-beta.7",
+    "ai-v4": "npm:ai@^4.3.16",
+    "ollama-ai-provider-v2": "0.0.8"
+  },
   "devDependencies": {
     "@actions/core": "1.11.1",
     "@ai-sdk/amazon-bedrock": "3.0.0-beta.3",
@@ -43,7 +48,6 @@
     "@willbooster/biome-config": "3.2.0",
     "@willbooster/prettier-config": "10.2.0",
     "@willbooster/wb": "9.0.0",
-    "ai": "5.0.0-beta.7",
     "ansis": "4.1.0",
     "build-ts": "15.0.8",
     "conventional-changelog-conventionalcommits": "9.0.0",
