@@ -26,7 +26,6 @@ export function buildClaudeCodeArgs(
   if (isCI) {
     baseArgs.push('--print');
   }
-
   baseArgs.push(args.prompt);
   return baseArgs;
 }
