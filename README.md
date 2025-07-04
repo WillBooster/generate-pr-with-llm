@@ -43,31 +43,31 @@ Here are some examples for creating PRs for issue [#89](https://github.com/WillB
 `gen-pr` can generate an implementation plan by reading files in the target repository using [Repomix](https://github.com/yamadashy/repomix).
 This feature is particularly useful for non-agentic coding tools like Aider.
 
-`gemini/gemini-2.5-pro` (for planning) and Aider (for coding):
+Gemini 2.5 Pro (`gemini/gemini-2.5-pro`) for planning and Aider for coding:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --planning-model gemini/gemini-2.5-pro --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model gemini/gemini-2.5-pro --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test"
 ```
 
-`bedrock/us.anthropic.claude-opus-4-20250514-v1:0` (for planning) and Aider (for coding):
+Claude Opus 4 on Bedrock (`bedrock/us.anthropic.claude-opus-4-20250514-v1:0`) for planning and Aider for coding:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --planning-model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --test-cmd='yarn check-for-ai' --auto-test"
 ```
 
-`gemini/gemini-2.5-pro` (for planning) and Claude Code (for coding):
+Gemini 2.5 Pro (`gemini/gemini-2.5-pro`) for planning and Claude Code for coding:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --planning-model gemini/gemini-2.5-pro --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool claude-code
 ```
 
-`openai/o4-mini` (for planning) and Codex (for coding):
+o4-mini (`openai/o4-mini`) for planning and Codex for coding:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --planning-model openai/o4-mini --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
 ```
 
-`deepseek/deepseek-r1-0528:free` (for planning) and Gemini CLI (for coding):
+DeepSeek R1 on OpenRouter (`deepseek/deepseek-r1-0528:free`) for planning and Gemini CLI for coding:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --planning-model openrouter/deepseek/deepseek-r1-0528:free --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool gemini
@@ -75,19 +75,19 @@ npx --yes gen-pr --issue-number 89 --planning-model openrouter/deepseek/deepseek
 
 #### Without Planning
 
-Claude Code (for coding):
+Claude Code:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --coding-tool claude-code
 ```
 
-Codex (for coding):
+Codex:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --coding-tool codex
 ```
 
-Gemini CLI (for coding):
+Gemini CLI:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --coding-tool gemini

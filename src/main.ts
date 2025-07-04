@@ -202,23 +202,21 @@ ${planText}
 
   const assistantName =
     options.codingTool === 'aider' ? 'Aider' : options.codingTool === 'claude-code' ? 'Claude Code' : 'Codex';
-
   prBody += `
 - **Coding Tool:** ${assistantName}
-- **Coding Command:** \`${toolCommand}\``;
-
-  prBody += `
+- **Coding Command:** \`${toolCommand}\`
 
 ${truncateText(planText, (planText.length / (planText.length + assistantResponse.length)) * MAX_PR_BODY_LENGTH)}
 `;
-
-  const responseFence = findDistinctFence(assistantResponse);
-  prBody += `
+  if (options.codingTool !== 'claude-code') {
+    const responseFence = findDistinctFence(assistantResponse);
+    prBody += `
 # ${assistantName} Log
 
 ${responseFence}
 ${truncateText(assistantResponse, (assistantResponse.length / (planText.length + assistantResponse.length)) * MAX_PR_BODY_LENGTH)}
 ${responseFence}`;
+  }
   prBody = prBody.replaceAll(/(?:\s*\n){2,}/g, '\n\n').trim();
 
   if (!options.dryRun) {
