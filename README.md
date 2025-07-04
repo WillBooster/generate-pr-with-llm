@@ -43,51 +43,51 @@ Here are some examples for creating PRs for issue [#89](https://github.com/WillB
 `gen-pr` can generate an implementation plan by reading files in the target repository using [Repomix](https://github.com/yamadashy/repomix).
 This feature is particularly useful for non-agentic coding tools like Aider.
 
-Gemini 2.5 Pro for planning and Aider:
+Gemini 2.5 Pro (`gemini/gemini-2.5-pro`) for planning and Aider for coding:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --planning-model gemini/gemini-2.5-pro --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model gemini/gemini-2.5-pro --edit-format diff-fenced --test-cmd='yarn check-for-ai' --auto-test"
 ```
 
-Claude Opus 4 on Bedrock (for planning) and Aider (for coding):
+Claude Opus 4 on Bedrock (`bedrock/us.anthropic.claude-opus-4-20250514-v1:0`) for planning and Aider for coding:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --planning-model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --aider-extra-args="--model bedrock/us.anthropic.claude-opus-4-20250514-v1:0 --test-cmd='yarn check-for-ai' --auto-test"
 ```
 
-Gemini 2.5 Pro (for planning) and Claude Code (for coding):
+Gemini 2.5 Pro (`gemini/gemini-2.5-pro`) for planning and Claude Code for coding:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --planning-model gemini/gemini-2.5-pro --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool claude-code
 ```
 
-o4-mini (for planning) and Codex (for coding):
+o4-mini (`openai/o4-mini`) for planning and Codex for coding:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --planning-model openai/o4-mini --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool codex
 ```
 
-o4-mini (for planning) and Gemini CLI (for coding):
+DeepSeek R1 on OpenRouter (`deepseek/deepseek-r1-0528:free`) for planning and Gemini CLI for coding:
 
 ```sh
-npx --yes gen-pr --issue-number 89 --planning-model gemini/gemini-2.5-pro --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool gemini
+npx --yes gen-pr --issue-number 89 --planning-model openrouter/deepseek/deepseek-r1-0528:free --reasoning-effort high --repomix-extra-args="--compress --remove-empty-lines --include 'src/**/*.ts'" --coding-tool gemini
 ```
 
 #### Without Planning
 
-Claude Code (for coding):
+Claude Code:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --coding-tool claude-code
 ```
 
-Codex (for coding):
+Codex:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --coding-tool codex
 ```
 
-Gemini CLI (for coding):
+Gemini CLI:
 
 ```sh
 npx --yes gen-pr --issue-number 89 --coding-tool gemini
@@ -97,12 +97,13 @@ npx --yes gen-pr --issue-number 89 --coding-tool gemini
 
 The tool requires **model names defined on [llmlite](https://docs.litellm.ai/docs/providers)** in the format `provider/model-name`:
 
-- **OpenAI**: `openai/gpt-4.1`, `openai/o4-mini`
-- **Azure OpenAI**: `azure/gpt-4.1`, `azure/o4-mini`
-- **Google Gemini**: `gemini/gemini-2.5-pro`, `gemini/gemini-2.5-flash`
-- **Anthropic**: `anthropic/claude-4-sonnet-latest`, `anthropic/claude-3-5-haiku-latest`
-- **AWS Bedrock**: `bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0`, `bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0`
-- **Google Vertex AI**: `vertex/gemini-2.5-pro`, `vertex/gemini-2.5-flash`
+- **OpenAI**: `openai/gpt-4.1`, `openai/o4-mini` and more
+- **Azure OpenAI**: `azure/gpt-4.1`, `azure/o4-mini` and more
+- **Google Gemini**: `gemini/gemini-2.5-pro`, `gemini/gemini-2.5-flash` and more
+- **Anthropic**: `anthropic/claude-4-sonnet-latest`, `anthropic/claude-3-5-haiku-latest` and more
+- **AWS Bedrock**: `bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0`, `bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0` and more
+- **Google Vertex AI**: `vertex/gemini-2.5-pro`, `vertex/gemini-2.5-flash` and more
+- **OpenRouter**: `deepseek/deepseek-r1-0528:free` and more
 
 #### Environment Variables
 
@@ -114,6 +115,7 @@ Each provider uses standard environment variables for authentication:
 - **Azure OpenAI**: `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_VERSION`
 - **AWS Bedrock**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (or `AWS_REGION_NAME`)
 - **Google Vertex AI**: `GOOGLE_APPLICATION_CREDENTIALS` or default service account
+- **OpenRouter**: `OPENROUTER_API_KEY`
 
 ## License
 
