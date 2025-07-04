@@ -36,7 +36,7 @@ See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/wor
 
 ### CLI
 
-Here are some examples for creating PRs for issue #89.
+Here are some examples for creating PRs for issue [#89](https://github.com/WillBooster/gen-pr/issues/89).
 
 #### With Planning (Strongly Recommended for Aider)
 
