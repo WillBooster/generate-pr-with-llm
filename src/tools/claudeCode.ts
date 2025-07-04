@@ -1,3 +1,4 @@
+import { isCI } from '../ci.js';
 import { DEFAULT_CLAUDE_CODE_EXTRA_ARGS } from '../defaultOptions.js';
 import type { MainOptions } from '../main.js';
 import type { ResolutionPlan } from '../plan.js';
@@ -15,14 +16,17 @@ export function buildClaudeCodeArgs(
   args: { prompt: string; resolutionPlan?: ResolutionPlan }
 ): string[] {
   // cf. https://docs.anthropic.com/en/docs/claude-code/cli-usage
-  return [
+  const baseArgs = [
     '--yes',
     '@anthropic-ai/claude-code@latest',
     ...parseCommandLineArgs(options.claudeCodeExtraArgs || DEFAULT_CLAUDE_CODE_EXTRA_ARGS),
     // Bypass all permission checks
     '--dangerously-skip-permissions',
-    // Print response without interactive mode
-    '--print',
-    args.prompt,
   ];
+  if (isCI) {
+    baseArgs.push('--print');
+  }
+
+  baseArgs.push(args.prompt);
+  return baseArgs;
 }
