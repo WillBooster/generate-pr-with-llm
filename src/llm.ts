@@ -187,38 +187,6 @@ export function supportsReasoning(provider: string, modelName: string): boolean 
       // Vertex: Gemini 2.5 models and Claude 3.7/4 models support thinking budget
       return /^gemini-2\.5/.test(modelName) || /^claude-(3-7-sonnet|opus-4|sonnet-4)/.test(modelName);
 
-    case 'openrouter':
-      // OpenRouter: Models with reasoning support based on their documentation
-      // https://openrouter.ai/docs/use-cases/reasoning-tokens
-      return (
-        // OpenAI o-series models
-        /^(openai\/)?(o1|o3)/.test(modelName) ||
-        // Anthropic Claude models (3.7 and 4 series)
-        /^(anthropic\/)?claude-(3-7-sonnet|opus-4|sonnet-4)/.test(modelName) ||
-        // Grok models
-        /^(x-ai\/)?grok/.test(modelName) ||
-        // Some Gemini thinking models (check for specific thinking models)
-        /^(google\/)?gemini.*thinking/.test(modelName) ||
-        // DeepSeek R1 models
-        /^(deepseek\/)?deepseek-r1/.test(modelName)
-      );
-
-    case 'ollama':
-      // Ollama: Native thinking mode support for reasoning-capable models
-      // Based on Ollama's official thinking mode documentation
-      return (
-        // DeepSeek R1 family - open reasoning models
-        /^deepseek-r1/.test(modelName) ||
-        // Granite 3.2 family - IBM's thinking models
-        /^granite-3\.2/.test(modelName) ||
-        // Llama 3.1 intuitive thinker models
-        /^llama3\.1.*intuitive.*thinker/.test(modelName) ||
-        // Any model explicitly marked as thinking/reasoning
-        /thinking|reasoning/.test(modelName) ||
-        // Qwen models with reasoning capabilities
-        /^qwen.*thinking/.test(modelName)
-      );
-
     default:
       return false;
   }

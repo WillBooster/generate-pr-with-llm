@@ -125,10 +125,6 @@ Each provider uses standard environment variables for authentication:
 - **OpenRouter**: `OPENROUTER_API_KEY`
 - **Ollama**: `OLLAMA_BASE_URL` (default: `http://localhost:11434`), `OLLAMA_API_KEY` (optional)
 
-### Known Limitations
-
-- **AI SDK 5.0.0-beta**: The beta version uses the newer Responses API (`/v1/responses`) instead of Chat Completions API (`/v1/chat/completions`). For maximum compatibility, OpenRouter and Ollama providers use AI SDK v4 while other providers use AI SDK v5.
-
 ## License
 
 Apache License 2.0
