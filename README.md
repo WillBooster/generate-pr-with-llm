@@ -116,14 +116,19 @@ The tool requires **model names defined on [llmlite](https://docs.litellm.ai/doc
 
 Each provider uses standard environment variables for authentication:
 
-- **OpenAI**: `OPENAI_API_KEY`
-- **Anthropic**: `ANTHROPIC_API_KEY`
-- **Google Gemini**: `GOOGLE_GENERATIVE_AI_API_KEY` (or `GEMINI_API_KEY`)
-- **Azure OpenAI**: `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_VERSION`
-- **AWS Bedrock**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (or `AWS_REGION_NAME`)
-- **Google Vertex AI**: `GOOGLE_APPLICATION_CREDENTIALS` or default service account
-- **OpenRouter**: `OPENROUTER_API_KEY`
-- **Ollama**: `OLLAMA_BASE_URL` (default: `http://localhost:11434`), `OLLAMA_API_KEY` (optional)
+- Planning Models
+  - **OpenAI**: `OPENAI_API_KEY`
+  - **Anthropic**: `ANTHROPIC_API_KEY`
+  - **Google Gemini**: `GOOGLE_GENERATIVE_AI_API_KEY` (or `GEMINI_API_KEY`)
+  - **Azure OpenAI**: `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_VERSION`
+  - **AWS Bedrock**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (or `AWS_REGION_NAME`)
+  - **Google Vertex AI**: `GOOGLE_APPLICATION_CREDENTIALS` or default service account
+  - **OpenRouter**: `OPENROUTER_API_KEY`
+  - **Ollama**: `OLLAMA_BASE_URL` (default: `http://localhost:11434`), `OLLAMA_API_KEY` (optional)
+- Coding Tools
+  - **Codex CLI**: `OPENAI_API_KEY`
+  - **Claude Code**: `ANTHROPIC_API_KEY`
+  - **Gemini CLI**: `GEMINI_API_KEY`
 
 ## License
 
