@@ -1,6 +1,7 @@
 import type { MainOptions } from './main.js';
 import { runCommand } from './spawn.js';
 import type { GitHubComment, GitHubIssue, IssueInfo } from './types.js';
+import { downloadImageAsDataURL, extractImageUrls } from './utils/image-utils.js';
 import { stripHtmlComments } from './utils.js';
 
 export async function createIssueInfo(options: MainOptions): Promise<IssueInfo> {
@@ -24,13 +25,23 @@ async function fetchIssueData(
 
   const { stdout: issueResult } = await runCommand(
     'gh',
-    ['issue', 'view', issueNumber.toString(), '--json', 'author,title,body,labels,comments,url'],
+    [
+      'issue',
+      'view',
+      issueNumber.toString(),
+      '--json',
+      'author,title,body,bodyHTML,labels,comments{id,author,authorAssociation,body,bodyHTML,createdAt,includesCreatedEdit,isMinimized,minimizedReason,reactionGroups,url,viewerDidAuthor},url',
+    ],
     { ignoreExitStatus: true }
   );
   if (!issueResult) {
     return;
   }
   const issue: GitHubIssue = JSON.parse(issueResult);
+
+  // extract image URLs & data from issue body
+  const issueImageUrls = extractImageUrls(issue.bodyHTML);
+  const issueImageData = await Promise.all(issueImageUrls.map((url) => downloadImageAsDataURL(url)));
 
   // Extract issue/PR references from the issue body and comments
   const allText = [issue.body, ...issue.comments.map((c) => c.body)].join('\n');
@@ -40,9 +51,12 @@ async function fetchIssueData(
     author: issue.author.login,
     title: issue.title,
     description: stripHtmlComments(issue.body),
+    imageUrls: issueImageUrls,
+    imageData: issueImageUrls.map((url, i) => ({ url, dataUrl: issueImageData[i] })),
     comments: issue.comments.map((c: GitHubComment) => ({
       author: c.author.login,
       body: c.body,
+      imageUrls: extractImageUrls(c.bodyHTML),
     })),
   };
 

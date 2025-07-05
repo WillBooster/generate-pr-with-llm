@@ -50,6 +50,8 @@ export interface GitHubComment {
   authorAssociation: string;
   /** The comment's content */
   body: string;
+  /** The comment's HTML content (for extracting images) */
+  bodyHTML: string;
   /** When the comment was created */
   createdAt: string;
   /** Whether the comment includes an edit made at creation time */
@@ -88,6 +90,8 @@ export interface GitHubIssue {
   author: GitHubUser;
   /** The issue's description */
   body: string;
+  /** The issue's HTML content (for extracting images) */
+  bodyHTML: string;
   /** Comments on the issue */
   comments: GitHubComment[];
   /** Labels attached to the issue */
@@ -106,6 +110,8 @@ export interface IssueComment {
   author: string;
   /** The comment's content */
   body: string;
+  /** URLs of images in this comment */
+  imageUrls?: string[];
 }
 
 /**
@@ -120,6 +126,10 @@ export interface IssueInfo {
   description: string;
   /** Simplified comments on the issue */
   comments: IssueComment[];
+  /** URLs of images in the issue body */
+  imageUrls?: string[];
+  /** Base64‐encoded image data for issue images */
+  imageData?: { url: string; dataUrl: string }[];
   /** Code changes (only present for PRs with diff content) */
   code_changes?: string;
   /** Referenced issues and pull requests */
