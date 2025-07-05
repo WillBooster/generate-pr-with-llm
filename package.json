@@ -28,7 +28,7 @@
   },
   "prettier": "@willbooster/prettier-config",
   "dependencies": {
-    "node-fetch": "^3.3.1"
+    "node-fetch": "3.3.2"
   },
   "devDependencies": {
     "@actions/core": "1.11.1",
