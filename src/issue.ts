@@ -1,7 +1,7 @@
 import type { MainOptions } from './main.js';
 import { runCommand } from './spawn.js';
-import type { GitHubComment, GitHubIssue, IssueInfo } from './types.js';
-import { stripHtmlComments } from './utils.js';
+import type { GitHubComment, GitHubIssue, IssueComment, IssueInfo } from './types.js';
+import { extractImageUrls, stripHtmlComments } from './utils.js';
 
 export async function createIssueInfo(options: MainOptions): Promise<IssueInfo> {
   const processedIssues = new Set<number>();
@@ -40,11 +40,23 @@ async function fetchIssueData(
     author: issue.author.login,
     title: issue.title,
     description: stripHtmlComments(issue.body),
-    comments: issue.comments.map((c: GitHubComment) => ({
-      author: c.author.login,
-      body: c.body,
-    })),
+    comments: issue.comments.map((c: GitHubComment) => {
+      const commentInfo: IssueComment = {
+        author: c.author.login,
+        body: c.body,
+      };
+      const images = extractImageUrls(c.body);
+      if (images.length > 0) {
+        commentInfo.images = images;
+      }
+      return commentInfo;
+    }),
   };
+
+  const descriptionImages = extractImageUrls(issue.body);
+  if (descriptionImages.length > 0) {
+    issueInfo.images = descriptionImages;
+  }
 
   if (issue.url?.includes('/pull/') && !isReferenced) {
     const { stdout: prDiff } = await runCommand('gh', ['pr', 'diff', issueNumber.toString()], {

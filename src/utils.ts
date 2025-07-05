@@ -61,3 +61,24 @@ export function parseCommandLineArgs(argsString: string): string[] {
 export function stripHtmlComments(markdownContent: string): string {
   return markdownContent.replace(/<!--[\s\S]*?-->/g, '');
 }
+
+/**
+ * Extracts image URLs from markdown content.
+ * Supports both markdown image syntax `![alt](url)` and HTML `<img>` tags.
+ *
+ * @param markdownContent The string containing markdown content
+ * @returns An array of unique image URLs
+ */
+export function extractImageUrls(markdownContent: string): string[] {
+  const imageUrlRegex = /!\[.*?\]\((.*?)\)|<img.*?src=["'](.*?)["']/g;
+  const urls: string[] = [];
+  for (;;) {
+    const match = imageUrlRegex.exec(markdownContent);
+    if (!match) break;
+
+    // match[1] is from markdown syntax, match[2] is from <img> tag
+    const url = match[1] || match[2];
+    if (url) urls.push(url);
+  }
+  return [...new Set(urls)]; // Return unique URLs
+}

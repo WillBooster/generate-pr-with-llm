@@ -1,10 +1,11 @@
 import fs from 'node:fs';
+import type { ModelMessage } from 'ai';
 import YAML from 'yaml';
 import { DEFAULT_REPOMIX_EXTRA_ARGS } from './defaultOptions.js';
 import { callLlmApi } from './llm.js';
 import { extractHeaderContents, findDistinctFence, trimCodeBlockFences } from './markdown.js';
 import { runCommand } from './spawn.js';
-import type { ReasoningEffort } from './types.js';
+import type { IssueInfo, ReasoningEffort } from './types.js';
 import { parseCommandLineArgs } from './utils.js';
 
 const REPOMIX_FILE_NAME = 'repomix.result';
@@ -20,6 +21,7 @@ const HEADING_OF_PLAN = '# Implementation Plans';
 
 export async function planCodeChanges(
   model: string,
+  issueInfo: IssueInfo,
   issueContent: string,
   twoStagePlanning: boolean,
   reasoningEffort?: ReasoningEffort,
@@ -35,20 +37,13 @@ export async function planCodeChanges(
   const repomixResult = fs.readFileSync(REPOMIX_FILE_NAME, 'utf8');
   void fs.promises.rm(REPOMIX_FILE_NAME, { force: true });
 
+  const imageUrls = [...(issueInfo.images || []), ...(issueInfo.comments?.flatMap((c) => c.images || []) || [])];
+
   if (twoStagePlanning) {
     console.info(`Selecting files with ${model} (reasoning effort: ${reasoningEffort}) ...`);
     const filesResponse = await callLlmApi(
       model,
-      [
-        {
-          role: 'system',
-          content: buildPromptForSelectingFiles(issueFence, issueContent).trim(),
-        },
-        {
-          role: 'user',
-          content: repomixResult,
-        },
-      ],
+      buildMultimodalMessages(buildPromptForSelectingFiles(issueFence, issueContent).trim(), repomixResult, imageUrls),
       reasoningEffort
     );
     console.info('Selecting complete!');
@@ -81,16 +76,7 @@ ${fence}`;
     console.info(`Planning code changes with ${model} (reasoning effort: ${reasoningEffort}) ...`);
     const planResponse = await callLlmApi(
       model,
-      [
-        {
-          role: 'system',
-          content: buildPromptForPlanningCodeChanges(issueFence, issueContent),
-        },
-        {
-          role: 'user',
-          content: fileContents,
-        },
-      ],
+      buildMultimodalMessages(buildPromptForPlanningCodeChanges(issueFence, issueContent), fileContents, imageUrls),
       reasoningEffort
     );
     console.info('Planning complete!');
@@ -104,16 +90,11 @@ ${fence}`;
   console.info(`Planning code changes with ${model} (reasoning effort: ${reasoningEffort}) ...`);
   const filesResponse = await callLlmApi(
     model,
-    [
-      {
-        role: 'system',
-        content: buildPromptForSelectingFilesAndPlanningCodeChanges(issueFence, issueContent).trim(),
-      },
-      {
-        role: 'user',
-        content: repomixResult,
-      },
-    ],
+    buildMultimodalMessages(
+      buildPromptForSelectingFilesAndPlanningCodeChanges(issueFence, issueContent).trim(),
+      repomixResult,
+      imageUrls
+    ),
     reasoningEffort
   );
   console.info('Planning complete!');
@@ -130,6 +111,26 @@ ${fence}`;
   const matches = [...extractedFilePathLists[1].matchAll(filePathRegex)];
   const filePathsToBeModified = matches.map((match) => match[1].trim());
   return { plan: extractedFilePathLists[0], filePaths: filePathsToBeModified };
+}
+
+function buildMultimodalMessages(systemContent: string, userContent: string, imageUrls: string[]): ModelMessage[] {
+  const messages: ModelMessage[] = [
+    { role: 'system', content: systemContent },
+    { role: 'user', content: [{ type: 'text', text: userContent }] },
+  ];
+  if (imageUrls.length > 0) {
+    const userMessage = messages.find((m) => m.role === 'user');
+    if (userMessage && Array.isArray(userMessage.content)) {
+      for (const url of imageUrls) {
+        try {
+          (userMessage.content as unknown[]).push({ type: 'image', image: new URL(url) });
+        } catch {
+          console.warn(`Invalid image URL, skipping: ${url}`);
+        }
+      }
+    }
+  }
+  return messages;
 }
 
 function buildPromptForSelectingFiles(issueFence: string, issueContent: string): string {
