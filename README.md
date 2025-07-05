@@ -32,7 +32,7 @@ This tool embodies the ultimate "Vibe Coding" experience, where humans can focus
 
 ### GitHub Actions
 
-See [action.yml](action.yml) and [.github/workflows/generate-pr.yml](.github/workflows/generate-pr.yml).
+See [action.yml](action.yml) and [.github/workflows/generate-pr-example.yml](.github/workflows/generate-pr-example.yml).
 
 ### CLI
 
