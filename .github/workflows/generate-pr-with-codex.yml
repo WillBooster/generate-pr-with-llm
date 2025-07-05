@@ -18,11 +18,8 @@ jobs:
       - name: Generate PR with AI
         uses: WillBooster/gen-pr@v2
         with:
-          # required options
           issue-number: ${{ github.event.issue.number }}
-          # optional options
           coding-tool: codex
-          codex-extra-args: '--approval-mode full-auto --quiet'
           planning-model: openai/o4-mini
           reasoning-effort: high
           repomix-extra-args: "--compress --remove-empty-lines --include 'src/**/*.ts'"

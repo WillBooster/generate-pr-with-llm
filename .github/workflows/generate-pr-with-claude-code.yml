@@ -18,14 +18,8 @@ jobs:
       - name: Generate PR with AI
         uses: WillBooster/gen-pr@v2
         with:
-          # required options
           issue-number: ${{ github.event.issue.number }}
-          # optional options
           coding-tool: claude-code
-          claude-code-extra-args: '--allowedTools Bash Edit Write'
-          planning-model: bedrock/us.anthropic.claude-opus-4-20250514-v1:0
-          reasoning-effort: high
-          repomix-extra-args: "--compress --remove-empty-lines --include 'src/**/*.ts'"
           test-command: 'yarn check-for-ai'
           max-test-attempts: 5
         env:
@@ -35,3 +29,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-west-2
           CLAUDE_CODE_USE_BEDROCK: 1
+          GH_TOKEN: ${{ secrets.PUBLIC_GH_BOT_PAT }}

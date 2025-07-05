@@ -33,10 +33,10 @@ jobs:
           # required options
           issue-number: ${{ github.event.issue.number }}
           # optional options
-          planning-model: gemini/gemini-2.5-flash
+          planning-model: gemini/gemini-2.5-pro
           reasoning-effort: high
           repomix-extra-args: "--compress --remove-empty-lines --include 'src/**/*.ts'"
-          aider-extra-args: '--model gemini/gemini-2.5-flash --edit-format diff-fenced --no-gitignore'
+          aider-extra-args: '--model gemini/gemini-2.5-pro --edit-format diff-fenced --no-gitignore'
           test-command: 'yarn check-for-ai'
           max-test-attempts: 5
         env:
