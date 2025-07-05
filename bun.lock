@@ -18,7 +18,7 @@
         "@types/yargs": "17.0.33",
         "@willbooster/biome-config": "3.2.0",
         "@willbooster/prettier-config": "10.2.0",
-        "@willbooster/wb": "9.0.0",
+        "@willbooster/wb": "9.0.1",
         "ai": "5.0.0-beta.7",
         "ai-v4": "npm:ai@4.3.16",
         "ansis": "4.1.0",
@@ -531,7 +531,7 @@
 
     "@willbooster/shared-lib-node": ["@willbooster/shared-lib-node@7.0.0", "", { "dependencies": { "dotenv": "17.0.0", "tree-kill": "1.2.2" } }, "sha512-5o0ZIkFcGDoCGWkk5ZD/OuuykOegi/+orNpX1OBXETpGtv8ninhYOWgk4vQJ72XdpEqKiE7x/fU7LspQudYzHw=="],
 
-    "@willbooster/wb": ["@willbooster/wb@9.0.0", "", { "dependencies": { "chalk": "5.4.1", "dotenv": "17.0.0", "globby": "14.1.0", "kill-port": "2.0.1", "minimal-promise-pool": "5.0.0", "tree-kill": "1.2.2", "yargs": "18.0.0" }, "bin": { "wb": "bin/index.js" } }, "sha512-Iz2z9WEBIHPRwiB3xoLVnXACnFTfHcGpxY8NGdLrMDboUp8LzEKsNPHVdyqGdCiZZPzjoxkFRGXD/Y460sUu/A=="],
+    "@willbooster/wb": ["@willbooster/wb@9.0.1", "", { "dependencies": { "chalk": "5.4.1", "dotenv": "17.0.1", "globby": "14.1.0", "kill-port": "2.0.1", "minimal-promise-pool": "5.0.0", "tree-kill": "1.2.2", "yargs": "18.0.0" }, "bin": { "wb": "bin/index.js" } }, "sha512-KGGqE1e8LrDLG3wrHHmBCj3hRKy/5MrjBX/8EA3503dRICEOva1AONPSHWeGKqBndhhlMruAIcs2U2z3fKK0cw=="],
 
     "acorn": ["acorn@8.15.0", "", { "bin": { "acorn": "bin/acorn" } }, "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg=="],
 
@@ -1360,8 +1360,6 @@
     "@semantic-release/release-notes-generator/get-stream": ["get-stream@7.0.1", "", {}, "sha512-3M8C1EOFN6r8AMUhwUAACIoXZJEOufDU5+0gFFN5uNs6XYOralD2Pqkl7m046va6x77FwposWXbAhPPIOus7mQ=="],
 
     "@willbooster/shared-lib-node/dotenv": ["dotenv@17.0.0", "", {}, "sha512-A0BJ5lrpJVSfnMMXjmeO0xUnoxqsBHWCoqqTnGwGYVdnctqXXUEhJOO7LxmgxJon9tEZFGpe0xPRX0h2v3AANQ=="],
-
-    "@willbooster/wb/dotenv": ["dotenv@17.0.0", "", {}, "sha512-A0BJ5lrpJVSfnMMXjmeO0xUnoxqsBHWCoqqTnGwGYVdnctqXXUEhJOO7LxmgxJon9tEZFGpe0xPRX0h2v3AANQ=="],
 
     "ai-v4/@ai-sdk/provider": ["@ai-sdk/provider@1.1.3", "", { "dependencies": { "json-schema": "^0.4.0" } }, "sha512-qZMxYJ0qqX/RfnuIaab+zp8UAeJn/ygXXAffR5I4N0n1IrvA6qBsjc8hXLmBiMV2zoXlifkacF7sEFnYnjBcqg=="],
 
