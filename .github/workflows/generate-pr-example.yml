@@ -15,7 +15,7 @@ jobs:
   generate-pr:
     runs-on: ubuntu-latest
     # Only run if the label name includes 'ai-pr' and an issue number is available
-    if: contains(github.event.label.name, 'ai-pr') && github.event.issue.number != null
+    if: contains(github.event.label.name, 'easy') && github.event.issue.number != null
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -62,3 +62,6 @@ jobs:
           ANTHROPIC_MODEL: 'us.anthropic.claude-opus-4-20250514-v1:0'
           ANTHROPIC_SMALL_FAST_MODEL: 'us.anthropic.claude-3-5-haiku-20241022-v1:0'
           CLAUDE_CODE_USE_BEDROCK: 1
+
+          # for gh
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
