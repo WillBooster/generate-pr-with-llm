@@ -37,20 +37,13 @@ export async function planCodeChanges(
   const repomixResult = fs.readFileSync(REPOMIX_FILE_NAME, 'utf8');
   void fs.promises.rm(REPOMIX_FILE_NAME, { force: true });
 
-  const imageUrls = [
-    ...(issueInfo.images || []),
-    ...(issueInfo.comments?.flatMap((c) => c.images || []) || []),
-  ];
+  const imageUrls = [...(issueInfo.images || []), ...(issueInfo.comments?.flatMap((c) => c.images || []) || [])];
 
   if (twoStagePlanning) {
     console.info(`Selecting files with ${model} (reasoning effort: ${reasoningEffort}) ...`);
     const filesResponse = await callLlmApi(
       model,
-      buildMultimodalMessages(
-        buildPromptForSelectingFiles(issueFence, issueContent).trim(),
-        repomixResult,
-        imageUrls
-      ),
+      buildMultimodalMessages(buildPromptForSelectingFiles(issueFence, issueContent).trim(), repomixResult, imageUrls),
       reasoningEffort
     );
     console.info('Selecting complete!');
@@ -120,11 +113,7 @@ ${fence}`;
   return { plan: extractedFilePathLists[0], filePaths: filePathsToBeModified };
 }
 
-function buildMultimodalMessages(
-  systemContent: string,
-  userContent: string,
-  imageUrls: string[]
-): ModelMessage[] {
+function buildMultimodalMessages(systemContent: string, userContent: string, imageUrls: string[]): ModelMessage[] {
   const messages: ModelMessage[] = [
     { role: 'system', content: systemContent },
     { role: 'user', content: [{ type: 'text', text: userContent }] },
