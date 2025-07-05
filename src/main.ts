@@ -51,6 +51,7 @@ const MAX_PR_BODY_LENGTH = 30000; // GitHub's limit is 65536, leave some buffer
 
 export async function main(options: MainOptions): Promise<void> {
   configureEnvVars();
+  console.log('Hi');
 
   if (options.dryRun) {
     console.info(ansis.yellow('Running in dry-run mode. No branches or PRs will be created.'));
