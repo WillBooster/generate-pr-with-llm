@@ -124,7 +124,7 @@ function buildMultimodalMessages(systemContent: string, userContent: string, ima
       for (const url of imageUrls) {
         try {
           (userMessage.content as unknown[]).push({ type: 'image', image: new URL(url) });
-        } catch (error) {
+        } catch {
           console.warn(`Invalid image URL, skipping: ${url}`);
         }
       }

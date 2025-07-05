@@ -72,8 +72,10 @@ export function stripHtmlComments(markdownContent: string): string {
 export function extractImageUrls(markdownContent: string): string[] {
   const imageUrlRegex = /!\[.*?\]\((.*?)\)|<img.*?src=["'](.*?)["']/g;
   const urls: string[] = [];
-  let match;
-  while ((match = imageUrlRegex.exec(markdownContent)) !== null) {
+  for (;;) {
+    const match = imageUrlRegex.exec(markdownContent);
+    if (!match) break;
+
     // match[1] is from markdown syntax, match[2] is from <img> tag
     const url = match[1] || match[2];
     if (url) urls.push(url);
