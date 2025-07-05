@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: write # for pushing commits and branches
+  issues: write # for creating PRs
+  pull-requests: write # for creating PRs
 
 jobs:
   generate-pr:
@@ -18,19 +18,25 @@ jobs:
     if: contains(github.event.label.name, 'easy') && github.event.issue.number != null
     steps:
       - uses: actions/checkout@v4
+      # Set up an environment for AI coding tools
       - uses: oven-sh/setup-bun@v2
       - name: Install dependencies
         run: bun install
+      # Set up user settings on Git (optional)
+      # - name: Set up user settings on Git
+      #   run: |
+      #     git config user.name "WillBooster Bot"
+      #     git config user.email "bot@willbooster.com"
       - name: Generate PR with AI
         uses: WillBooster/gen-pr@v2
         with:
           # required options
           issue-number: ${{ github.event.issue.number }}
           # optional options
-          planning-model: gemini/gemini-2.5-pro
+          planning-model: gemini/gemini-2.5-flash
           reasoning-effort: high
           repomix-extra-args: "--compress --remove-empty-lines --include 'src/**/*.ts'"
-          aider-extra-args: '--model gemini/gemini-2.5-pro --edit-format diff-fenced --no-gitignore'
+          aider-extra-args: '--model gemini/gemini-2.5-flash --edit-format diff-fenced --no-gitignore'
           test-command: 'yarn check-for-ai'
           max-test-attempts: 5
         env:
@@ -63,5 +69,5 @@ jobs:
           ANTHROPIC_SMALL_FAST_MODEL: 'us.anthropic.claude-3-5-haiku-20241022-v1:0'
           CLAUDE_CODE_USE_BEDROCK: 1
 
-          # for gh (required)
+          # for gh (required for creating PRs)
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
