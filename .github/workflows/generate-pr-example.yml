@@ -63,5 +63,5 @@ jobs:
           ANTHROPIC_SMALL_FAST_MODEL: 'us.anthropic.claude-3-5-haiku-20241022-v1:0'
           CLAUDE_CODE_USE_BEDROCK: 1
 
-          # for gh
+          # for gh (required)
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
