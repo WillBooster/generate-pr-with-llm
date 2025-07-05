@@ -106,6 +106,8 @@ export interface IssueComment {
   author: string;
   /** The comment's content */
   body: string;
+  /** Image URLs found in the comment */
+  images?: string[];
 }
 
 /**
@@ -118,6 +120,8 @@ export interface IssueInfo {
   title: string;
   /** The cleaned issue description */
   description: string;
+  /** Image URLs found in the description */
+  images?: string[];
   /** Simplified comments on the issue */
   comments: IssueComment[];
   /** Code changes (only present for PRs with diff content) */

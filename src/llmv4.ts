@@ -68,9 +68,14 @@ export async function callV4ProviderApi(
  * Convert AI SDK v5 ModelMessage[] to AI SDK v4 Message[] format
  */
 function convertToV4Messages(messages: ModelMessage[]): Message[] {
-  return messages.map((msg, index) => ({
-    id: `msg-${index}`,
-    role: msg.role === 'tool' ? 'data' : msg.role,
-    content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
-  }));
+  return messages.map(
+    (msg, index) =>
+      ({
+        id: `msg-${index}`,
+        role: msg.role === 'tool' ? 'data' : msg.role, // 'tool' role in v5 is 'data' in v4
+        // For 'tool' role, content needs to be stringified. For others (like user with images), it can be an array.
+        content:
+          msg.role === 'tool' && typeof msg.content !== 'string' ? JSON.stringify(msg.content) : msg.content,
+      }) as Message
+  );
 }

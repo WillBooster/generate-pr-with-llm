@@ -90,6 +90,7 @@ export async function main(options: MainOptions): Promise<void> {
     (options.planningModel &&
       (await planCodeChanges(
         options.planningModel,
+        issueInfo,
         issueText,
         options.twoStagePlanning,
         options.reasoningEffort,
